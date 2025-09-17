@@ -1,5 +1,6 @@
 <script lang="ts">
   import Card from '$lib/components/Card.svelte';
+  import Button from '$lib/components/Button.svelte';
   import CharacterStats from '$lib/components/CharacterStats.svelte';
   import SpellConfig from '$lib/components/SpellConfig.svelte';
   import EnhancementSettings from '$lib/components/EnhancementSettings.svelte';
@@ -10,20 +11,44 @@
   import { calculateEnhancedSpell, calculateSpellEffects } from '$lib/composables/calculator';
   import type { Character, BaseSpell, StealSettings, IDamageSettings, IEnhancement, ISpellCosts, ISpellEffects } from '$lib/types';
 
-  let character = $state<Character>({
-    maxAP: 12, currentAP: 12, maxHP: 1000, currentHP: 1000,
-    maxMP: 1000, currentMP: 1000
+  // Load initial state from localStorage or use defaults
+  let character = $state<Character>(
+    JSON.parse(localStorage.getItem('character') || 'null') || {
+      maxAP: 12, currentAP: 12, maxHP: 1000, currentHP: 1000,
+      maxMP: 1000, currentMP: 1000
+    }
+  );
+  let baseSpell = $state<BaseSpell>(
+    JSON.parse(localStorage.getItem('baseSpell') || 'null') || {
+      name: 'Fireball', apCost: 2, mpCost: 100, baseDamage: 50
+    }
+  );
+  let stealSettings = $state<StealSettings>(
+    JSON.parse(localStorage.getItem('stealSettings') || 'null') || {
+      lifeStealPercent: 2, manaStealPercent: 3
+    }
+  );
+  let damageSettings = $state<IDamageSettings>(
+    JSON.parse(localStorage.getItem('damageSettings') || 'null') || {
+      rawDamagePercent: 15
+    }
+  );
+  let enhancements = $state<IEnhancement[]>(
+    JSON.parse(localStorage.getItem('enhancements') || 'null') || []
+  );
+  let enemyCount = $state<number>(
+    JSON.parse(localStorage.getItem('enemyCount') || 'null') || 3
+  );
+
+  // Save state to localStorage on changes
+  $effect(() => {
+    localStorage.setItem('character', JSON.stringify(character));
+    localStorage.setItem('baseSpell', JSON.stringify(baseSpell));
+    localStorage.setItem('stealSettings', JSON.stringify(stealSettings));
+    localStorage.setItem('damageSettings', JSON.stringify(damageSettings));
+    localStorage.setItem('enhancements', JSON.stringify(enhancements));
+    localStorage.setItem('enemyCount', JSON.stringify(enemyCount));
   });
-
-  let baseSpell = $state<BaseSpell>({ name: 'Fireball', apCost: 2, mpCost: 100, baseDamage: 50 });
-
-  let stealSettings = $state<StealSettings>({ lifeStealPercent: 2, manaStealPercent: 3 });
-
-  let damageSettings = $state<IDamageSettings>({ rawDamagePercent: 15 });
-
-  let enhancements = $state<IEnhancement[]>([]);
-
-  let enemyCount = $state<number>(3);
 
   let availableEnhancements = $state<IEnhancement[]>([
     { name: 'Critical Hit Chance', effect: '+15% crit chance', stackable: true, description: 'Each stack adds 15% crit chance' },
@@ -87,7 +112,11 @@
 
 <div class="calculator-container">
   <h1 class="title">Enhancement System Calculator</h1>
-
+  <div class="calculator-container">
+    <h1 class="title">Enhancement System Calculator</h1>
+    <Button variant="secondary" onClick={() => localStorage.clear()}>Clear Saved Settings</Button>
+    <!-- Rest of the template remains the same -->
+  </div>
   <!-- Desktop Layout -->
   <div class="desktop-layout">
     <div class="desktop-column">
