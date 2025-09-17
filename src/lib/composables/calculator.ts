@@ -1,14 +1,19 @@
 // src/lib/composables/calculator.ts
-import type { BaseSpell, IEnhancement, IDamageSettings, StealSettings, ISpellCosts, ISpellEffects, Character } from '$lib/types';
+import type { Character, BaseSpell, IEnhancement, IDamageSettings, StealSettings, ISpellCosts, ISpellEffects } from '$lib/types';
 
 type CacheKey = string;
 type CacheValue = ISpellCosts | ISpellEffects;
 
-const cache = new Map<CacheKey, CacheValue>();
+// Define the argument types for generateCacheKey
+type CacheKeyArgs = 
+  | [BaseSpell, IEnhancement[]] // For calculateEnhancedSpell
+  | [BaseSpell, IEnhancement[], number, IDamageSettings, StealSettings]; // For calculateSpellEffects
 
-function generateCacheKey(...args: unknown[]): CacheKey {
+function generateCacheKey(...args: CacheKeyArgs): CacheKey {
   return JSON.stringify(args);
 }
+
+const cache = new Map<CacheKey, CacheValue>();
 
 export function calculateEnhancedSpell(baseSpell: BaseSpell, enhancements: IEnhancement[]): ISpellCosts {
   const cacheKey = generateCacheKey(baseSpell, enhancements);
@@ -16,7 +21,6 @@ export function calculateEnhancedSpell(baseSpell: BaseSpell, enhancements: IEnha
     return cache.get(cacheKey) as ISpellCosts;
   }
 
-  // Existing calculation logic
   const enhancementAPCost = enhancements.reduce((sum, enh) => sum + (enh.name === 'Multi-Target' ? 2 : 1), 0);
   const enhancementMPCost = enhancements.reduce((sum, enh) => sum + (enh.name === 'Elemental Boost' ? 50 : 25), 0);
   const result: ISpellCosts = {
@@ -42,7 +46,6 @@ export function calculateSpellEffects(
     return cache.get(cacheKey) as ISpellEffects;
   }
 
-  // Existing calculation logic (simplified example)
   const rawDamageMultiplier = 1 + (enhancements.filter(e => e.name === 'Raw Damage').length * damageSettings.rawDamagePercent / 100);
   const isMultiTarget = enhancements.some(e => e.name === 'Multi-Target');
   const result: ISpellEffects = {
@@ -57,10 +60,10 @@ export function calculateSpellEffects(
     isMultiTarget,
     lifeStealPercent: enhancements.filter(e => e.name === 'Life Steal').length * stealSettings.lifeStealPercent,
     manaStealPercent: enhancements.filter(e => e.name === 'Mana Steal').length * stealSettings.manaStealPercent,
-    lifeStealAmount: 0, // Simplified; add actual logic
-    manaStealAmount: 0, // Simplified; add actual logic
-    critLifeStealAmount: 0, // Simplified; add actual logic
-    critManaStealAmount: 0, // Simplified; add actual logic
+    lifeStealAmount: 0, // Replace with actual logic
+    manaStealAmount: 0, // Replace with actual logic
+    critLifeStealAmount: 0, // Replace with actual logic
+    critManaStealAmount: 0, // Replace with actual logic
     totalDamageOutput: isMultiTarget ? baseSpell.baseDamage * 0.5 * enemyCount : baseSpell.baseDamage * rawDamageMultiplier,
     baseDamageAfterRaw: baseSpell.baseDamage * rawDamageMultiplier
   };
@@ -70,7 +73,6 @@ export function calculateSpellEffects(
 }
 
 export function calculateAPRecovery(character: Character, baseSpell: BaseSpell, enhancements: IEnhancement[]): number {
-  // Existing logic (example)
   const enhancementAPCost = enhancements.reduce((sum, enh) => sum + (enh.name === 'Multi-Target' ? 2 : 1), 0);
   return character.currentAP + Math.ceil(enhancementAPCost * 0.3);
 }

@@ -51,14 +51,14 @@
   });
 
   let availableEnhancements = $state<IEnhancement[]>([
-    { name: 'Critical Hit Chance', effect: '+15% crit chance', stackable: true, description: 'Each stack adds 15% crit chance' },
-    { name: 'Critical Hit Damage', effect: '+50% crit damage', stackable: true, description: 'Each stack multiplies crit damage by 1.5x' },
-    { name: 'Raw Damage', effect: '', stackable: true, description: 'Each stack adds 15% damage multiplier' },
-    { name: 'Multi-Target', effect: 'Hit all enemies (50% damage)', stackable: false, description: 'One-time enhancement: converts to AoE with 50% damage per target' },
-    { name: 'Penetration', effect: 'Ignore 30% defense', stackable: true, description: 'Each stack adds 30% defense ignore (max 90%)' },
-    { name: 'Elemental Boost', effect: '+Fire DoT (3 turns)', stackable: true, description: 'Each stack extends duration and increases DoT damage' },
-    { name: 'Life Steal', effect: '', stackable: true, description: 'Each stack adds 2% of damage dealt as healing' },
-    { name: 'Mana Steal', effect: '', stackable: true, description: 'Each stack adds 3% of damage dealt as mana recovery' }
+    { name: 'Critical Hit Chance', category:"Utility", effect: '+15% crit chance', stackable: true, description: 'Each stack adds 15% crit chance' },
+    { name: 'Critical Hit Damage', category: "Damage", effect: '+50% crit damage', stackable: true, description: 'Each stack multiplies crit damage by 1.5x' },
+    { name: 'Raw Damage', category: "Damage", effect: '', stackable: true, description: 'Each stack adds 15% damage multiplier' },
+    { name: 'Multi-Target', category:"Utility", effect: 'Hit all enemies (50% damage)', stackable: false, description: 'One-time enhancement: converts to AoE with 50% damage per target' },
+    { name: 'Penetration', category: "Damage", effect: 'Ignore 30% defense', stackable: true, description: 'Each stack adds 30% defense ignore (max 90%)' },
+    { name: 'Elemental Boost', category: "Damage", effect: '+Fire DoT (3 turns)', stackable: true, description: 'Each stack extends duration and increases DoT damage' },
+    { name: 'Life Steal', category:"Utility", effect: '', stackable: true, description: 'Each stack adds 2% of damage dealt as healing' },
+    { name: 'Mana Steal', category: "Utility", effect: '', stackable: true, description: 'Each stack adds 3% of damage dealt as mana recovery' }
   ]);
 
   let displayedAvailableEnhancements: IEnhancement[] = $derived.by(() => availableEnhancements.map(enh => ({

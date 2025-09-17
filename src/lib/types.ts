@@ -25,6 +25,7 @@ export interface IDamageSettings {
 }
 
 export interface IEnhancement {
+  category: 'Damage' | 'Utility' | 'Defensive';
   name: string;
   effect: string;
   stackable: boolean;
