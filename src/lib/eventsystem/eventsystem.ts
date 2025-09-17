@@ -93,7 +93,6 @@ class EventSystem<TEvents extends { [K in keyof TEvents]: unknown }> {
 		return this.listeners[eventName]?.size ?? 0;
 	}
 
-	// Development helper
 	debugInfo(): void {
 		const eventCounts: Record<string, number> = {};
 		let totalListeners = 0;
@@ -107,14 +106,14 @@ class EventSystem<TEvents extends { [K in keyof TEvents]: unknown }> {
       }
     });
 
-		console.table({
+		console.table([{
 			'Total Events': Object.keys(this.listeners).length,
 			'Total Listeners': totalListeners,
 			'Events with Listeners': Object.keys(eventCounts).length
-		});
+		}]);
 
 		if (Object.keys(eventCounts).length > 0) {
-			console.table(eventCounts);
+			console.table([eventCounts]);
 		}
 	}
 }

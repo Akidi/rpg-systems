@@ -7,4 +7,5 @@
 </script>
 <h1>Welcome to SvelteKit</h1>
 <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-<button onclick={() => gEvents.emit("game.stateChangeRequest", {newState: "main_menu"})}>Main Menu</button>
+<div><button onclick={() => gEvents.emit("game.stateChangeRequest", {newState: "main_menu"})}>Main Menu</button></div>
+<div><a href="demo/system/enhancements">Enhancement test</a></div>
