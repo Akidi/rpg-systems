@@ -438,7 +438,8 @@
 					min="1"
 					max="10000"
 					class="form-input"
-				/>
+				/><br />
+				(max sp {(character.level - 1) * 5})
 			</div>
 
 			<div class="form-group">
