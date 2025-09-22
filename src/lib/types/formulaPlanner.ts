@@ -18,10 +18,8 @@ export interface DerivedStats {
 	rangedDamage: number;
 	physicalDefense: number;
 	magicalDefense: number;
-	accuracy: number;
-	evasion: number;
-	criticalChance: number;
-	criticalDamage: number;
+	accuracy: number; // displayed as percentage
+	evasion: number; // displayed as percentage
 	initiative: number;
 }
 
@@ -43,18 +41,16 @@ export const DEFAULT_FORMULAS: FormulaSet = {
 	name: 'Linear Scaling',
 	description: 'Simple linear formulas for testing',
 	formulas: {
-		health: '100 + CON * 5 + level * 2',
-		mana: '50 + INT * 3 + level * 1',
-		physicalDamage: 'STR * 2 + level',
-		magicalDamage: 'INT * 2 + level',
-		rangedDamage: 'DEX * 2 + level',
-		physicalDefense: 'CON + STR * 0.5',
-		magicalDefense: 'WIS + INT * 0.5',
-		accuracy: '75 + DEX * 0.5',
-		evasion: 'DEX * 0.3',
-		criticalChance: 'DEX * 0.2 + WIS * 0.1',
-		criticalDamage: '150 + STR * 0.5',
-		initiative: 'DEX + level * 0.5'
+		health: 'floor(CON * 5 + level * 2)',
+		mana: 'floor(INT * 3 + level * 1)',
+		physicalDamage: 'floor(STR * 2 + level)',
+		magicalDamage: 'floor(INT * 2 + level)',
+		rangedDamage: 'floor(DEX * 2 + level)',
+		physicalDefense: 'floor(CON + STR * 0.5)',
+		magicalDefense: 'floor(WIS + INT * 0.5)',
+		accuracy: 'floor(75 + DEX * 0.5)',
+		evasion: 'floor(DEX * 0.3)',
+		initiative: 'floor(DEX + level * 0.5)'
 	}
 };
 

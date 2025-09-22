@@ -11,7 +11,7 @@
 	import MathReference from '$lib/components/FormulaSystem/MathReference.svelte';
 
 	// Current tab
-	let activeTab = $state<'planner' | 'math'>('planner');
+	let activeTab = $state<'planner' | 'reference'>('planner');
 
 	// Formula state
 	let currentFormulas = $state<FormulaSet>({ ...DEFAULT_FORMULAS });
@@ -33,7 +33,7 @@
 				Math: Math,
 				// Helper functions
 				min: Math.min,
-        exp: Math.exp,
+				exp: Math.exp,
 				max: Math.max,
 				floor: Math.floor,
 				ceil: Math.ceil,
@@ -89,131 +89,256 @@
 </script>
 
 <svelte:head>
-	<title>Formula Planner - Game Stat Calculator</title>
-	<meta name="description" content="Design and test mathematical formulas for game stats with real-time preview" />
+	<title>Formula Planner - RPG Stat Calculator</title>
+	<meta name="description" content="Design and test mathematical formulas for RPG game statistics with real-time preview and visual feedback" />
 </svelte:head>
 
-<div class="container">
-	<header class="page-header">
-		<h1>Formula Planner</h1>
-		<p class="subtitle">Design and test mathematical formulas for game statistics</p>
+<main class="app">
+	<header class="hero">
+		<div class="hero-content">
+			<h1 class="hero-title">Formula Planner</h1>
+			<p class="hero-subtitle">Design balanced mathematical formulas for RPG stat systems</p>
+		</div>
 	</header>
 
-	<div class="tabs">
-		<button 
-			class="tab {activeTab === 'planner' ? 'active' : ''}"
-			onclick={() => activeTab = 'planner'}
-		>
-			Formula Editor
-		</button>
-		<button 
-			class="tab {activeTab === 'math' ? 'active' : ''}"
-			onclick={() => activeTab = 'math'}
-		>
-			Math Reference
-		</button>
-	</div>
+	<nav class="navigation">
+		<div class="nav-container">
+			<button 
+				class="nav-tab {activeTab === 'planner' ? 'active' : ''}"
+				onclick={() => activeTab = 'planner'}
+			>
+				<span class="nav-icon">🔧</span>
+				<span class="nav-text">Formula Builder</span>
+			</button>
+			<button 
+				class="nav-tab {activeTab === 'reference' ? 'active' : ''}"
+				onclick={() => activeTab = 'reference'}
+			>
+				<span class="nav-icon">📚</span>
+				<span class="nav-text">Math Reference</span>
+			</button>
+		</div>
+	</nav>
 
-	{#if activeTab === 'planner'}
-		<FormulaCalculator 
-			{currentFormulas}
-			{selectedBuild}
-			{derivedStats}
-			onFormulaUpdate={handleFormulaUpdate}
-			onBuildLoad={handleBuildLoad}
-			onStatUpdate={handleStatUpdate}
-		/>
-	{:else if activeTab === 'math'}
-		<MathReference />
-	{/if}
-</div>
+	<div class="content">
+		{#if activeTab === 'planner'}
+			<FormulaCalculator 
+				{currentFormulas}
+				{selectedBuild}
+				{derivedStats}
+				onFormulaUpdate={handleFormulaUpdate}
+				onBuildLoad={handleBuildLoad}
+				onStatUpdate={handleStatUpdate}
+			/>
+		{:else}
+			<MathReference />
+		{/if}
+	</div>
+</main>
 
 <style>
-	.container {
+	.app {
 		min-height: 100vh;
-		background-color: #f8fafc;
-		font-family: system-ui, sans-serif;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		font-family: system-ui, -apple-system, sans-serif;
 	}
 
-	.page-header {
+	/* Hero Section */
+	.hero {
+		padding: 40px 20px;
 		text-align: center;
-		padding: 24px 16px;
-		background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
-		color: white;
+		position: relative;
+		overflow: hidden;
 	}
 
-	.page-header h1 {
-		margin: 0 0 8px 0;
-		font-size: clamp(24px, 5vw, 32px);
-		font-weight: 700;
+	.hero::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(10px);
+		z-index: 0;
 	}
 
-	.subtitle {
-		margin: 0;
-		font-size: clamp(14px, 3vw, 16px);
-		opacity: 0.9;
-	}
-
-	.tabs {
-		display: flex;
-		background: white;
-		border-bottom: 1px solid #e5e7eb;
-		max-width: 1400px;
+	.hero-content {
+		position: relative;
+		z-index: 1;
+		max-width: 800px;
 		margin: 0 auto;
 	}
 
-	.tab {
-		flex: 1;
-		padding: 16px;
+	.hero-title {
+		margin: 0 0 12px 0;
+		font-size: clamp(32px, 6vw, 48px);
+		font-weight: 800;
+		color: white;
+		text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+		letter-spacing: -0.02em;
+	}
+
+	.hero-subtitle {
+		margin: 0;
+		font-size: clamp(16px, 3vw, 20px);
+		color: rgba(255, 255, 255, 0.9);
+		font-weight: 400;
+		text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+	}
+
+	/* Navigation */
+	.navigation {
+		background: rgba(255, 255, 255, 0.15);
+		backdrop-filter: blur(20px);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		padding: 0 20px;
+	}
+
+	.nav-container {
+		max-width: 1400px;
+		margin: 0 auto;
+		display: flex;
+		gap: 2px;
+	}
+
+	.nav-tab {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 16px 24px;
 		background: none;
 		border: none;
-		cursor: pointer;
+		color: rgba(255, 255, 255, 0.8);
 		font-size: 16px;
 		font-weight: 500;
-		color: #6b7280;
-		border-bottom: 3px solid transparent;
-		transition: all 0.2s;
+		cursor: pointer;
+		border-radius: 12px 12px 0 0;
+		transition: all 0.3s ease;
+		position: relative;
 	}
 
-	.tab.active {
-		color: #8b5cf6;
-		border-bottom-color: #8b5cf6;
-		background-color: #faf5ff;
+	.nav-tab:hover {
+		background: rgba(255, 255, 255, 0.1);
+		color: white;
+		transform: translateY(-2px);
 	}
 
-	.tab:hover:not(.active) {
-		background-color: #f9fafb;
-		color: #374151;
+	.nav-tab.active {
+		background: white;
+		color: #667eea;
+		box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
 	}
 
-	/* Dark mode support */
+	.nav-tab.active:hover {
+		transform: none;
+	}
+
+	.nav-icon {
+		font-size: 20px;
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+	}
+
+	/* Content Area */
+	.content {
+		background: #f8fafc;
+		min-height: calc(100vh - 200px);
+		border-radius: 20px 20px 0 0;
+		box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+		position: relative;
+		z-index: 1;
+	}
+
+	/* Responsive Design */
+	@media (max-width: 768px) {
+		.hero {
+			padding: 24px 16px;
+		}
+
+		.navigation {
+			padding: 0 16px;
+		}
+
+		.nav-tab {
+			padding: 12px 16px;
+			font-size: 14px;
+		}
+
+		.nav-icon {
+			font-size: 18px;
+		}
+
+		.nav-text {
+			display: none;
+		}
+
+		.content {
+			border-radius: 16px 16px 0 0;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.nav-container {
+			justify-content: center;
+		}
+
+		.nav-tab {
+			flex: 1;
+			justify-content: center;
+			max-width: 120px;
+		}
+	}
+
+	/* Dark Mode */
 	@media (prefers-color-scheme: dark) {
-		.container {
-			background-color: #111827;
-			color: #f9fafb;
+		.app {
+			background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 		}
 
-		.page-header {
-			background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+		.content {
+			background: #111827;
 		}
 
-		.tabs {
+		.hero::before {
+			background: rgba(0, 0, 0, 0.2);
+		}
+
+		.navigation {
+			background: rgba(0, 0, 0, 0.3);
+			border-bottom-color: rgba(255, 255, 255, 0.1);
+		}
+
+		.nav-tab:hover {
+			background: rgba(255, 255, 255, 0.05);
+		}
+
+		.nav-tab.active {
 			background: #1f2937;
-			border-bottom-color: #374151;
-		}
-
-		.tab {
-			color: #9ca3af;
-		}
-
-		.tab.active {
 			color: #a855f7;
-			background-color: #1e1b4b;
 		}
+	}
 
-		.tab:hover:not(.active) {
-			background-color: #374151;
-			color: #f3f4f6;
+	/* Animations */
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
 		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.hero-content {
+		animation: fadeInUp 0.6s ease-out;
+	}
+
+	.navigation {
+		animation: fadeInUp 0.6s ease-out 0.1s both;
+	}
+
+	.content {
+		animation: fadeInUp 0.6s ease-out 0.2s both;
 	}
 </style>
