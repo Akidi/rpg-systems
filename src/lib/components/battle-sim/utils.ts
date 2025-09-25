@@ -27,6 +27,19 @@ export const getTotalEnhancementCount = (selected: SelectedEnhancements) => {
   }, 0);
 };
 
+export const getEnhancementApCost = (selected: SelectedEnhancements) => {
+  return Object.entries(selected).reduce((total, [id, count]) => {
+    if (!count || count <= 0) {
+      return total;
+    }
+    if (id === 'multi') {
+      return total + 2;
+    }
+    return total + count;
+  }, 0);
+};
+
 export const hasAnyEnhancements = (selected: SelectedEnhancements) => {
   return Object.values(selected).some((count) => !!count && count > 0);
 };
+

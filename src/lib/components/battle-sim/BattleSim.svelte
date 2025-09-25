@@ -10,6 +10,7 @@
     getFocusMultiplier,
     rollNextTickInterval,
     getTotalEnhancementCount,
+    getEnhancementApCost,
     hasAnyEnhancements
   } from './utils';
   import type {
@@ -37,7 +38,7 @@
     { id: 'heal', name: 'Heal', apCost: 3, type: 'healing', icon: Heart },
     { id: 'focus', name: 'Focus', apCost: 1, type: 'focus', icon: Target },
     { id: 'defend', name: 'Defend', apCost: 2, type: 'defend', icon: Shield },
-    { id: 'fireball', name: 'Fireball', apCost: 4, type: 'damage', icon: Flame, dot: true }
+    { id: 'fireball', name: 'Fireball', apCost: 1, type: 'damage', icon: Flame, dot: true }
   ];
 
   const createInitialCharacters = (): CharactersState => ({
@@ -109,12 +110,13 @@
   }
 
   function updateEnhancementCount(id: EnhancementId, count: number) {
+    const next = { ...selectedEnhancements } as Record<EnhancementId, number>;
     if (count <= 0) {
-      const { [id]: _removed, ...rest } = selectedEnhancements;
-      selectedEnhancements = rest;
-      return;
+      delete next[id];
+    } else {
+      next[id] = count;
     }
-    selectedEnhancements = { ...selectedEnhancements, [id]: count };
+    applyEnhancementSelection(next as SelectedEnhancements);
   }
 
   function incrementEnhancement(id: EnhancementId) {
@@ -138,6 +140,48 @@
   function clearEnhancements() {
     selectedEnhancements = {};
     selectedAction = null;
+  }
+
+  function sanitizeEnhancements(selection: SelectedEnhancements): SelectedEnhancements {
+    return Object.fromEntries(
+      Object.entries(selection).filter(([, count]) => !!count && count > 0)
+    ) as SelectedEnhancements;
+  }
+
+  function getActionDefinition(actionId: string | null) {
+    return actionId ? actions.find((item) => item.id === actionId) ?? null : null;
+  }
+
+  function getTotalApCostForSelection(
+    selection: SelectedEnhancements,
+    actionId: string | null,
+    actor: Character
+  ) {
+    const action = getActionDefinition(actionId);
+    const baseCost = action?.apCost ?? 0;
+    return baseCost + getEnhancementApCost(selection);
+  }
+
+  function canAffordSelection(
+    selection: SelectedEnhancements,
+    actionId: string | null,
+    actor: Character
+  ) {
+    const totalCost = getTotalApCostForSelection(selection, actionId, actor);
+    return totalCost <= actor.ap;
+  }
+
+  function applyEnhancementSelection(selection: SelectedEnhancements) {
+    const actor = characters[currentTurn];
+    if (!actor) {
+      return false;
+    }
+    const sanitized = sanitizeEnhancements(selection);
+    if (!canAffordSelection(sanitized, selectedAction, actor)) {
+      return false;
+    }
+    selectedEnhancements = sanitized;
+    return true;
   }
 
   function cloneCharacter(character: Character): Character {
@@ -251,10 +295,23 @@
     actionId: string,
     attacker: Character,
     targets: PartialCharactersState,
-    attackerKey: CharacterKey
+    attackerKey: CharacterKey,
+    options: { skipResourceCosts?: boolean } = {}
   ) {
     const action = actions.find((item) => item.id === actionId);
-    if (!action || attacker.ap < action.apCost) {
+    if (!action) {
+      return {
+        attacker: cloneCharacter(attacker),
+        targets: cloneTargets(targets)
+      };
+    }
+
+    const enhancementApCost = getEnhancementApCost(selectedEnhancements);
+    const totalApCost = action.apCost + enhancementApCost;
+    const { skipResourceCosts = false } = options;
+
+    if (!skipResourceCosts && attacker.ap < totalApCost) {
+      logMessage(`${attacker.name} lacks AP for ${action.name} (${totalApCost} needed)`);
       return {
         attacker: cloneCharacter(attacker),
         targets: cloneTargets(targets)
@@ -264,24 +321,25 @@
     let newAttacker = cloneCharacter(attacker);
     let newTargets = cloneTargets(targets);
 
-    newAttacker.ap -= action.apCost;
+    if (!skipResourceCosts) {
+      newAttacker.ap = Math.max(0, newAttacker.ap - totalApCost);
+    }
 
     const totalEnhancementStacks = getTotalEnhancementCount(selectedEnhancements);
-    const actualManaCost = getEnhancementCost(
-      totalEnhancementStacks,
-      newAttacker.mana * 0.2
-    );
+    const enhancementManaCost = skipResourceCosts
+      ? 0
+      : getEnhancementCost(totalEnhancementStacks, newAttacker.mana * 0.2);
 
-    if (totalEnhancementStacks > 0 && newAttacker.mana < actualManaCost) {
-      logMessage(`${attacker.name} lacks mana for enhancements (${actualManaCost} needed)`);
+    if (!skipResourceCosts && totalEnhancementStacks > 0 && newAttacker.mana < enhancementManaCost) {
+      logMessage(`${attacker.name} lacks mana for enhancements (${enhancementManaCost} needed)`);
       return {
         attacker: cloneCharacter(attacker),
         targets: cloneTargets(targets)
       };
     }
 
-    if (totalEnhancementStacks > 0) {
-      newAttacker.mana = Math.max(0, newAttacker.mana - actualManaCost);
+    if (!skipResourceCosts && totalEnhancementStacks > 0) {
+      newAttacker.mana = Math.max(0, newAttacker.mana - enhancementManaCost);
     }
 
     switch (action.type) {
@@ -455,8 +513,11 @@
     const action = actions.find((item) => item.id === selectedAction);
     if (!action) return;
 
-    if (attacker.ap < action.apCost) {
-      logMessage(`${attacker.name} lacks AP for ${action.name} (${action.apCost} needed)`);
+    const enhancementApCost = getEnhancementApCost(selectedEnhancements);
+    const totalApCost = action.apCost + enhancementApCost;
+
+    if (attacker.ap < totalApCost) {
+      logMessage(`${attacker.name} lacks AP for ${action.name} (${totalApCost} needed)`);
       return;
     }
 
@@ -474,7 +535,7 @@
       ...characters,
       [currentTurn]: {
         ...attacker,
-        ap: attacker.ap - action.apCost,
+        ap: attacker.ap - totalApCost,
         mana: Math.max(0, attacker.mana - actualManaCost)
       }
     };
@@ -516,7 +577,7 @@
 
     globalActionCount += 1;
 
-    const result = executeAction(telegraphed.actionId, attacker, targets, caster);
+    const result = executeAction(telegraphed.actionId, attacker, targets, caster, { skipResourceCosts: true });
 
     const updatedCharacters: CharactersState = {
       ...characters,
@@ -543,11 +604,14 @@
     if (enhancementMode) {
       selectedAction = actionId;
       const valid = validEnhancementsForAction(actionId);
-      selectedEnhancements = Object.fromEntries(
+      const filtered = Object.fromEntries(
         Object.entries(selectedEnhancements).filter(
           ([id, count]) => valid.includes(id as EnhancementId) && count > 0
         )
       ) as SelectedEnhancements;
+      if (!applyEnhancementSelection(filtered)) {
+        selectedEnhancements = {};
+      }
       return;
     }
 
@@ -631,24 +695,28 @@
   }
 </script>
 
-<div class="max-w-7xl mx-auto p-4 bg-gray-900 text-white min-h-screen">
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold mb-2 text-center">Combat Simulator</h1>
-    <div class="text-center text-gray-400">
-      <span>Turn {turnCount} - </span>
-      <span class="text-yellow-400 font-semibold">{currentCharacter.name}'s Turn</span>
-      <span class="ml-4 text-blue-400">Global Actions: {globalActionCount}</span>
-      {#if Object.keys(telegraphedActions).length > 0}
-        <div class="text-sm mt-1">
-          {#each Object.entries(telegraphedActions) as [entityKey, action] (entityKey)}
-            <span class="ml-4 text-orange-400">
-              ⚡ {actions.find((item) => item.id === action.actionId)?.name} telegraphed for {characters[entityKey as CharacterKey]?.name}
-            </span>
-          {/each}
-        </div>
-      {/if}
+<div class="battle-sim-container">
+  <div class="battle-header">
+    <h1 class="battle-title">Combat Simulator</h1>
+    <div class="battle-turn-meta">
+      <span>Turn {turnCount}</span>
+      <span class="separator" aria-hidden="true"></span>
+      <span class="current-turn">{currentCharacter.name}'s Turn</span>
+      <span class="separator" aria-hidden="true"></span>
+      <span class="global-actions">Global Actions: {globalActionCount}</span>
     </div>
+    {#if Object.keys(telegraphedActions).length > 0}
+      <div class="telegraph-row">
+        {#each Object.entries(telegraphedActions) as [entityKey, action] (entityKey)}
+          <span class="telegraph-pill">
+            ⚡ {actions.find((item) => item.id === action.actionId)?.name} telegraphed for {characters[entityKey as CharacterKey]?.name}
+          </span>
+        {/each}
+      </div>
+    {/if}
   </div>
+
+
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -688,10 +756,10 @@
     />
   {/if}
 
-  <div class="mt-6">
-    <div class="flex items-center gap-4 mb-4">
+  <div class="control-section">
+    <div class="control-bar">
       <button
-        class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        class="action-button accent"
         type="button"
         disabled={currentCharacter.ap <= 0 || currentCharacter.hp <= 0}
         on:click={() => {
@@ -704,18 +772,18 @@
         {enhancementMode ? 'Cancel Enhancements' : 'Add Enhancements'}
       </button>
       <button
-        class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded font-medium"
+        class="action-button neutral"
         type="button"
         on:click={endTurn}
       >
         End Turn
       </button>
       <button
-        class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded font-medium flex items-center gap-2"
+        class="action-button danger"
         type="button"
         on:click={resetCombat}
       >
-        <RotateCcw size={16} />
+        <RotateCcw size={16} class="button-icon" />
         Reset
       </button>
     </div>
@@ -727,6 +795,8 @@
     />
   </div>
 
+
+
   {#if playerDefeated || goblinsDefeated}
     <VictoryOverlay
       playerDefeated={playerDefeated}
@@ -734,3 +804,164 @@
     />
   {/if}
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+  .battle-sim-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  .battle-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .battle-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    text-shadow: 0 4px 20px var(--shadow-medium);
+  }
+
+  .battle-turn-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .battle-turn-meta .current-turn {
+    color: var(--color-warning);
+    font-weight: 600;
+  }
+
+  .battle-turn-meta .global-actions {
+    color: var(--color-info);
+    font-weight: 500;
+  }
+
+  .battle-turn-meta .separator::before {
+    content: '•';
+    color: var(--text-muted);
+  }
+
+  .telegraph-row {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .telegraph-pill {
+    background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-warning) 35%, transparent);
+    color: var(--color-warning);
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    box-shadow: 0 4px 12px var(--shadow-light);
+  }
+
+  .control-section {
+    margin-top: 2rem;
+  }
+
+  .control-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-theme);
+  }
+
+  .action-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .action-button.accent {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: var(--text-inverse);
+    box-shadow: 0 8px 24px var(--shadow-medium);
+  }
+
+  .action-button.accent:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+
+  .action-button.neutral {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-color: var(--border-secondary);
+  }
+
+  .action-button.neutral:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px var(--shadow-light);
+  }
+
+  .action-button.danger {
+    background: var(--color-error);
+    color: var(--text-inverse);
+  }
+
+  .action-button.danger:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+
+  .button-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .battle-sim-container {
+      padding: 1rem;
+    }
+
+    .control-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .action-button {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+</style>

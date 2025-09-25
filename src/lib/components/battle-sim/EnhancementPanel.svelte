@@ -32,6 +32,15 @@
   const getValidEnhancements = () =>
     selectedActionId ? validEnhancementsForAction(selectedActionId) : null;
 
+  $: actionDefinition = selectedActionId
+    ? actions.find((action) => action.id === selectedActionId) ?? null
+    : null;
+  $: actionApCost = actionDefinition?.apCost ?? 0;
+  $: apBudget = currentCharacter.ap;
+  $: enhancementApCost = getEnhancementApCost(selectedEnhancements);
+  $: totalApCost = actionApCost + enhancementApCost;
+  $: apRemaining = Math.max(0, apBudget - totalApCost);
+
   $: enhancementCostBase = currentCharacter.mana * 0.2;
   $: totalStacks = getTotalEnhancementCount(selectedEnhancements);
   $: totalManaCost = totalStacks
@@ -40,12 +49,38 @@
   $: selectedActionName = selectedActionId
     ? actions.find((action) => action.id === selectedActionId)?.name ?? null
     : null;
+
+  const computeTotalApWith = (actionCost: number, id: EnhancementId, value: number) => {
+    const next = { ...selectedEnhancements } as Record<EnhancementId, number>;
+    if (value <= 0) {
+      delete next[id];
+    } else {
+      next[id] = value;
+    }
+    return actionCost + getEnhancementApCost(next as SelectedEnhancements);
+  };
+
   $: enhancementOptions = baseEnhancements.map((enhancement) => {
     const count = selectedEnhancements[enhancement.id] ?? 0;
     const isStacking = isStackingEnhancement(enhancement.id);
     const validList = getValidEnhancements();
     const isValid = !validList || validList.includes(enhancement.id);
-    const isDisabled = (!isValid && count === 0) || (enhancement.id === 'multi' && !multiTargetAvailable && count === 0);
+    const disabledByValidity = (!isValid && count === 0)
+      || (enhancement.id === 'multi' && !multiTargetAvailable && count === 0);
+    const apDescription = enhancement.id === 'multi' ? '2 AP when enabled' : '1 AP per stack';
+    const nextTotalAp = computeTotalApWith(
+      actionApCost,
+      enhancement.id,
+      isStacking ? count + 1 : 1
+    );
+    const apBlocked = isStacking
+      ? nextTotalAp > apBudget
+      : count === 0 ? nextTotalAp > apBudget : false;
+    const apStatus = apBlocked
+      ? isStacking
+        ? 'AP limit reached for additional stacks'
+        : 'Not enough AP to enable'
+      : null;
     const subtitle = !isValid && count === 0
       ? 'Not valid for selected action'
       : enhancement.id === 'multi' && !multiTargetAvailable && count === 0
@@ -56,7 +91,10 @@
       ...enhancement,
       count,
       isStacking,
-      isDisabled,
+      isDisabled: disabledByValidity,
+      apBlocked,
+      apDescription,
+      apStatus,
       subtitle,
       isActive: count > 0
     };
@@ -101,6 +139,12 @@
           {/if}
         </div>
         <div class="text-xs text-gray-300">{enhancement.subtitle}</div>
+        {#if enhancement.subtitle === enhancement.description}
+          <div class="text-xs text-gray-400">AP Cost: {enhancement.apDescription}</div>
+        {/if}
+        {#if enhancement.apStatus}
+          <div class="text-xs text-red-300">{enhancement.apStatus}</div>
+        {/if}
 
         {#if enhancement.isStacking}
           <div class="flex items-center gap-2 pt-1">
@@ -117,7 +161,7 @@
               class="px-2 py-1 bg-purple-600 hover:bg-purple-700 border border-purple-500 rounded disabled:opacity-50 disabled:cursor-not-allowed"
               type="button"
               on:click={() => handleIncrement(enhancement.id)}
-              disabled={enhancement.isDisabled}
+              disabled={enhancement.isDisabled || enhancement.apBlocked}
             >
               +
             </button>
@@ -131,7 +175,7 @@
             }`}
             type="button"
             on:click={() => handleToggle(enhancement.id, !enhancement.isActive)}
-            disabled={!enhancement.isActive && enhancement.isDisabled}
+            disabled={!enhancement.isActive && (enhancement.isDisabled || enhancement.apBlocked)}
           >
             {enhancement.isActive ? 'Disable' : 'Enable'}
           </button>
@@ -142,17 +186,27 @@
 
   {#if hasAnyEnhancements(selectedEnhancements)}
     <div class="text-sm text-purple-300 space-y-1">
+      <div>Total AP Cost: {totalApCost}/{apBudget}</div>
+      <div class="text-xs">
+        Enhancements: {enhancementApCost} AP{selectedActionName ? ` • Action: ${actionApCost} AP` : ''}
+      </div>
       <div>Total Mana Cost: {totalManaCost}</div>
+      <div class="text-xs">AP Remaining: {apRemaining}</div>
       <div class="text-xs">(Ends turn after use)</div>
       {#if selectedActionName}
         <div class="text-xs">Selected Action: {selectedActionName}</div>
       {/if}
+      {#if totalApCost > apBudget}
+        <div class="text-xs text-red-300">Insufficient AP available</div>
+      {/if}
+    </div>
+  {/if}
     </div>
   {/if}
 
   {#if selectedActionId && hasAnyEnhancements(selectedEnhancements)}
     <button
-      class="w-full mt-3 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded font-medium"
+      class="w-full mt-3 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       type="button"
       on:click={handleExecute}
     >
@@ -160,3 +214,9 @@
     </button>
   {/if}
 </div>
+
+
+
+
+
+
