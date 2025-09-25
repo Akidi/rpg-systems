@@ -212,301 +212,295 @@
 	onApply={handleCustomDistribution}
 />
 
-<div class="formula-workspace">
-	<!-- Character Setup Panel -->
-	<aside class="character-panel">
-		<div class="panel-header">
-			<h2>Character Setup</h2>
-			<div class="panel-divider"></div>
-		</div>
-
-		<BuildSelector
-			selectedDistribution={selectedBuild.statDistribution}
-			currentLevel={selectedBuild.stats.level}
-			onClassBuild={handleClassBuild}
-			onCustomDistribution={() => showCustomModal = true}
-		/>
-
-		<div class="allocation-section">
-			<div class="allocation-header">
-				<h3>Stat Points</h3>
-				<div class="points-display">
-					<span class="points-used">{getUsedStatPoints(selectedBuild.stats)}</span>
-					<span class="points-separator">/</span>
-					<span class="points-total">{getTotalStatPoints(selectedBuild.stats.level)}</span>
-				</div>
+<div class="formula-planner">
+	<!-- Top Bar: Quick Reference & Stats -->
+	<div class="top-bar">
+		<div class="reference-info">
+			<div class="info-section">
+				<span class="info-label">Variables:</span>
+				<code class="info-code">level, STR, DEX, INT, CON, WIS, CHA</code>
 			</div>
-			<div class="points-remaining {getAvailablePoints(selectedBuild.stats) < 0 ? 'over-allocated' : ''}">
-				{getAvailablePoints(selectedBuild.stats)} points remaining
-			</div>
-			<div class="quick-actions">
-				<button class="quick-btn" onclick={resetAllStats} aria-label="Reset all stats to default balanced distribution">Reset All</button>
-				<button class="quick-btn" onclick={maxAllStats} aria-label="Maximize all stats evenly">Max All</button>
+			<div class="info-section">
+				<span class="info-label">Functions:</span>
+				<code class="info-code">pow(), sqrt(), log(), min(), max(), floor(), ceil(), round()</code>
 			</div>
 		</div>
-
-		<SaveLoadPanel {selectedBuild} {currentFormulas} {onStatUpdate} {onFormulaUpdate} />
-
-		<div class="stats-section">
-			<h3>Character Stats</h3>
-			<div class="stats-compact-grid">
-				<StatInput statName="level" value={selectedBuild.stats.level} min={1} max={1000} label="Level" onStatUpdate={handleStatChange} />
-				<StatInput statName="strength" value={selectedBuild.stats.strength} min={5} max={999} label="STR" onStatUpdate={handleStatChange} />
-				<StatInput statName="dexterity" value={selectedBuild.stats.dexterity} min={5} max={999} label="DEX" onStatUpdate={handleStatChange} />
-				<StatInput statName="intelligence" value={selectedBuild.stats.intelligence} min={5} max={999} label="INT" onStatUpdate={handleStatChange} />
-				<StatInput statName="constitution" value={selectedBuild.stats.constitution} min={5} max={999} label="CON" onStatUpdate={handleStatChange} />
-				<StatInput statName="wisdom" value={selectedBuild.stats.wisdom} min={5} max={999} label="WIS" onStatUpdate={handleStatChange} />
-				<StatInput statName="charisma" value={selectedBuild.stats.charisma} min={5} max={999} label="CHA" onStatUpdate={handleStatChange} />
+		
+		<div class="points-tracker">
+			<div class="points-display">
+				<span class="points-used">{getUsedStatPoints(selectedBuild.stats)}</span>
+				<span class="points-separator">/</span>
+				<span class="points-total">{getTotalStatPoints(selectedBuild.stats.level)}</span>
+			</div>
+			<div class="points-label {getAvailablePoints(selectedBuild.stats) < 0 ? 'over-allocated' : ''}">
+				{getAvailablePoints(selectedBuild.stats)} remaining
 			</div>
 		</div>
-	</aside>
+	</div>
 
-	<!-- Main Formula Editor -->
-	<main class="editor-area">
-		<div class="editor-header">
-			<h2>Formula Editor</h2>
-			<div class="helper-info">
-				<div class="info-badge">
-					<span class="badge-label">Variables:</span>
-					<code>level, STR, DEX, INT, CON, WIS, CHA</code>
+	<!-- Main Content Area -->
+	<div class="main-content">
+		<!-- Left Column: Character Setup -->
+		<div class="setup-panel">
+			<div class="panel-section">
+				<h2 class="section-title">Character Setup</h2>
+				
+				<BuildSelector
+					selectedDistribution={selectedBuild.statDistribution}
+					currentLevel={selectedBuild.stats.level}
+					onClassBuild={handleClassBuild}
+					onCustomDistribution={() => showCustomModal = true}
+				/>
+
+				<div class="stat-controls">
+					<div class="control-header">
+						<h3>Base Stats</h3>
+						<div class="quick-actions">
+							<button class="quick-btn secondary" onclick={resetAllStats}>Reset</button>
+							<button class="quick-btn secondary" onclick={maxAllStats}>Max All</button>
+						</div>
+					</div>
+					
+					<div class="stats-grid">
+						<StatInput statName="level" value={selectedBuild.stats.level} min={1} max={1000} label="Level" onStatUpdate={handleStatChange} />
+						<StatInput statName="strength" value={selectedBuild.stats.strength} min={5} max={999} label="STR" onStatUpdate={handleStatChange} />
+						<StatInput statName="dexterity" value={selectedBuild.stats.dexterity} min={5} max={999} label="DEX" onStatUpdate={handleStatChange} />
+						<StatInput statName="intelligence" value={selectedBuild.stats.intelligence} min={5} max={999} label="INT" onStatUpdate={handleStatChange} />
+						<StatInput statName="constitution" value={selectedBuild.stats.constitution} min={5} max={999} label="CON" onStatUpdate={handleStatChange} />
+						<StatInput statName="wisdom" value={selectedBuild.stats.wisdom} min={5} max={999} label="WIS" onStatUpdate={handleStatChange} />
+						<StatInput statName="charisma" value={selectedBuild.stats.charisma} min={5} max={999} label="CHA" onStatUpdate={handleStatChange} />
+					</div>
 				</div>
-				<div class="info-badge">
-					<span class="badge-label">Functions:</span>
-					<code>pow(), sqrt(), log(), min(), max(), floor(), ceil()</code>
-				</div>
+
+				<SaveLoadPanel {selectedBuild} {currentFormulas} {onStatUpdate} {onFormulaUpdate} />
 			</div>
 		</div>
 
-		<div class="formulas-sections">
-			<div class="formula-section">
-				<h3 class="formula-section-title">Core Stats</h3>
-				<div class="formula-grid">
-					<FormulaRow
-						label="Health"
-						statName="health"
-						formula={currentFormulas.formulas.health}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-					<FormulaRow
-						label="Mana"
-						statName="mana"
-						formula={currentFormulas.formulas.mana}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-					<FormulaRow
-						label="Initiative"
-						statName="initiative"
-						formula={currentFormulas.formulas.initiative}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-				</div>
-			</div>
+		<!-- Right Column: Formulas & Results -->
+		<div class="formula-panel">
+			<div class="panel-section">
+				<h2 class="section-title">Formula Editor</h2>
+				
+				<div class="formula-sections">
+					<div class="formula-group">
+						<h3 class="group-title">Core Stats</h3>
+						<div class="formula-list">
+							<FormulaRow
+								label="Health"
+								statName="health"
+								formula={currentFormulas.formulas.health}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+							<FormulaRow
+								label="Mana"
+								statName="mana"
+								formula={currentFormulas.formulas.mana}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+							<FormulaRow
+								label="Initiative"
+								statName="initiative"
+								formula={currentFormulas.formulas.initiative}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+						</div>
+					</div>
 
-			<div class="formula-section">
-				<h3 class="formula-section-title">Damage Types</h3>
-				<div class="formula-grid">
-					<FormulaRow
-						label="Physical"
-						statName="physicalDamage"
-						formula={currentFormulas.formulas.physicalDamage}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-					<FormulaRow
-						label="Magical"
-						statName="magicalDamage"
-						formula={currentFormulas.formulas.magicalDamage}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-					<FormulaRow
-						label="Ranged"
-						statName="rangedDamage"
-						formula={currentFormulas.formulas.rangedDamage}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-				</div>
-			</div>
+					<div class="formula-group">
+						<h3 class="group-title">Damage Output</h3>
+						<div class="formula-list">
+							<FormulaRow
+								label="Physical"
+								statName="physicalDamage"
+								formula={currentFormulas.formulas.physicalDamage}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+							<FormulaRow
+								label="Magical"
+								statName="magicalDamage"
+								formula={currentFormulas.formulas.magicalDamage}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+							<FormulaRow
+								label="Ranged"
+								statName="rangedDamage"
+								formula={currentFormulas.formulas.rangedDamage}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+						</div>
+					</div>
 
-			<div class="formula-section">
-				<h3 class="formula-section-title">Defense & Combat</h3>
-				<div class="formula-grid">
-					<FormulaRow
-						label="Phys Defense"
-						statName="physicalDefense"
-						formula={currentFormulas.formulas.physicalDefense}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-					<FormulaRow
-						label="Mag Defense"
-						statName="magicalDefense"
-						formula={currentFormulas.formulas.magicalDefense}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-					<FormulaRow
-						label="Accuracy"
-						statName="accuracy"
-						formula={currentFormulas.formulas.accuracy}
-						isPercentage={true}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
-					<FormulaRow
-						label="Evasion"
-						statName="evasion"
-						formula={currentFormulas.formulas.evasion}
-						isPercentage={true}
-						stats={selectedBuild.stats}
-						{onFormulaUpdate}
-						onCopy={copyFormula}
-					/>
+					<div class="formula-group">
+						<h3 class="group-title">Defense & Combat</h3>
+						<div class="formula-list">
+							<FormulaRow
+								label="Phys Defense"
+								statName="physicalDefense"
+								formula={currentFormulas.formulas.physicalDefense}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+							<FormulaRow
+								label="Mag Defense"
+								statName="magicalDefense"
+								formula={currentFormulas.formulas.magicalDefense}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+							<FormulaRow
+								label="Accuracy"
+								statName="accuracy"
+								formula={currentFormulas.formulas.accuracy}
+								isPercentage={true}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+							<FormulaRow
+								label="Evasion"
+								statName="evasion"
+								formula={currentFormulas.formulas.evasion}
+								isPercentage={true}
+								stats={selectedBuild.stats}
+								{onFormulaUpdate}
+								onCopy={copyFormula}
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</main>
+	</div>
 
-	<!-- Results Preview Panel -->
-	{#if derivedStats}
-		<aside class="results-panel">
-			<div class="panel-header">
-				<h2>Live Preview</h2>
-				<div class="panel-divider"></div>
-			</div>
-			
-			<div class="results-sections">
-				<div class="result-section">
-					<h4 class="section-title">Vitals</h4>
-					<div class="section-grid">
+	<!-- Bottom Results Bar -->
+	<div class="results-bar">
+		{#if derivedStats}
+			<div class="results-container">
+				<div class="result-group">
+					<h4 class="result-group-title">Vitals</h4>
+					<div class="result-cards">
 						<ResultCard name="Health" value={derivedStats.health} />
 						<ResultCard name="Mana" value={derivedStats.mana} />
 						<ResultCard name="Initiative" value={derivedStats.initiative} />
 					</div>
 				</div>
 
-				<div class="result-section">
-					<h4 class="section-title">Damage</h4>
-					<div class="section-grid">
+				<div class="result-group">
+					<h4 class="result-group-title">Damage</h4>
+					<div class="result-cards">
 						<ResultCard name="Physical" value={derivedStats.physicalDamage} />
 						<ResultCard name="Magical" value={derivedStats.magicalDamage} />
 						<ResultCard name="Ranged" value={derivedStats.rangedDamage} />
 					</div>
 				</div>
 
-				<div class="result-section">
-					<h4 class="section-title">Defense</h4>
-					<div class="section-grid">
-						<ResultCard name="Physical" value={derivedStats.physicalDefense} />
-						<ResultCard name="Magical" value={derivedStats.magicalDefense} />
+				<div class="result-group">
+					<h4 class="result-group-title">Defense</h4>
+					<div class="result-cards">
+						<ResultCard name="Phys Def" value={derivedStats.physicalDefense} />
+						<ResultCard name="Mag Def" value={derivedStats.magicalDefense} />
 					</div>
 				</div>
 
-				<div class="result-section">
-					<h4 class="section-title">Combat</h4>
-					<div class="section-grid">
+				<div class="result-group">
+					<h4 class="result-group-title">Combat</h4>
+					<div class="result-cards">
 						<ResultCard name="Accuracy" value={derivedStats.accuracy.toFixed(1) + '%'} />
 						<ResultCard name="Evasion" value={derivedStats.evasion.toFixed(1) + '%'} />
 					</div>
 				</div>
 			</div>
-		</aside>
-	{:else}
-		<aside class="results-panel">
-			<div class="panel-header">
-				<h2>Live Preview</h2>
-				<div class="panel-divider"></div>
+		{:else}
+			<div class="no-results">
+				<span class="error-icon">⚠️</span>
+				<span class="error-text">Formula errors detected - check your formulas above</span>
 			</div>
-			<div class="results-sections">
-				<p class="no-data">No valid stats available. Please check your formulas.</p>
-			</div>
-		</aside>
-	{/if}
+		{/if}
+	</div>
 </div>
 
 <style>
-	.formula-workspace {
-		display: grid;
-		grid-template-columns: 320px 1fr 280px;
-		gap: 24px;
-		padding: 24px;
+	.formula-planner {
+		display: flex;
+		flex-direction: column;
 		min-height: calc(100vh - 200px);
-		max-width: 1600px;
+		max-width: 1800px;
 		margin: 0 auto;
+		padding: 2rem;
+		gap: 1.5rem;
 	}
 
-	/* Panel Headers */
-	.panel-header {
-		margin-bottom: 24px;
-	}
-
-	.panel-header h2 {
-		margin: 0 0 8px 0;
-		font-size: 20px;
-		font-weight: 700;
-		color: var(--text-primary);
-	}
-
-	.panel-divider {
-		height: 2px;
-		background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-		border-radius: 1px;
-		opacity: 0.8;
-		transition: var(--transition-theme);
-	}
-
-	/* Character Panel */
-	.character-panel {
-		background-color: var(--bg-secondary);
-		border: 1px solid var(--border-primary);
-		border-radius: 16px;
-		padding: 24px;
-		box-shadow: 0 4px 20px var(--shadow-light);
-		height: fit-content;
-		position: sticky;
-		top: 24px;
-		transition: var(--transition-theme);
-	}
-
-	.allocation-section {
-		margin-bottom: 32px;
-		padding: 16px;
-		background-color: var(--bg-tertiary);
-		border: 1px solid var(--border-secondary);
-		border-radius: 12px;
-		transition: var(--transition-theme);
-	}
-
-	.allocation-header {
+	/* Top Reference Bar */
+	.top-bar {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 8px;
+		background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+		border: 1px solid var(--border-primary);
+		border-radius: 16px;
+		padding: 1.5rem 2rem;
+		box-shadow: 0 4px 20px var(--shadow-light);
+		flex-wrap: wrap;
+		gap: 1rem;
 	}
 
-	.allocation-header h3 {
-		margin: 0;
-		font-size: 16px;
+	.reference-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		flex: 1;
+		min-width: 400px;
+	}
+
+	.info-section {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.info-label {
+		font-size: 0.875rem;
 		font-weight: 600;
-		color: var(--text-secondary);
+		color: var(--text-primary);
+		min-width: 80px;
+	}
+
+	.info-code {
+		background-color: var(--bg-primary);
+		border: 1px solid var(--border-primary);
+		padding: 0.375rem 0.75rem;
+		border-radius: 8px;
+		font-family: 'Monaco', 'Consolas', monospace;
+		font-size: 0.8125rem;
+		color: var(--color-primary);
+		line-height: 1.2;
+	}
+
+	.points-tracker {
+		text-align: right;
+		min-width: 150px;
 	}
 
 	.points-display {
-		font-size: 18px;
-		font-weight: 700;
+		font-size: 2rem;
+		font-weight: 800;
+		line-height: 1;
+		margin-bottom: 0.25rem;
 	}
 
 	.points-used {
@@ -515,255 +509,303 @@
 
 	.points-separator {
 		color: var(--text-muted);
-		margin: 0 4px;
+		margin: 0 0.25rem;
 	}
 
 	.points-total {
 		color: var(--text-secondary);
 	}
 
-	.points-remaining {
-		font-size: 14px;
+	.points-label {
+		font-size: 0.875rem;
 		font-weight: 500;
 		color: var(--color-success);
-		text-align: center;
 	}
 
-	.points-remaining.over-allocated {
+	.points-label.over-allocated {
 		color: var(--color-error);
 		font-weight: 600;
+	}
+
+	/* Main Content Layout */
+	.main-content {
+		display: grid;
+		grid-template-columns: 400px 1fr;
+		gap: 2rem;
+		flex: 1;
+	}
+
+	.panel-section {
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
+		border-radius: 20px;
+		padding: 2rem;
+		box-shadow: 0 8px 32px var(--shadow-light);
+		height: fit-content;
+	}
+
+	.section-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--text-primary);
+		margin: 0 0 2rem 0;
+		padding-bottom: 0.75rem;
+		border-bottom: 3px solid var(--color-primary);
+		position: relative;
+	}
+
+	.section-title::after {
+		content: '';
+		position: absolute;
+		bottom: -3px;
+		left: 0;
+		width: 60px;
+		height: 3px;
+		background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+		border-radius: 1.5px;
+	}
+
+	/* Character Setup Panel */
+	.setup-panel {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.stat-controls {
+		margin: 2rem 0;
+	}
+
+	.control-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+	}
+
+	.control-header h3 {
+		font-size: 1.125rem;
+		font-weight: 600;
+		color: var(--text-primary);
+		margin: 0;
 	}
 
 	.quick-actions {
 		display: flex;
-		gap: 8px;
-		margin-top: 12px;
+		gap: 0.5rem;
 	}
 
 	.quick-btn {
-		flex: 1;
-		background-color: var(--bg-primary);
-		border: 1px solid var(--border-primary);
-		border-radius: 6px;
-		padding: 6px 12px;
-		font-size: 12px;
+		padding: 0.5rem 1rem;
+		border-radius: 8px;
+		font-size: 0.875rem;
 		font-weight: 500;
-		color: var(--text-primary);
 		cursor: pointer;
 		transition: var(--transition-theme);
-	}
-
-	.quick-btn:hover {
-		background-color: var(--color-primary);
-		color: var(--text-inverse);
-		border-color: var(--color-primary);
-		transform: translateY(-1px);
-		box-shadow: 0 2px 4px var(--shadow-medium);
-	}
-
-	.stats-section h3 {
-		margin: 0 0 12px 0;
-		font-size: 16px;
-		font-weight: 600;
-		color: var(--text-secondary);
-	}
-
-	.stats-compact-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 8px;
-	}
-
-	/* Editor Area */
-	.editor-area {
-		background-color: var(--bg-secondary);
 		border: 1px solid var(--border-primary);
-		border-radius: 16px;
-		padding: 24px;
-		box-shadow: 0 4px 20px var(--shadow-light);
-		transition: var(--transition-theme);
 	}
 
-	.editor-header {
-		margin-bottom: 24px;
-	}
-
-	.editor-header h2 {
-		margin: 0 0 12px 0;
-		font-size: 24px;
-		font-weight: 700;
-		color: var(--text-primary);
-	}
-
-	.helper-info {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
-	.info-badge {
+	.quick-btn.secondary {
 		background-color: var(--bg-tertiary);
-		border: 1px solid var(--border-primary);
-		border-radius: 8px;
-		padding: 8px 12px;
-		font-size: 13px;
-		line-height: 1.4;
-		transition: var(--transition-theme);
+		color: var(--text-primary);
 	}
 
-	.badge-label {
+	.quick-btn.secondary:hover {
+		background-color: var(--color-secondary);
+		color: var(--text-inverse);
+		border-color: var(--color-secondary);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px var(--shadow-medium);
+	}
+
+	.stats-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.75rem;
+	}
+
+	/* Formula Panel */
+	.formula-panel {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.formula-sections {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.formula-group {
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-secondary);
+		border-radius: 12px;
+		padding: 1.5rem;
+	}
+
+	.group-title {
+		font-size: 1rem;
 		font-weight: 600;
 		color: var(--text-primary);
-		margin-right: 8px;
+		margin: 0 0 1rem 0;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var(--border-primary);
 	}
 
-	.info-badge code {
-		background-color: var(--bg-primary);
-		border: 1px solid var(--border-secondary);
-		padding: 2px 6px;
-		border-radius: 4px;
-		font-family: 'Monaco', 'Consolas', monospace;
-		font-size: 12px;
-		color: var(--color-primary);
-	}
-
-	.formulas-sections {
+	.formula-list {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 0.75rem;
 	}
 
-	.formula-section {
-		border-bottom: 1px solid var(--border-primary);
-		padding-bottom: 16px;
-	}
-
-	.formula-section:last-child {
-		border-bottom: none;
-		padding-bottom: 0;
-	}
-
-	.formula-section-title {
-		margin: 0 0 12px 0;
-		font-size: 14px;
-		font-weight: 600;
-		color: var(--text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	.formula-grid {
-		display: grid;
-		gap: 8px;
-	}
-
-	/* Results Panel */
-	.results-panel {
-		background-color: var(--bg-secondary);
+	/* Results Bar */
+	.results-bar {
+		background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
 		border: 1px solid var(--border-primary);
 		border-radius: 16px;
-		padding: 24px;
+		padding: 1.5rem 2rem;
 		box-shadow: 0 4px 20px var(--shadow-light);
-		height: fit-content;
-		position: sticky;
-		top: 24px;
-		transition: var(--transition-theme);
+		min-height: 120px;
+		display: flex;
+		align-items: center;
 	}
 
-	.results-sections {
+	.results-container {
+		display: flex;
+		gap: 3rem;
+		width: 100%;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.result-group {
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		gap: 0.75rem;
+		min-width: 200px;
 	}
 
-	.result-section {
-		border-bottom: 1px solid var(--border-primary);
-		padding-bottom: 12px;
-	}
-
-	.result-section:last-child {
-		border-bottom: none;
-		padding-bottom: 0;
-	}
-
-	.section-title {
-		margin: 0 0 8px 0;
-		font-size: 13px;
+	.result-group-title {
+		font-size: 0.875rem;
 		font-weight: 600;
 		color: var(--text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		margin: 0;
 	}
 
-	.section-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-		gap: 6px;
+	.result-cards {
+		display: flex;
+		gap: 0.75rem;
+		flex-wrap: wrap;
 	}
 
-	.no-data {
+	.no-results {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
 		color: var(--color-error);
-		font-size: 14px;
-		text-align: center;
-		padding: 16px;
+		font-weight: 500;
+		width: 100%;
+		justify-content: center;
+	}
+
+	.error-icon {
+		font-size: 1.5rem;
+	}
+
+	.error-text {
+		font-size: 1rem;
 	}
 
 	/* Responsive Design */
 	@media (max-width: 1400px) {
-		.formula-workspace {
-			grid-template-columns: 300px 1fr 260px;
+		.main-content {
+			grid-template-columns: 350px 1fr;
 		}
 	}
 
 	@media (max-width: 1200px) {
-		.formula-workspace {
-			grid-template-columns: 280px 1fr;
-			grid-template-rows: auto 1fr auto;
+		.formula-planner {
+			padding: 1rem;
 		}
 
-		.character-panel {
-			position: static;
-		}
-
-		.results-panel {
-			grid-column: 1 / -1;
-			grid-row: 3;
-			position: static;
-		}
-	}
-
-	@media (max-width: 900px) {
-		.formula-workspace {
+		.main-content {
 			grid-template-columns: 1fr;
-			grid-template-rows: auto auto auto;
+			gap: 1.5rem;
 		}
 
-		.character-panel {
-			grid-row: 1;
-			position: static;
+		.top-bar {
+			flex-direction: column;
+			text-align: center;
 		}
 
-		.editor-area {
-			grid-row: 2;
+		.reference-info {
+			min-width: auto;
 		}
 
-		.results-panel {
-			grid-row: 3;
+		.points-tracker {
+			text-align: center;
 		}
 	}
 
 	@media (max-width: 768px) {
-		.formula-workspace {
-			gap: 16px;
-			padding: 16px;
+		.formula-planner {
+			padding: 1rem;
+			gap: 1rem;
 		}
 
-		.stats-compact-grid {
-			grid-template-columns: 1fr;
+		.top-bar,
+		.panel-section,
+		.results-bar {
+			padding: 1rem;
 		}
 
-		.helper-info {
+		.info-section {
 			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+		}
+
+		.info-label {
+			min-width: auto;
+		}
+
+		.results-container {
+			flex-direction: column;
+			gap: 1.5rem;
+		}
+
+		.result-group {
+			width: 100%;
+			min-width: auto;
+		}
+
+		.result-cards {
+			justify-content: center;
+		}
+
+		.control-header {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 1rem;
+		}
+
+		.quick-actions {
+			justify-content: center;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.formula-planner {
+			padding: 0.75rem;
+		}
+
+		.section-title {
+			font-size: 1.25rem;
+		}
+
+		.points-display {
+			font-size: 1.5rem;
 		}
 	}
 </style>
