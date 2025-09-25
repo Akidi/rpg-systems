@@ -6,7 +6,8 @@
     { href: '/demo/system/currency', name: 'Currency System', icon: '💰' },
     { href: '/demo/system/ap-progression', name: 'AP Progression', icon: '⚡' },
     { href: '/demo/system/turn-system', name: 'Turn System', icon: '🎯' },
-    { href: '/demo/system/formula-planner', name: 'Formula Planner', icon: '📊' }
+    { href: '/demo/system/formula-planner', name: 'Formula Planner', icon: '📊' },
+    { href: '/demo/system/skill-planner', name: 'Skill Planner', icon: '' }
   ];
   
   const features = [
@@ -29,6 +30,11 @@
       title: 'Ascension System',
       description: 'Meta-progression that unlocks new content and bonuses',
       icon: '🔄'
+    },
+    {
+      title: 'Skill Planner',
+      description: 'Plan out skill bonuses and costs.',
+      icon: ' '
     }
   ];
 </script>

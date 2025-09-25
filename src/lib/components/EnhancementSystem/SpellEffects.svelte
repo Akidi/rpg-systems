@@ -117,57 +117,61 @@
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 4px;
+    transition: var(--transition-theme);
   }
 
   .stat-number.damage {
-    color: #dc2626;
+    color: var(--color-health);
   }
 
   .stat-number.crit {
-    color: #d97706;
+    color: var(--color-warning);
   }
 
   .stat-number.targets {
-    color: #2563eb;
+    color: var(--color-info);
   }
 
   .stat-number.defense {
-    color: #16a34a;
+    color: var(--color-success);
   }
 
   .stat-label {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-bottom: 4px;
   }
 
   .stat-detail {
     font-size: 12px;
-    color: #16a34a;
+    color: var(--color-success);
   }
 
   .stat-detail.crit {
-    color: #7c3aed;
+    color: var(--color-primary);
   }
 
   .stat-detail.multi {
-    color: #ea580c;
+    color: var(--color-accent);
   }
 
   .stat-detail.dot {
-    color: #dc2626;
+    color: var(--color-health);
   }
 
   .enhancement-summary {
-    background: #f9fafb;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
     padding: 12px;
     border-radius: 6px;
     margin-bottom: 16px;
+    transition: var(--transition-theme);
   }
 
   .summary-title {
     font-weight: 600;
     margin-bottom: 8px;
+    color: var(--text-primary);
   }
 
   .summary-grid {
@@ -180,44 +184,48 @@
   .summary-row {
     display: flex;
     justify-content: space-between;
+    color: var(--text-secondary);
   }
 
   .summary-value {
     font-weight: bold;
-    color: #2563eb;
+    color: var(--color-info);
   }
 
   .damage-output {
-    background: #fefce8;
-    border-left: 4px solid #eab308;
+    background-color: var(--bg-tertiary);
+    border-left: 4px solid var(--color-warning);
     padding: 12px;
     border-radius: 6px;
     margin-bottom: 16px;
+    transition: var(--transition-theme);
   }
 
   .output-title {
     font-weight: 600;
     font-size: 18px;
     margin-bottom: 8px;
+    color: var(--text-primary);
   }
 
   .output-main {
     font-size: 16px;
     margin-bottom: 4px;
+    color: var(--text-secondary);
   }
 
   .output-main .total-damage {
     font-weight: bold;
-    color: #dc2626;
+    color: var(--color-health);
   }
 
   .output-detail {
     font-size: 14px;
-    color: #4b5563;
+    color: var(--text-secondary);
   }
 
   .output-crit {
-    color: #7c3aed;
+    color: var(--color-primary);
     font-weight: bold;
   }
 

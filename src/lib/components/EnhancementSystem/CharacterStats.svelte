@@ -51,23 +51,25 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
+    color: var(--text-secondary);
   }
 
   .stat-value {
     font-weight: 600;
+    transition: var(--transition-theme);
   }
 
   .stat-insufficient {
-    color: #dc2626;
+    color: var(--color-error);
     font-weight: bold;
   }
 
   .stat-sufficient {
-    color: #16a34a;
+    color: var(--color-success);
   }
 
   .stat-mp {
-    color: #2563eb;
+    color: var(--color-mana);
   }
 
   .button-group {

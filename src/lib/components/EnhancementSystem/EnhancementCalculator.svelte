@@ -385,9 +385,10 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: 24px;
-    background-color: #f5f5f5;
+    background-color: var(--bg-primary);
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: var(--transition-theme);
   }
 
   .title {
@@ -395,7 +396,7 @@
     font-weight: bold;
     text-align: center;
     margin-bottom: 32px;
-    color: #333;
+    color: var(--text-primary);
   }
 
   .desktop-layout {
@@ -440,17 +441,19 @@
 
   /* Global styles that child components will inherit */
   :global(.card) {
-    background: white;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
     padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px var(--shadow-light);
+    transition: var(--transition-theme);
   }
 
   :global(.card-title) {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 16px;
-    color: #374151;
+    color: var(--text-primary);
   }
 
   :global(.btn) {
@@ -460,7 +463,7 @@
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: var(--transition-theme);
   }
 
   :global(.btn:disabled) {
@@ -469,37 +472,43 @@
   }
 
   :global(.btn-primary) {
-    background: #3b82f6;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--text-inverse);
   }
 
   :global(.btn-primary:hover:not(:disabled)) {
-    background: #2563eb;
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow-medium);
   }
 
   :global(.btn-secondary) {
-    background: #6b7280;
-    color: white;
+    background-color: var(--color-secondary);
+    color: var(--text-inverse);
   }
 
   :global(.btn-secondary:hover:not(:disabled)) {
-    background: #4b5563;
+    background-color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow-medium);
   }
 
   :global(.btn-danger) {
-    background: #dc2626;
-    color: white;
+    background-color: var(--color-error);
+    color: var(--text-inverse);
     font-size: 18px;
     padding: 16px 24px;
   }
 
   :global(.btn-danger:hover:not(:disabled)) {
-    background: #b91c1c;
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-medium);
   }
 
   :global(.btn-danger:disabled) {
-    background: #d1d5db;
-    color: #6b7280;
+    background-color: var(--bg-tertiary);
+    color: var(--text-muted);
   }
 
   :global(.form-group) {
@@ -511,27 +520,30 @@
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 4px;
-    color: #374151;
+    color: var(--text-primary);
   }
 
   :global(.form-input) {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid #d1d5db;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 6px;
     font-size: 14px;
     box-sizing: border-box;
+    transition: var(--transition-theme);
   }
 
   :global(.form-input:focus) {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.1);
   }
 
   :global(.form-hint) {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-top: 4px;
   }
 </style>

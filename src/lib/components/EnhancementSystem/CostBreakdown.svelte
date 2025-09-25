@@ -80,33 +80,34 @@
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 4px;
+    transition: var(--transition-theme);
   }
 
   .cost-number.ap {
-    color: #2563eb;
+    color: var(--color-info);
   }
 
   .cost-number.mp {
-    color: #7c3aed;
+    color: var(--color-mana);
   }
 
   .cost-number.enhanced {
-    color: #ea580c;
+    color: var(--color-accent);
   }
 
   .cost-number.recovery {
-    color: #16a34a;
+    color: var(--color-success);
   }
 
   .cost-label {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-bottom: 4px;
   }
 
   .cost-breakdown {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-muted);
   }
 
   .cast-section {
@@ -115,7 +116,7 @@
 
   .cast-warning {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-top: 8px;
   }
 

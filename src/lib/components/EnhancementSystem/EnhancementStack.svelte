@@ -35,7 +35,7 @@
 
 <style>
   .empty-state {
-    color: #6b7280;
+    color: var(--text-muted);
     font-style: italic;
   }
 
@@ -51,31 +51,44 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fef3c7;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
     padding: 8px;
     border-radius: 6px;
+    transition: var(--transition-theme);
+  }
+
+  .stack-item:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 1px 3px var(--shadow-light);
   }
 
   .enhancement-name {
     font-weight: 600;
     margin-bottom: 4px;
+    color: var(--text-primary);
   }
 
   .enhancement-effect {
     font-size: 14px;
-    color: #4b5563;
+    color: var(--text-secondary);
   }
 
   .remove-btn {
     background: none;
     border: none;
-    color: #dc2626;
+    color: var(--color-error);
     font-weight: bold;
     cursor: pointer;
     font-size: 18px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: var(--transition-theme);
   }
 
   .remove-btn:hover {
-    color: #991b1b;
+    background-color: var(--color-error);
+    color: var(--text-inverse);
+    transform: scale(1.1);
   }
 </style>

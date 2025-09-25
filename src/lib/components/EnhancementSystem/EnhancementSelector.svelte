@@ -52,16 +52,20 @@
   .enhancement-item {
     width: 100%;
     text-align: left;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
     border-radius: 6px;
     padding: 12px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: var(--transition-theme);
   }
 
   .enhancement-item:hover {
-    background: #dcfce7;
+    background-color: var(--color-primary);
+    color: var(--text-inverse);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow-medium);
   }
 
   .enhancement-name {
@@ -71,18 +75,33 @@
 
   .enhancement-effect {
     font-size: 14px;
-    color: #4b5563;
+    color: var(--text-secondary);
     margin-bottom: 4px;
+    transition: var(--transition-theme);
+  }
+
+  .enhancement-item:hover .enhancement-effect {
+    color: var(--text-inverse);
   }
 
   .enhancement-description {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-muted);
+    transition: var(--transition-theme);
+  }
+
+  .enhancement-item:hover .enhancement-description {
+    color: var(--text-inverse);
   }
 
   .enhancement-note {
     font-size: 12px;
-    color: #2563eb;
+    color: var(--color-info);
     margin-top: 4px;
+    transition: var(--transition-theme);
+  }
+
+  .enhancement-item:hover .enhancement-note {
+    color: var(--text-inverse);
   }
 </style>
