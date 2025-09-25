@@ -40,6 +40,13 @@ export interface APResult {
 	effectiveLevel: number;
 }
 
+// Missing type that components expect
+export interface ProgressionPoint {
+	level: number;
+	ap: number;
+	breakdown: APResult;
+}
+
 export type ScalingType = 'universal' | 'linear' | 'logarithmic' | 'softCap' | 'milestone';
 
 export interface ScalingFormula {
@@ -247,8 +254,8 @@ export function generateProgressionData(
 	maxLevel: number = 100,
 	dexterity: number = 0,
 	ascensions: number = 0
-): Array<{ level: number; ap: number; breakdown: APResult }> {
-	const data = [];
+): ProgressionPoint[] {
+	const data: ProgressionPoint[] = [];
 	
 	for (let level = 1; level <= maxLevel; level++) {
 		const character: Character = { level, dexterity, ascensions };

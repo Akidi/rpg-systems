@@ -1,7 +1,6 @@
 <!-- src/lib/components/CurrencySystem/PresetButton.svelte -->
 <script lang="ts">
 	import type { CurrencyType } from '$lib/types/currency.js';
-	import { getCurrencyColor } from '$lib/types/currency.js';
 	import CoinIcon from './CoinIcon.svelte';
 
 	interface Props {
@@ -12,33 +11,33 @@
 
 	let { amount, currency, onClick }: Props = $props();
 
-	function getTextColor(currency: CurrencyType): string {
-		return currency === 'silver' || currency === 'gold' || currency === 'platinum' ? 'black' : 'white';
-	}
-
 	function capitalizeFirst(str: string): string {
 		return str.charAt(0).toUpperCase() + str.slice(1);
 	}
+
+	// Map currency to CSS class for special styling
+	const currencyClass = $derived(`currency-${currency}`);
 </script>
 
 <button 
 	onclick={() => onClick(amount, currency)} 
-	class="preset-btn"
-	style="background-color: {getCurrencyColor(currency)}; color: {getTextColor(currency)}"
+	class="preset-btn {currencyClass}"
 >
 	<CoinIcon {currency} size={14} />
-	+{amount} {capitalizeFirst(currency)}
+	<span>+{amount} {capitalizeFirst(currency)}</span>
 </button>
 
 <style>
 	.preset-btn {
 		padding: 8px 12px;
-		border: none;
-		border-radius: 4px;
+		background-color: var(--color-secondary);
+		color: var(--text-inverse);
+		border: 1px solid var(--border-primary);
+		border-radius: 6px;
 		cursor: pointer;
 		font-size: 12px;
 		font-weight: 500;
-		transition: filter 0.2s ease;
+		transition: var(--transition-theme);
 		display: flex;
 		align-items: center;
 		gap: 6px;
@@ -46,10 +45,36 @@
 	}
 
 	.preset-btn:hover {
-		filter: brightness(0.9);
+		background-color: var(--color-primary);
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px var(--shadow-medium);
 	}
 
 	.preset-btn:active {
-		transform: translateY(1px);
+		transform: translateY(0);
+		box-shadow: 0 1px 2px var(--shadow-light);
+	}
+
+	/* Currency-specific styling using theme variables */
+	.currency-copper {
+		background-color: var(--color-secondary);
+	}
+
+	.currency-silver {
+		background-color: var(--color-accent);
+	}
+
+	.currency-gold {
+		background-color: var(--color-gold);
+		color: var(--text-primary);
+	}
+
+	.currency-platinum {
+		background-color: var(--color-primary);
+		border-color: var(--color-accent);
+	}
+
+	.preset-btn span {
+		font-weight: 600;
 	}
 </style>

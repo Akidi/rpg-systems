@@ -97,6 +97,7 @@
 		class="copy-button-small"
 		onclick={() => onCopy(formula)}
 		aria-label="Copy {label.toLowerCase()} formula"
+		title="Copy formula to clipboard"
 	>
 		📋
 	</button>
@@ -108,22 +109,22 @@
 		grid-template-columns: 90px 60px 1fr 32px;
 		gap: 8px;
 		align-items: center;
-		background: #fafbfc;
-		border: 1px solid #e5e7eb;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-primary);
 		border-radius: 8px;
 		padding: 8px;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
 	}
 
 	.formula-row:hover {
-		border-color: #667eea;
-		box-shadow: 0 1px 4px rgba(102, 126, 234, 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 1px 4px var(--shadow-light);
 	}
 
 	.formula-label {
 		font-size: 12px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
 		text-align: right;
 		padding-right: 4px;
 	}
@@ -133,119 +134,83 @@
 	}
 
 	.copy-button-small {
-		background: #f3f4f6;
-		border: 1px solid #d1d5db;
+		background-color: var(--bg-primary);
+		border: 1px solid var(--border-primary);
 		border-radius: 4px;
 		padding: 4px;
 		cursor: pointer;
 		font-size: 12px;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
 		width: 28px;
 		height: 28px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		color: var(--text-muted);
 	}
 
 	.copy-button-small:hover {
-		background: #667eea;
-		border-color: #667eea;
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
+		border-color: var(--color-primary);
 		transform: scale(1.05);
+		box-shadow: 0 1px 4px var(--shadow-medium);
 	}
 
 	.value-number {
 		font-size: 14px;
 		font-weight: 700;
-		color: #059669;
-		background: #ecfdf5;
+		color: var(--color-success);
+		background-color: rgba(var(--color-success), 0.1);
 		padding: 2px 6px;
 		border-radius: 4px;
 		min-width: 50px;
 		text-align: center;
 		display: inline-block;
+		border: 1px solid rgba(var(--color-success), 0.2);
 	}
 
 	.value-error {
 		font-size: 12px;
 		font-weight: 600;
-		color: #dc2626;
-		background: #fef2f2;
+		color: var(--color-error);
+		background-color: rgba(var(--color-error), 0.1);
 		padding: 2px 6px;
 		border-radius: 4px;
 		text-align: center;
 		display: inline-block;
+		border: 1px solid rgba(var(--color-error), 0.2);
 	}
 
 	.formula-input {
 		width: 100%;
 		padding: 12px 16px;
-		border: 1px solid #d1d5db;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		border: 1px solid var(--border-primary);
 		border-radius: 8px;
 		font-family: 'Monaco', 'Consolas', monospace;
 		font-size: 14px;
-		background: white;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
 	}
 
 	.formula-input:focus {
 		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.1);
 	}
 
 	.formula-input.invalid {
-		border-color: #dc2626;
-		background: #fef2f2;
+		border-color: var(--color-error);
+		background-color: rgba(var(--color-error), 0.05);
 	}
 
 	.formula-input.valid {
-		border-color: #059669;
+		border-color: var(--color-success);
 	}
 
-	@media (prefers-color-scheme: dark) {
-		.formula-row {
-			background: #111827;
-			border-color: #4b5563;
-		}
-
-		.formula-row:hover {
-			border-color: #7c3aed;
-		}
-
-		.formula-label {
-			color: #e5e7eb;
-		}
-
-		.value-number {
-			background: #064e3b;
-			color: #6ee7b7;
-		}
-
-		.value-error {
-			background: #7f1d1d;
-			color: #fca5a5;
-		}
-
-		.formula-input {
-			background: #111827;
-			border-color: #4b5563;
-			color: #f9fafb;
-		}
-
-		.formula-input:focus {
-			border-color: #7c3aed;
-			box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-		}
-
-		.copy-button-small {
-			background: #374151;
-			border-color: #4b5563;
-			color: #e5e7eb;
-		}
-
-		.copy-button-small:hover {
-			background: #7c3aed;
-			border-color: #7c3aed;
-		}
+	.formula-input::placeholder {
+		color: var(--text-muted);
+		opacity: 0.7;
 	}
 </style>

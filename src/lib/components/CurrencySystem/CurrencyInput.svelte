@@ -7,11 +7,10 @@
 		label: string;
 		value: number;
 		currency: CurrencyType;
-		color: string;
 		onInput: (value: number) => void;
 	}
 
-	let { label, value = $bindable(), currency, color, onInput }: Props = $props();
+	let { label, value = $bindable(), currency, onInput }: Props = $props();
 
 	function handleInput(event: Event): void {
 		const target = event.target as HTMLInputElement;
@@ -24,7 +23,7 @@
 <div class="currency-row">
 	<div class="currency-label-container">
 		<CoinIcon {currency} size={20} />
-		<span class="currency-label" style="color: {color}">{label}:</span>
+		<span class="currency-label">{label}:</span>
 	</div>
 	<input 
 		type="number" 
@@ -51,18 +50,27 @@
 
 	.currency-label {
 		font-weight: 600;
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
 	.currency-input {
 		flex: 1;
 		padding: 8px 12px;
-		border: 1px solid #d1d5db;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		border: 1px solid var(--border-primary);
 		border-radius: 6px;
+		transition: var(--transition-theme);
 	}
 
 	.currency-input:focus {
 		outline: none;
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.1);
+	}
+
+	.currency-input:hover {
+		border-color: var(--color-secondary);
 	}
 </style>

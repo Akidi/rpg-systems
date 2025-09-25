@@ -62,11 +62,11 @@
 
 	// Preset quick actions
 	const presets = [
-		{ name: 'Tank', dist: { STR: 30, DEX: 10, INT: 5, CON: 40, WIS: 10, CHA: 5 } },
-		{ name: 'Glass Cannon', dist: { STR: 5, DEX: 15, INT: 50, CON: 10, WIS: 15, CHA: 5 } },
-		{ name: 'Speedster', dist: { STR: 15, DEX: 50, INT: 10, CON: 15, WIS: 5, CHA: 5 } },
-		{ name: 'Support', dist: { STR: 5, DEX: 10, INT: 20, CON: 15, WIS: 35, CHA: 15 } },
-		{ name: 'Hybrid', dist: { STR: 20, DEX: 20, INT: 20, CON: 20, WIS: 10, CHA: 10 } }
+		{ name: 'Tank', dist: { STR: 30, DEX: 10, INT: 5, CON: 40, WIS: 10, CHA: 5 }, icon: '🛡️' },
+		{ name: 'Glass Cannon', dist: { STR: 5, DEX: 15, INT: 50, CON: 10, WIS: 15, CHA: 5 }, icon: '💥' },
+		{ name: 'Speedster', dist: { STR: 15, DEX: 50, INT: 10, CON: 15, WIS: 5, CHA: 5 }, icon: '💨' },
+		{ name: 'Support', dist: { STR: 5, DEX: 10, INT: 20, CON: 15, WIS: 35, CHA: 15 }, icon: '🤝' },
+		{ name: 'Hybrid', dist: { STR: 20, DEX: 20, INT: 20, CON: 20, WIS: 10, CHA: 10 }, icon: '⚖️' }
 	];
 
 	function applyPreset(preset: typeof presets[0]) {
@@ -93,58 +93,70 @@
 			tabindex="-1"
 		>
 			<div class="modal-header">
-				<h3 id="custom-modal-title">Custom Stat Distribution</h3>
-				<p class="modal-subtitle">Set percentage allocation for each stat (must total 100%)</p>
-			</div>
-
-			<div class="presets-section">
-				<h4>Quick Presets</h4>
-				<div class="presets-grid">
-					{#each presets as preset}
-						<button 
-							class="preset-btn"
-							onclick={() => applyPreset(preset)}
-							aria-label="Apply {preset.name} preset"
-						>
-							{preset.name}
-						</button>
-					{/each}
+				<div class="header-content">
+					<h3 id="custom-modal-title">Custom Stat Distribution</h3>
+					<p class="modal-subtitle">Set percentage allocation for each stat (must total 100%)</p>
 				</div>
+				<button 
+					class="close-btn"
+					onclick={onClose}
+					aria-label="Close dialog"
+				>
+					×
+				</button>
 			</div>
 
-			<div class="percentages-section">
-				<h4>Manual Distribution</h4>
-				<div class="percentage-grid">
-					{#each Object.entries(percentages) as [stat, value]}
-						<div class="percentage-row">
-							<label for="{stat}-percentage" class="stat-label">{stat}</label>
-							<div class="input-group">
-								<input
-									id="{stat}-percentage"
-									type="number"
-									value={value.toFixed(2)}
-									oninput={(e) => updatePercentage(stat, parseFloat((e.target as HTMLInputElement).value) || 0)}
-									min="0"
-									max="100"
-									step="0.01"
-									class="percentage-input"
-								/>
-								<span class="percentage-symbol">%</span>
+			<div class="modal-body">
+				<div class="presets-section">
+					<h4 class="section-title">Quick Presets</h4>
+					<div class="presets-grid">
+						{#each presets as preset}
+							<button 
+								class="preset-btn"
+								onclick={() => applyPreset(preset)}
+								aria-label="Apply {preset.name} preset"
+							>
+								<span class="preset-icon">{preset.icon}</span>
+								<span class="preset-name">{preset.name}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<div class="percentages-section">
+					<h4 class="section-title">Manual Distribution</h4>
+					<div class="percentage-grid">
+						{#each Object.entries(percentages) as [stat, value]}
+							<div class="percentage-row">
+								<label for="{stat}-percentage" class="stat-label">{stat}</label>
+								<div class="input-group">
+									<input
+										id="{stat}-percentage"
+										type="number"
+										value={value.toFixed(2)}
+										oninput={(e) => updatePercentage(stat, parseFloat((e.target as HTMLInputElement).value) || 0)}
+										min="0"
+										max="100"
+										step="0.01"
+										class="percentage-input"
+									/>
+									<span class="percentage-symbol">%</span>
+								</div>
 							</div>
-						</div>
-					{/each}
-				</div>
+						{/each}
+					</div>
 
-				<div class="total-display {isValid ? 'valid' : 'invalid'}">
-					<span class="total-label">Total:</span>
-					<span class="total-value">{totalPercentage.toFixed(2)}%</span>
-					{#if !isValid}
-						<span class="error-text">Must equal 100%</span>
-					{/if}
+					<div class="total-display {isValid ? 'valid' : 'invalid'}">
+						<span class="total-label">Total:</span>
+						<span class="total-value">{totalPercentage.toFixed(2)}%</span>
+						{#if !isValid}
+							<span class="error-text">Must equal 100%</span>
+						{/if}
+					</div>
 				</div>
 			</div>
 
-			<div class="modal-actions">
+			<div class="modal-footer">
 				<button class="action-btn secondary" onclick={resetToBalanced}>
 					Reset to Balanced
 				</button>
@@ -173,51 +185,114 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(0, 0, 0, 0.6);
+		background: var(--bg-overlay);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 1000;
+		animation: fadeIn 0.2s ease-out;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
 	}
 
 	.custom-modal {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 16px;
-		padding: 32px;
 		max-width: 500px;
 		width: 90vw;
 		max-height: 90vh;
-		overflow-y: auto;
-		box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+		overflow: hidden;
+		box-shadow: 0 25px 50px var(--shadow-heavy);
+		animation: slideUp 0.3s ease-out;
+		display: flex;
+		flex-direction: column;
+	}
+
+	@keyframes slideUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px) scale(0.95);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
 	}
 
 	.modal-header {
-		margin-bottom: 24px;
-		text-align: center;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		padding: 24px;
+		border-bottom: 1px solid var(--border-primary);
+		flex-shrink: 0;
+	}
+
+	.header-content {
+		flex: 1;
 	}
 
 	.modal-header h3 {
 		margin: 0 0 8px 0;
 		font-size: 24px;
 		font-weight: 700;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.modal-subtitle {
 		margin: 0;
 		font-size: 14px;
-		color: #6b7280;
+		color: var(--text-muted);
+		line-height: 1.4;
 	}
 
-	.presets-section {
+	.close-btn {
+		background: none;
+		border: none;
+		font-size: 24px;
+		color: var(--text-muted);
+		cursor: pointer;
+		padding: 0;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		transition: var(--transition-theme);
+		flex-shrink: 0;
+		margin-left: 16px;
+	}
+
+	.close-btn:hover {
+		color: var(--color-error);
+		background-color: rgba(var(--color-error), 0.1);
+	}
+
+	.modal-body {
+		padding: 24px;
+		overflow-y: auto;
+		flex: 1;
+	}
+
+	.presets-section,
+	.percentages-section {
 		margin-bottom: 32px;
 	}
 
-	.presets-section h4 {
-		margin: 0 0 12px 0;
+	.percentages-section:last-child {
+		margin-bottom: 0;
+	}
+
+	.section-title {
+		margin: 0 0 16px 0;
 		font-size: 16px;
 		font-weight: 600;
-		color: #4b5563;
+		color: var(--text-primary);
 	}
 
 	.presets-grid {
@@ -227,27 +302,35 @@
 	}
 
 	.preset-btn {
-		background: #f3f4f6;
-		border: 1px solid #d1d5db;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-primary);
 		border-radius: 8px;
-		padding: 8px 12px;
+		padding: 12px 8px;
 		font-size: 12px;
 		font-weight: 500;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
+		color: var(--text-primary);
 	}
 
 	.preset-btn:hover {
-		background: #667eea;
-		color: white;
-		border-color: #667eea;
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
+		border-color: var(--color-primary);
+		transform: translateY(-1px);
+		box-shadow: 0 2px 8px var(--shadow-medium);
 	}
 
-	.percentages-section h4 {
-		margin: 0 0 16px 0;
-		font-size: 16px;
+	.preset-icon {
+		font-size: 20px;
+	}
+
+	.preset-name {
 		font-weight: 600;
-		color: #4b5563;
 	}
 
 	.percentage-grid {
@@ -261,12 +344,16 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 16px;
+		padding: 8px 12px;
+		background-color: var(--bg-tertiary);
+		border-radius: 8px;
+		border: 1px solid var(--border-primary);
 	}
 
 	.stat-label {
 		font-size: 14px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
 		min-width: 40px;
 	}
 
@@ -280,22 +367,25 @@
 
 	.percentage-input {
 		flex: 1;
-		padding: 8px 12px;
-		border: 1px solid #d1d5db;
+		padding: 6px 8px;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		border: 1px solid var(--border-primary);
 		border-radius: 6px;
 		font-size: 14px;
 		text-align: right;
+		transition: var(--transition-theme);
 	}
 
 	.percentage-input:focus {
 		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.1);
 	}
 
 	.percentage-symbol {
 		font-size: 14px;
-		color: #6b7280;
+		color: var(--text-muted);
 		font-weight: 500;
 	}
 
@@ -307,18 +397,20 @@
 		border-radius: 8px;
 		font-weight: 600;
 		margin-bottom: 24px;
+		border: 2px solid;
+		transition: var(--transition-theme);
 	}
 
 	.total-display.valid {
-		background: #ecfdf5;
-		border: 1px solid #10b981;
-		color: #065f46;
+		background-color: rgba(var(--color-success), 0.1);
+		border-color: var(--color-success);
+		color: var(--color-success);
 	}
 
 	.total-display.invalid {
-		background: #fef2f2;
-		border: 1px solid #ef4444;
-		color: #7f1d1d;
+		background-color: rgba(var(--color-error), 0.1);
+		border-color: var(--color-error);
+		color: var(--color-error);
 	}
 
 	.total-label {
@@ -327,18 +419,23 @@
 
 	.total-value {
 		font-size: 16px;
+		font-weight: 700;
 	}
 
 	.error-text {
 		font-size: 12px;
 		margin-left: auto;
+		font-weight: 500;
 	}
 
-	.modal-actions {
+	.modal-footer {
 		display: flex;
 		gap: 12px;
 		justify-content: flex-end;
 		flex-wrap: wrap;
+		padding: 24px;
+		border-top: 1px solid var(--border-primary);
+		flex-shrink: 0;
 	}
 
 	.action-btn {
@@ -347,37 +444,49 @@
 		font-size: 14px;
 		font-weight: 500;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
 		border: 1px solid transparent;
 	}
 
 	.action-btn.primary {
-		background: #667eea;
-		color: white;
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
 	}
 
 	.action-btn.primary:hover:not(.disabled) {
-		background: #5b67d1;
+		background-color: var(--color-primary-hover);
+		box-shadow: 0 2px 8px var(--shadow-medium);
 	}
 
 	.action-btn.primary.disabled {
-		background: #9ca3af;
+		background-color: var(--text-muted);
 		cursor: not-allowed;
+		opacity: 0.5;
 	}
 
 	.action-btn.secondary {
-		background: #f3f4f6;
-		border-color: #d1d5db;
-		color: #374151;
+		background-color: var(--bg-tertiary);
+		border-color: var(--border-primary);
+		color: var(--text-primary);
 	}
 
 	.action-btn.secondary:hover {
-		background: #e5e7eb;
+		background-color: var(--bg-primary);
+		border-color: var(--color-secondary);
 	}
 
 	@media (max-width: 768px) {
 		.custom-modal {
-			padding: 24px;
+			margin: 20px;
+			width: calc(100vw - 40px);
+		}
+
+		.modal-header {
+			padding: 20px;
+		}
+
+		.modal-body {
+			padding: 20px;
 		}
 
 		.percentage-row {
@@ -390,91 +499,13 @@
 			max-width: none;
 		}
 
-		.modal-actions {
+		.modal-footer {
 			flex-direction: column;
+			padding: 20px;
 		}
 
 		.action-btn {
 			width: 100%;
-		}
-	}
-
-	@media (prefers-color-scheme: dark) {
-		.custom-modal {
-			background: #1f2937;
-		}
-
-		.modal-header h3 {
-			color: #f9fafb;
-		}
-
-		.modal-subtitle {
-			color: #d1d5db;
-		}
-
-		.presets-section h4,
-		.percentages-section h4 {
-			color: #e5e7eb;
-		}
-
-		.stat-label {
-			color: #f3f4f6;
-		}
-
-		.preset-btn {
-			background: #374151;
-			border-color: #4b5563;
-			color: #e5e7eb;
-		}
-
-		.preset-btn:hover {
-			background: #7c3aed;
-			border-color: #7c3aed;
-		}
-
-		.percentage-input {
-			background: #111827;
-			border-color: #4b5563;
-			color: #f9fafb;
-		}
-
-		.percentage-input:focus {
-			border-color: #7c3aed;
-			box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
-		}
-
-		.percentage-symbol {
-			color: #9ca3af;
-		}
-
-		.total-display.valid {
-			background: #064e3b;
-			border-color: #10b981;
-			color: #6ee7b7;
-		}
-
-		.total-display.invalid {
-			background: #7f1d1d;
-			border-color: #ef4444;
-			color: #fca5a5;
-		}
-
-		.action-btn.primary {
-			background: #7c3aed;
-		}
-
-		.action-btn.primary:hover:not(.disabled) {
-			background: #6d28d9;
-		}
-
-		.action-btn.secondary {
-			background: #374151;
-			border-color: #4b5563;
-			color: #e5e7eb;
-		}
-
-		.action-btn.secondary:hover {
-			background: #4b5563;
 		}
 	}
 </style>

@@ -22,32 +22,32 @@
 	{#if variant === 'default'}
 		<div class="amount">
 			<CoinIcon currency="copper" size={18} />
-			{formatNumber(totalCopper)} Copper
+			<span class="gold-text">{formatNumber(totalCopper)} Copper</span>
 		</div>
 	{:else}
 		<div class="breakdown-list">
 			{#if breakdown.platinum > 0}
 				<div class="breakdown-item">
 					<CoinIcon currency="platinum" size={16} />
-					{breakdown.platinum} Platinum
+					<span>{breakdown.platinum} Platinum</span>
 				</div>
 			{/if}
 			{#if breakdown.gold > 0}
 				<div class="breakdown-item">
 					<CoinIcon currency="gold" size={16} />
-					{breakdown.gold} Gold
+					<span>{breakdown.gold} Gold</span>
 				</div>
 			{/if}
 			{#if breakdown.silver > 0}
 				<div class="breakdown-item">
 					<CoinIcon currency="silver" size={16} />
-					{breakdown.silver} Silver
+					<span>{breakdown.silver} Silver</span>
 				</div>
 			{/if}
 			{#if breakdown.copper > 0}
 				<div class="breakdown-item">
 					<CoinIcon currency="copper" size={16} />
-					{breakdown.copper} Copper
+					<span>{breakdown.copper} Copper</span>
 				</div>
 			{/if}
 		</div>
@@ -57,23 +57,28 @@
 <style>
 	.currency-display {
 		padding: 12px;
-		background-color: #f9fafb;
-		border-radius: 6px;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-primary);
+		border-radius: 8px;
 		margin-bottom: 12px;
+		transition: var(--transition-theme);
 	}
 
 	.currency-display.optimized {
-		background-color: #f0fdf4;
+		background-color: var(--bg-secondary);
+		border-color: var(--color-success);
+		box-shadow: 0 0 0 1px rgba(var(--color-success), 0.2);
 	}
 
 	.label {
 		font-weight: 600;
 		margin-bottom: 8px;
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
 	.amount {
 		font-size: 18px;
-		color: #8B4513;
 		font-weight: 600;
 		display: flex;
 		align-items: center;
@@ -84,12 +89,18 @@
 		font-size: 14px;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 6px;
 	}
 
 	.breakdown-item {
 		display: flex;
 		align-items: center;
-		gap: 6px;
+		gap: 8px;
+		color: var(--text-primary);
+		transition: var(--transition-theme);
+	}
+
+	.breakdown-item span {
+		font-weight: 500;
 	}
 </style>

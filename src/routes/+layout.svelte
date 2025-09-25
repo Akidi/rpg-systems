@@ -1,12 +1,15 @@
+<!-- src/routes/+layout.svelte -->
 <script lang="ts">
-	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
-
-	let { children } = $props();
+  import AppLayout from '$lib/components/AppLayout.svelte';
+  import '../app.css';
+  
+  interface Props {
+    children: import('svelte').Snippet;
+  }
+  
+  const { children }: Props = $props();
 </script>
 
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
-
-{@render children()}
+<AppLayout>
+  {@render children()}
+</AppLayout>

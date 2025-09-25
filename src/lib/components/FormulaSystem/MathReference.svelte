@@ -136,25 +136,27 @@
 
 	/* Introduction Section */
 	.math-intro {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 12px;
 		padding: 24px;
 		margin-bottom: 32px;
-		box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+		box-shadow: 0 4px 12px var(--shadow-medium);
 		text-align: center;
+		transition: var(--transition-theme);
 	}
 
 	.math-intro h3 {
 		margin: 0 0 12px 0;
 		font-size: 24px;
 		font-weight: 700;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.math-intro p {
 		margin: 0;
 		font-size: 16px;
-		color: #6b7280;
+		color: var(--text-secondary);
 		line-height: 1.6;
 		max-width: 600px;
 		margin: 0 auto;
@@ -169,16 +171,17 @@
 	}
 
 	.math-example {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 12px;
 		padding: 20px;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-		border: 1px solid #e5e7eb;
-		transition: box-shadow 0.2s ease;
+		box-shadow: 0 2px 8px var(--shadow-light);
+		transition: var(--transition-theme);
 	}
 
 	.math-example:hover {
-		box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+		box-shadow: 0 4px 16px var(--shadow-medium);
+		border-color: var(--color-primary);
 	}
 
 	/* Top Section: Title + Chart */
@@ -198,30 +201,35 @@
 		margin: 0 0 4px 0;
 		font-size: 18px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.description {
 		margin: 0;
 		font-size: 14px;
-		color: #6b7280;
+		color: var(--text-muted);
 		font-style: italic;
 		line-height: 1.4;
 	}
 
 	.chart-section {
 		flex-shrink: 0;
-		background: #f8fafc;
-		border: 1px solid #e2e8f0;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-secondary);
 		border-radius: 8px;
 		padding: 8px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		transition: var(--transition-theme);
 	}
 
 	.progression-chart {
 		display: block;
+	}
+
+	.progression-chart path {
+		stroke: var(--color-primary);
 	}
 
 	/* Formula Section */
@@ -234,53 +242,57 @@
 
 	.formula-display {
 		flex: 1;
-		background: #f8fafc;
-		border: 1px solid #e2e8f0;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-secondary);
 		border-radius: 8px;
 		padding: 12px 16px;
 		font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
 		font-size: 14px;
-		color: #1f2937;
+		color: var(--text-primary);
 		overflow-x: auto;
+		transition: var(--transition-theme);
 	}
 
 	.copy-btn {
-		background: #8b5cf6;
-		color: white;
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
 		border: none;
 		border-radius: 6px;
 		padding: 8px 16px;
 		font-size: 14px;
 		font-weight: 500;
 		cursor: pointer;
-		transition: background-color 0.2s ease;
+		transition: var(--transition-theme);
 		flex-shrink: 0;
 	}
 
 	.copy-btn:hover {
-		background: #7c3aed;
+		background-color: var(--color-primary-hover);
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px var(--shadow-medium);
 	}
 
 	/* Explanation Section */
 	.explanation-section {
-		border-top: 1px solid #f3f4f6;
+		border-top: 1px solid var(--border-primary);
 		padding-top: 16px;
 	}
 
 	.explanation {
 		margin: 0 0 12px 0;
 		font-size: 14px;
-		color: #374151;
+		color: var(--text-secondary);
 		line-height: 1.5;
 	}
 
 	.usage-tag {
 		font-size: 13px;
-		color: #1e40af;
-		background: #eff6ff;
+		color: var(--color-info);
+		background-color: var(--bg-tertiary);
 		padding: 8px 12px;
 		border-radius: 6px;
-		border-left: 3px solid #3b82f6;
+		border-left: 3px solid var(--color-info);
+		transition: var(--transition-theme);
 	}
 
 	/* Reference Section */
@@ -291,17 +303,19 @@
 	}
 
 	.reference-card {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 12px;
 		padding: 24px;
-		box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+		box-shadow: 0 4px 12px var(--shadow-medium);
+		transition: var(--transition-theme);
 	}
 
 	.reference-card h4 {
 		margin: 0 0 16px 0;
 		font-size: 18px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.reference-grid {
@@ -311,20 +325,22 @@
 
 	.ref-item {
 		padding: 8px 12px;
-		background: #f8fafc;
-		border: 1px solid #e2e8f0;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-secondary);
 		border-radius: 6px;
 		font-size: 14px;
-		color: #374151;
+		color: var(--text-secondary);
+		transition: var(--transition-theme);
 	}
 
 	.ref-item code {
-		background: #e0f2fe;
+		background-color: var(--bg-primary);
+		border: 1px solid var(--border-primary);
 		padding: 2px 6px;
 		border-radius: 4px;
 		font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
 		font-weight: 600;
-		color: #0c4a6e;
+		color: var(--color-primary);
 	}
 
 	/* Responsive Design */
@@ -352,47 +368,6 @@
 
 		.reference-section {
 			grid-template-columns: 1fr;
-		}
-	}
-
-	/* Dark Mode */
-	@media (prefers-color-scheme: dark) {
-		.math-intro, .math-example, .reference-card {
-			background: #1f2937;
-			border-color: #374151;
-		}
-
-		.math-intro h3, .title-section h4, .reference-card h4 {
-			color: #f9fafb;
-		}
-
-		.math-intro p, .description {
-			color: #d1d5db;
-		}
-
-		.explanation {
-			color: #e5e7eb;
-		}
-
-		.chart-section, .formula-display, .ref-item {
-			background: #111827;
-			border-color: #374151;
-			color: #f9fafb;
-		}
-
-		.ref-item code {
-			background: #1e40af;
-			color: #dbeafe;
-		}
-
-		.usage-tag {
-			background: #1e3a8a;
-			border-color: #3b82f6;
-			color: #dbeafe;
-		}
-
-		.explanation-section {
-			border-color: #374151;
 		}
 	}
 </style>

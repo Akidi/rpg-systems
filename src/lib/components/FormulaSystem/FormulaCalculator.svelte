@@ -457,34 +457,37 @@
 		margin: 0 0 8px 0;
 		font-size: 20px;
 		font-weight: 700;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.panel-divider {
 		height: 2px;
-		background: linear-gradient(90deg, #667eea, #764ba2);
+		background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
 		border-radius: 1px;
-		opacity: 0.6;
+		opacity: 0.8;
+		transition: var(--transition-theme);
 	}
 
 	/* Character Panel */
 	.character-panel {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 16px;
 		padding: 24px;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-		border: 1px solid rgba(102, 126, 234, 0.1);
+		box-shadow: 0 4px 20px var(--shadow-light);
 		height: fit-content;
 		position: sticky;
 		top: 24px;
+		transition: var(--transition-theme);
 	}
 
 	.allocation-section {
 		margin-bottom: 32px;
 		padding: 16px;
-		background: #f8fafc;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-secondary);
 		border-radius: 12px;
-		border: 1px solid #e2e8f0;
+		transition: var(--transition-theme);
 	}
 
 	.allocation-header {
@@ -498,7 +501,7 @@
 		margin: 0;
 		font-size: 16px;
 		font-weight: 600;
-		color: #4b5563;
+		color: var(--text-secondary);
 	}
 
 	.points-display {
@@ -507,27 +510,27 @@
 	}
 
 	.points-used {
-		color: #667eea;
+		color: var(--color-primary);
 	}
 
 	.points-separator {
-		color: #9ca3af;
+		color: var(--text-muted);
 		margin: 0 4px;
 	}
 
 	.points-total {
-		color: #6b7280;
+		color: var(--text-secondary);
 	}
 
 	.points-remaining {
 		font-size: 14px;
 		font-weight: 500;
-		color: #059669;
+		color: var(--color-success);
 		text-align: center;
 	}
 
 	.points-remaining.over-allocated {
-		color: #dc2626;
+		color: var(--color-error);
 		font-weight: 600;
 	}
 
@@ -539,27 +542,30 @@
 
 	.quick-btn {
 		flex: 1;
-		background: #f3f4f6;
-		border: 1px solid #d1d5db;
+		background-color: var(--bg-primary);
+		border: 1px solid var(--border-primary);
 		border-radius: 6px;
 		padding: 6px 12px;
 		font-size: 12px;
 		font-weight: 500;
+		color: var(--text-primary);
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
 	}
 
 	.quick-btn:hover {
-		background: #667eea;
-		color: white;
-		border-color: #667eea;
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
+		border-color: var(--color-primary);
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px var(--shadow-medium);
 	}
 
 	.stats-section h3 {
 		margin: 0 0 12px 0;
 		font-size: 16px;
 		font-weight: 600;
-		color: #4b5563;
+		color: var(--text-secondary);
 	}
 
 	.stats-compact-grid {
@@ -570,11 +576,12 @@
 
 	/* Editor Area */
 	.editor-area {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 16px;
 		padding: 24px;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-		border: 1px solid rgba(102, 126, 234, 0.1);
+		box-shadow: 0 4px 20px var(--shadow-light);
+		transition: var(--transition-theme);
 	}
 
 	.editor-header {
@@ -585,7 +592,7 @@
 		margin: 0 0 12px 0;
 		font-size: 24px;
 		font-weight: 700;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.helper-info {
@@ -595,27 +602,29 @@
 	}
 
 	.info-badge {
-		background: #f0f9ff;
-		border: 1px solid #bae6fd;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-primary);
 		border-radius: 8px;
 		padding: 8px 12px;
 		font-size: 13px;
 		line-height: 1.4;
+		transition: var(--transition-theme);
 	}
 
 	.badge-label {
 		font-weight: 600;
-		color: #0c4a6e;
+		color: var(--text-primary);
 		margin-right: 8px;
 	}
 
 	.info-badge code {
-		background: #e0f2fe;
+		background-color: var(--bg-primary);
+		border: 1px solid var(--border-secondary);
 		padding: 2px 6px;
 		border-radius: 4px;
 		font-family: 'Monaco', 'Consolas', monospace;
 		font-size: 12px;
-		color: #0c4a6e;
+		color: var(--color-primary);
 	}
 
 	.formulas-sections {
@@ -625,7 +634,7 @@
 	}
 
 	.formula-section {
-		border-bottom: 1px solid #f3f4f6;
+		border-bottom: 1px solid var(--border-primary);
 		padding-bottom: 16px;
 	}
 
@@ -638,7 +647,7 @@
 		margin: 0 0 12px 0;
 		font-size: 14px;
 		font-weight: 600;
-		color: #6b7280;
+		color: var(--text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
@@ -650,14 +659,15 @@
 
 	/* Results Panel */
 	.results-panel {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 16px;
 		padding: 24px;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-		border: 1px solid rgba(102, 126, 234, 0.1);
+		box-shadow: 0 4px 20px var(--shadow-light);
 		height: fit-content;
 		position: sticky;
 		top: 24px;
+		transition: var(--transition-theme);
 	}
 
 	.results-sections {
@@ -667,7 +677,7 @@
 	}
 
 	.result-section {
-		border-bottom: 1px solid #f3f4f6;
+		border-bottom: 1px solid var(--border-primary);
 		padding-bottom: 12px;
 	}
 
@@ -680,7 +690,7 @@
 		margin: 0 0 8px 0;
 		font-size: 13px;
 		font-weight: 600;
-		color: #6b7280;
+		color: var(--text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
@@ -692,7 +702,7 @@
 	}
 
 	.no-data {
-		color: #dc2626;
+		color: var(--color-error);
 		font-size: 14px;
 		text-align: center;
 		padding: 16px;
@@ -754,85 +764,6 @@
 
 		.helper-info {
 			flex-direction: column;
-		}
-	}
-
-	/* Dark Mode */
-	@media (prefers-color-scheme: dark) {
-		.character-panel, .editor-area, .results-panel {
-			background: #1f2937;
-			border-color: rgba(156, 163, 175, 0.2);
-		}
-
-		.panel-header h2, .editor-header h2 {
-			color: #f9fafb;
-		}
-
-		.stats-section h3 {
-			color: #d1d5db;
-		}
-
-		.allocation-section {
-			background: #111827;
-			border-color: #4b5563;
-		}
-
-		.allocation-header h3 {
-			color: #d1d5db;
-		}
-
-		.points-used {
-			color: #a855f7;
-		}
-
-		.points-remaining.over-allocated {
-			color: #f87171;
-		}
-
-		.quick-btn {
-			background: #374151;
-			border-color: #4b5563;
-			color: #e5e7eb;
-		}
-
-		.quick-btn:hover {
-			background: #7c3aed;
-			border-color: #7c3aed;
-		}
-
-		.formula-section {
-			border-color: #374151;
-		}
-
-		.formula-section-title {
-			color: #9ca3af;
-		}
-
-		.result-section {
-			border-color: #374151;
-		}
-
-		.section-title {
-			color: #9ca3af;
-		}
-
-		.info-badge {
-			background: #1e3a8a;
-			border-color: #3b82f6;
-			color: #dbeafe;
-		}
-
-		.badge-label {
-			color: #dbeafe;
-		}
-
-		.info-badge code {
-			background: #1e40af;
-			color: #bfdbfe;
-		}
-
-		.no-data {
-			color: #f87171;
 		}
 	}
 </style>

@@ -37,33 +37,51 @@
 		}
 		return components;
 	});
+
+	// Determine rarity class based on category
+	const rarityClass = $derived.by(() => {
+		switch (item.category) {
+			case 'consumable': return 'rarity-common';
+			case 'weapon': return 'rarity-uncommon';
+			case 'armor': return 'rarity-rare';
+			case 'accessory': return 'rarity-epic';
+			case 'meta': return 'rarity-legendary';
+			case 'cosmetic': return 'rarity-legendary';
+			default: return 'rarity-common';
+		}
+	});
 </script>
 
 <div class="item-card" class:affordable={canAfford} class:unaffordable={!canAfford}>
-	<div class="item-name">{item.name}</div>
-	<div class="item-category">{capitalizeFirst(item.category)}</div>
+	<div class="item-header">
+		<div class="item-name {rarityClass}">{item.name}</div>
+		<div class="item-category">{capitalizeFirst(item.category)}</div>
+	</div>
 	
 	<div class="item-price">
 		{#if priceComponents.length > 0}
 			<div class="price-components">
 				{#each priceComponents as component, index}
 					<div class="price-component">
-						<CoinIcon currency={component.currency} size={32} />
-						<span>{component.amount}</span>
+						<CoinIcon currency={component.currency} size={24} />
+						<span class="price-amount">{component.amount}</span>
 					</div>
+					{#if index < priceComponents.length - 1}
+						<span class="price-separator">+</span>
+					{/if}
 				{/each}
 			</div>
 		{:else}
 			<div class="price-component">
 				<CoinIcon currency="copper" size={16} />
-				<span>0 copper</span>
+				<span class="price-amount">0</span>
 			</div>
 		{/if}
 	</div>
 	
 	<div class="item-copper">
 		<CoinIcon currency="copper" size={12} />
-		({formatNumber(totalCopperCost)} copper total)
+		<span>({formatNumber(totalCopperCost)} copper total)</span>
 	</div>
 	
 	<button 
@@ -79,87 +97,153 @@
 
 <style>
 	.item-card {
-		padding: 12px;
-		border: 1px solid;
-		border-radius: 6px;
-		transition: all 0.2s ease;
+		padding: 16px;
+		background-color: var(--bg-secondary);
+		border: 2px solid var(--border-primary);
+		border-radius: 8px;
+		transition: var(--transition-theme);
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		position: relative;
+	}
+
+	.item-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px var(--shadow-medium);
 	}
 
 	.item-card.affordable {
-		border-color: #10b981;
-		background-color: #f0fdf4;
+		border-color: var(--color-success);
+		background-color: var(--bg-secondary);
+	}
+
+	.item-card.affordable::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background-color: var(--color-success);
+		border-radius: 8px 8px 0 0;
 	}
 
 	.item-card.unaffordable {
-		border-color: #ef4444;
-		background-color: #fef2f2;
+		border-color: var(--color-error);
+		background-color: var(--bg-tertiary);
+		opacity: 0.7;
+	}
+
+	.item-card.unaffordable::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background-color: var(--color-error);
+		border-radius: 8px 8px 0 0;
+	}
+
+	.item-header {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	.item-name {
-		font-weight: 600;
-		margin-bottom: 4px;
+		font-weight: 700;
 		font-size: 16px;
+		transition: var(--transition-theme);
 	}
 
 	.item-category {
-		font-size: 14px;
-		color: #6b7280;
-		margin-bottom: 8px;
+		font-size: 12px;
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		font-weight: 500;
+		transition: var(--transition-theme);
 	}
 
 	.item-price {
-		font-size: 14px;
-		font-weight: 600;
-		margin-bottom: 8px;
-		color: #374151;
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
 	.price-components {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 2px;
+		gap: 8px;
 	}
 
 	.price-component {
 		display: flex;
 		align-items: center;
 		gap: 4px;
+		background-color: var(--bg-tertiary);
+		padding: 4px 8px;
+		border-radius: 6px;
+		border: 1px solid var(--border-secondary);
+	}
+
+	.price-amount {
+		font-weight: 600;
+		color: var(--text-primary);
+		font-size: 14px;
+	}
+
+	.price-separator {
+		color: var(--text-secondary);
+		font-weight: 600;
+		font-size: 12px;
 	}
 
 	.item-copper {
 		font-size: 12px;
-		color: #6b7280;
-		margin-bottom: 8px;
+		color: var(--text-muted);
 		display: flex;
 		align-items: center;
 		gap: 4px;
+		font-style: italic;
 	}
 
 	.buy-btn {
 		width: 100%;
-		padding: 6px 12px;
+		padding: 10px 16px;
 		border: none;
-		border-radius: 4px;
+		border-radius: 6px;
 		cursor: pointer;
 		font-size: 14px;
-		font-weight: 500;
-		transition: all 0.2s ease;
+		font-weight: 600;
+		transition: var(--transition-theme);
+		text-transform: uppercase;
+		letter-spacing: 0.025em;
 	}
 
 	.buy-btn.affordable {
-		background-color: #10b981;
-		color: white;
+		background-color: var(--color-success);
+		color: var(--text-inverse);
+	}
+
+	.buy-btn.affordable:hover {
+		background-color: var(--color-primary);
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px var(--shadow-medium);
 	}
 
 	.buy-btn.unaffordable {
-		background-color: #d1d5db;
-		color: #6b7280;
+		background-color: var(--bg-tertiary);
+		color: var(--text-muted);
 		cursor: not-allowed;
+		border: 1px solid var(--border-primary);
 	}
 
-	.buy-btn:hover.affordable {
-		background-color: #059669;
-		transform: translateY(-1px);
+	.buy-btn:disabled {
+		transform: none;
+		box-shadow: none;
 	}
 </style>

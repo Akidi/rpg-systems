@@ -1,4 +1,4 @@
-<!-- src/routes/formula-planner/+page.svelte -->
+<!-- src/routes/demo/system/formula-planner/+page.svelte -->
 <script lang="ts">
 	import type { 
 		CharacterStats, 
@@ -96,7 +96,10 @@
 <main class="app">
 	<header class="hero">
 		<div class="hero-content">
-			<h1 class="hero-title">Formula Planner</h1>
+			<h1 class="hero-title">
+				<span class="hero-icon">📊</span>
+				Formula Planner
+			</h1>
 			<p class="hero-subtitle">Design balanced mathematical formulas for RPG stat systems</p>
 		</div>
 	</header>
@@ -104,14 +107,16 @@
 	<nav class="navigation">
 		<div class="nav-container">
 			<button 
-				class="nav-tab {activeTab === 'planner' ? 'active' : ''}"
+				class="nav-tab"
+				class:active={activeTab === 'planner'}
 				onclick={() => activeTab = 'planner'}
 			>
 				<span class="nav-icon">🔧</span>
 				<span class="nav-text">Formula Builder</span>
 			</button>
 			<button 
-				class="nav-tab {activeTab === 'reference' ? 'active' : ''}"
+				class="nav-tab"
+				class:active={activeTab === 'reference'}
 				onclick={() => activeTab = 'reference'}
 			>
 				<span class="nav-icon">📚</span>
@@ -139,8 +144,9 @@
 <style>
 	.app {
 		min-height: 100vh;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 		font-family: system-ui, -apple-system, sans-serif;
+		transition: var(--transition-theme);
 	}
 
 	/* Hero Section */
@@ -158,7 +164,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(255, 255, 255, 0.1);
+		background: rgba(var(--bg-overlay), 0.1);
 		backdrop-filter: blur(10px);
 		z-index: 0;
 	}
@@ -174,24 +180,34 @@
 		margin: 0 0 12px 0;
 		font-size: clamp(32px, 6vw, 48px);
 		font-weight: 800;
-		color: white;
-		text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+		color: var(--text-inverse);
+		text-shadow: 0 2px 20px var(--shadow-heavy);
 		letter-spacing: -0.02em;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+	}
+
+	.hero-icon {
+		font-size: 1.2em;
+		filter: drop-shadow(0 2px 4px var(--shadow-medium));
 	}
 
 	.hero-subtitle {
 		margin: 0;
 		font-size: clamp(16px, 3vw, 20px);
-		color: rgba(255, 255, 255, 0.9);
+		color: var(--text-inverse);
+		opacity: 0.9;
 		font-weight: 400;
-		text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+		text-shadow: 0 1px 10px var(--shadow-medium);
 	}
 
 	/* Navigation */
 	.navigation {
-		background: rgba(255, 255, 255, 0.15);
+		background: rgba(var(--bg-overlay), 0.15);
 		backdrop-filter: blur(20px);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		border-bottom: 1px solid var(--border-primary);
 		padding: 0 20px;
 	}
 
@@ -209,25 +225,27 @@
 		padding: 16px 24px;
 		background: none;
 		border: none;
-		color: rgba(255, 255, 255, 0.8);
+		color: var(--text-inverse);
+		opacity: 0.8;
 		font-size: 16px;
 		font-weight: 500;
 		cursor: pointer;
 		border-radius: 12px 12px 0 0;
-		transition: all 0.3s ease;
+		transition: var(--transition-theme);
 		position: relative;
 	}
 
 	.nav-tab:hover {
-		background: rgba(255, 255, 255, 0.1);
-		color: white;
+		background: rgba(var(--bg-primary), 0.1);
+		opacity: 1;
 		transform: translateY(-2px);
 	}
 
 	.nav-tab.active {
-		background: white;
-		color: #667eea;
-		box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		opacity: 1;
+		box-shadow: 0 -4px 20px var(--shadow-medium);
 	}
 
 	.nav-tab.active:hover {
@@ -236,15 +254,15 @@
 
 	.nav-icon {
 		font-size: 20px;
-		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+		filter: drop-shadow(0 1px 2px var(--shadow-light));
 	}
 
 	/* Content Area */
 	.content {
-		background: #f8fafc;
+		background-color: var(--bg-primary);
 		min-height: calc(100vh - 200px);
 		border-radius: 20px 20px 0 0;
-		box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 -10px 40px var(--shadow-medium);
 		position: relative;
 		z-index: 1;
 	}
@@ -253,6 +271,11 @@
 	@media (max-width: 768px) {
 		.hero {
 			padding: 24px 16px;
+		}
+
+		.hero-title {
+			flex-direction: column;
+			gap: 0.5rem;
 		}
 
 		.navigation {
@@ -286,35 +309,6 @@
 			flex: 1;
 			justify-content: center;
 			max-width: 120px;
-		}
-	}
-
-	/* Dark Mode */
-	@media (prefers-color-scheme: dark) {
-		.app {
-			background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-		}
-
-		.content {
-			background: #111827;
-		}
-
-		.hero::before {
-			background: rgba(0, 0, 0, 0.2);
-		}
-
-		.navigation {
-			background: rgba(0, 0, 0, 0.3);
-			border-bottom-color: rgba(255, 255, 255, 0.1);
-		}
-
-		.nav-tab:hover {
-			background: rgba(255, 255, 255, 0.05);
-		}
-
-		.nav-tab.active {
-			background: #1f2937;
-			color: #a855f7;
 		}
 	}
 

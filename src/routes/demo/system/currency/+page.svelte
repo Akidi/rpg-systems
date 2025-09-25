@@ -1,4 +1,4 @@
-<!-- src/routes/currency/+page.svelte -->
+<!-- src/routes/demo/system/currency/+page.svelte -->
 <script lang="ts">
 	import CurrencyInput from '$lib/components/CurrencySystem/CurrencyInput.svelte';
 	import CurrencyDisplay from '$lib/components/CurrencySystem/CurrencyDisplay.svelte';
@@ -144,20 +144,30 @@
 	<meta name="description" content="Test the 3x scaling currency system for the Diablo-like web game" />
 </svelte:head>
 
-<div class="container">
-	<h1>Currency Conversion Calculator</h1>
+<div class="currency-calculator">
+	<header class="page-header">
+		<h1 class="page-title">
+			<span class="title-icon">💰</span>
+			Currency Conversion Calculator
+		</h1>
+		<p class="page-description">
+			Test the multi-tier currency system with automatic conversion and item pricing
+		</p>
+	</header>
 	
-	<div class="grid">
-		<!-- Currency Input -->
-		<div class="card">
-			<h2>Your Currency</h2>
+	<div class="calculator-grid">
+		<!-- Currency Input Panel -->
+		<section class="panel currency-panel">
+			<h2 class="panel-title">
+				<span class="panel-icon">🏦</span>
+				Your Currency
+			</h2>
 			
 			<div class="currency-inputs">
 				<CurrencyInput 
 					label="Copper"
 					bind:value={playerCurrency.copper}
 					currency="copper"
-					color={getCurrencyColor('copper')}
 					onInput={(value) => updateCurrency('copper', value)}
 				/>
 				
@@ -165,7 +175,6 @@
 					label="Silver"
 					bind:value={playerCurrency.silver}
 					currency="silver"
-					color={getCurrencyColor('silver')}
 					onInput={(value) => updateCurrency('silver', value)}
 				/>
 				
@@ -173,7 +182,6 @@
 					label="Gold"
 					bind:value={playerCurrency.gold}
 					currency="gold"
-					color={getCurrencyColor('gold')}
 					onInput={(value) => updateCurrency('gold', value)}
 				/>
 				
@@ -181,29 +189,37 @@
 					label="Platinum"
 					bind:value={playerCurrency.platinum}
 					currency="platinum"
-					color={getCurrencyColor('platinum')}
 					onInput={(value) => updateCurrency('platinum', value)}
 				/>
 			</div>
 			
-			<div class="button-group">
+			<div class="action-buttons">
 				<button onclick={convertUp} class="btn btn-primary">
-					Convert Up
+					⚡ Convert Up
 				</button>
 				<button onclick={resetCurrency} class="btn btn-secondary">
-					Reset
+					🔄 Reset
 				</button>
 			</div>
-		</div>
+		</section>
 		
-		<!-- Conversion Info -->
-		<div class="card">
-			<h2>Conversion Rates</h2>
+		<!-- Conversion Info Panel -->
+		<section class="panel info-panel">
+			<h2 class="panel-title">
+				<span class="panel-icon">⚖️</span>
+				Conversion Rates
+			</h2>
 			
-			<div class="conversion-rates">
-				<div>1 Silver = {conversionRates.copperToSilver} Copper</div>
-				<div>1 Gold = {conversionRates.silverToGold} Silver = {formatNumber(conversionRates.silverToGold * conversionRates.copperToSilver)} Copper</div>
-				<div>1 Platinum = {conversionRates.goldToPlatinum} Gold = {formatNumber(conversionRates.goldToPlatinum * conversionRates.silverToGold * conversionRates.copperToSilver)} Copper</div>
+			<div class="conversion-info">
+				<div class="rate-item">
+					<strong>1 Silver</strong> = {conversionRates.copperToSilver} Copper
+				</div>
+				<div class="rate-item">
+					<strong>1 Gold</strong> = {conversionRates.silverToGold} Silver = {formatNumber(conversionRates.silverToGold * conversionRates.copperToSilver)} Copper
+				</div>
+				<div class="rate-item">
+					<strong>1 Platinum</strong> = {conversionRates.goldToPlatinum} Gold = {formatNumber(conversionRates.goldToPlatinum * conversionRates.silverToGold * conversionRates.copperToSilver)} Copper
+				</div>
 			</div>
 			
 			<CurrencyDisplay 
@@ -219,11 +235,14 @@
 				totalCopper={totalCopperValue}
 				variant="optimized"
 			/>
-		</div>
+		</section>
 		
-		<!-- Quick Add Presets -->
-		<div class="card">
-			<h2>Quick Add</h2>
+		<!-- Quick Add Presets Panel -->
+		<section class="panel preset-panel">
+			<h2 class="panel-title">
+				<span class="panel-icon">⚡</span>
+				Quick Add
+			</h2>
 			
 			<div class="preset-grid">
 				<PresetButton amount={100} currency="copper" onClick={addPresetAmount} />
@@ -231,13 +250,25 @@
 				<PresetButton amount={5} currency="gold" onClick={addPresetAmount} />
 				<PresetButton amount={1} currency="platinum" onClick={addPresetAmount} />
 			</div>
-		</div>
+			
+			<div class="preset-shortcuts">
+				<button onclick={() => addPresetAmount(1000, 'copper')} class="shortcut-btn">
+					+1K Copper
+				</button>
+				<button onclick={() => addPresetAmount(100, 'silver')} class="shortcut-btn">
+					+100 Silver
+				</button>
+			</div>
+		</section>
 		
-		<!-- Sample Items -->
-		<div class="card full-width">
-			<h2>Sample Item Prices</h2>
-			<p class="description">
-				Items can now have mixed currency prices (e.g., "1 gold 15 silver 50 copper")
+		<!-- Sample Items Panel -->
+		<section class="panel items-panel">
+			<h2 class="panel-title">
+				<span class="panel-icon">🛍️</span>
+				Sample Item Prices
+			</h2>
+			<p class="panel-description">
+				Items can have mixed currency prices. Purchase them to test the conversion system!
 			</p>
 			
 			<div class="items-grid">
@@ -250,117 +281,284 @@
 					/>
 				{/each}
 			</div>
-		</div>
+		</section>
 	</div>
 </div>
 
 <style>
-	.container {
-		max-width: 1200px;
+	.currency-calculator {
+		max-width: 1400px;
 		margin: 0 auto;
-		padding: 24px;
-		font-family: system-ui, sans-serif;
-		background-color: #f5f5f5;
+		padding: 2rem;
+		background-color: var(--bg-primary);
 		min-height: 100vh;
+		transition: var(--transition-theme);
 	}
 
-	h1 {
-		font-size: 28px;
-		font-weight: bold;
+	/* Header Styles */
+	.page-header {
 		text-align: center;
-		margin-bottom: 32px;
-		color: #333;
+		margin-bottom: 3rem;
+		padding: 2rem;
+		background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+		border-radius: 12px;
+		border: 1px solid var(--border-primary);
+		box-shadow: 0 4px 8px var(--shadow-light);
 	}
 
-	h2 {
-		font-size: 20px;
-		font-weight: 600;
-		margin-bottom: 16px;
-		color: #374151;
+	.page-title {
+		font-size: 2.5rem;
+		font-weight: 800;
+		margin: 0 0 1rem 0;
+		color: var(--color-primary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
 	}
 
-	.description {
-		font-size: 14px;
-		color: #6b7280;
-		margin-bottom: 16px;
-		font-style: italic;
+	.title-icon {
+		font-size: 3rem;
+		filter: drop-shadow(0 2px 4px var(--shadow-medium));
 	}
 
-	.grid {
+	.page-description {
+		font-size: 1.125rem;
+		color: var(--text-secondary);
+		margin: 0;
+		line-height: 1.6;
+	}
+
+	/* Grid Layout */
+	.calculator-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 24px;
+		grid-template-columns: 1fr 1fr 0.7fr;
+		gap: 2rem;
 	}
 
-	.card {
-		background: white;
-		border-radius: 8px;
-		padding: 24px;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	/* Panel Styles */
+	.panel {
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
+		border-radius: 12px;
+		padding: 1.5rem;
+		box-shadow: 0 2px 8px var(--shadow-light);
+		transition: var(--transition-theme);
 	}
 
-	.full-width {
-		grid-column: 1 / -1;
+	.panel:hover {
+		box-shadow: 0 4px 12px var(--shadow-medium);
+		transform: translateY(-2px);
 	}
 
+	.panel-title {
+		font-size: 1.25rem;
+		font-weight: 700;
+		margin: 0 0 1rem 0;
+		color: var(--text-primary);
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.panel-icon {
+		font-size: 1.5rem;
+	}
+
+	.panel-description {
+		font-size: 0.875rem;
+		color: var(--text-muted);
+		margin: 0 0 1rem 0;
+		line-height: 1.5;
+	}
+
+	/* Currency Panel */
 	.currency-inputs {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
+		gap: 1rem;
+		margin-bottom: 1.5rem;
 	}
 
-	.button-group {
-		margin-top: 16px;
+	.action-buttons {
 		display: flex;
-		gap: 8px;
+		gap: 0.75rem;
 		flex-wrap: wrap;
 	}
 
-	.btn {
-		padding: 8px 16px;
-		border: none;
-		border-radius: 6px;
-		cursor: pointer;
-		font-size: 14px;
-		font-weight: 500;
-		transition: all 0.2s ease;
+	/* Info Panel */
+	.conversion-info {
+		background-color: var(--bg-tertiary);
+		padding: 1rem;
+		border-radius: 8px;
+		margin-bottom: 1rem;
+		border: 1px solid var(--border-secondary);
 	}
 
-	.btn-primary {
-		background-color: #3b82f6;
-		color: white;
+	.rate-item {
+		padding: 0.5rem 0;
+		border-bottom: 1px solid var(--border-primary);
+		color: var(--text-primary);
+		font-size: 0.875rem;
 	}
 
-	.btn-primary:hover {
-		background-color: #2563eb;
+	.rate-item:last-child {
+		border-bottom: none;
 	}
 
-	.btn-secondary {
-		background-color: #6b7280;
-		color: white;
-	}
-
-	.btn-secondary:hover {
-		background-color: #4b5563;
-	}
-
-	.conversion-rates {
+	/* Preset Panel */
+	.preset-grid {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
-		font-size: 14px;
-		margin-bottom: 16px;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
 	}
 
-	.preset-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 8px;
+	.preset-shortcuts {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.shortcut-btn {
+		padding: 0.5rem 1rem;
+		background-color: var(--color-accent);
+		color: var(--text-inverse);
+		border: none;
+		border-radius: 6px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: var(--transition-theme);
+		text-transform: uppercase;
+		letter-spacing: 0.025em;
+	}
+
+	.shortcut-btn:hover {
+		background-color: var(--color-primary);
+		transform: translateY(-1px);
+	}
+
+	/* Items Panel */
+	.items-panel {
+		grid-column: 1 / -1;
 	}
 
 	.items-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		gap: 12px;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1rem;
+	}
+
+	/* Button Styles */
+	.btn {
+		padding: 0.75rem 1.5rem;
+		border: none;
+		border-radius: 8px;
+		cursor: pointer;
+		font-size: 0.875rem;
+		font-weight: 600;
+		transition: var(--transition-theme);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		text-transform: uppercase;
+		letter-spacing: 0.025em;
+	}
+
+	.btn-primary {
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
+		box-shadow: 0 2px 4px var(--shadow-light);
+	}
+
+	.btn-primary:hover {
+		background-color: var(--color-primary-hover);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 8px var(--shadow-medium);
+	}
+
+	.btn-secondary {
+		background-color: var(--color-secondary);
+		color: var(--text-inverse);
+		box-shadow: 0 2px 4px var(--shadow-light);
+	}
+
+	.btn-secondary:hover {
+		background-color: var(--color-primary);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 8px var(--shadow-medium);
+	}
+
+	/* Responsive Design */
+	@media (max-width: 768px) {
+		.currency-calculator {
+			padding: 1rem;
+		}
+
+		.page-header {
+			padding: 1.5rem;
+			margin-bottom: 2rem;
+		}
+
+		.page-title {
+			font-size: 2rem;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.title-icon {
+			font-size: 2.5rem;
+		}
+
+		.calculator-grid {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+
+		.panel {
+			padding: 1rem;
+		}
+
+		.preset-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.action-buttons {
+			flex-direction: column;
+		}
+
+		.items-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.page-title {
+			font-size: 1.75rem;
+		}
+
+		.btn {
+			padding: 0.625rem 1.25rem;
+			font-size: 0.8125rem;
+		}
+	}
+
+	/* Special theme-aware enhancements */
+	.currency-panel {
+		border-left: 4px solid var(--color-gold);
+	}
+
+	.info-panel {
+		border-left: 4px solid var(--color-info);
+	}
+
+	.preset-panel {
+		border-left: 4px solid var(--color-accent);
+	}
+
+	.items-panel {
+		border-left: 4px solid var(--color-success);
 	}
 </style>

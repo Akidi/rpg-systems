@@ -70,9 +70,14 @@
 </script>
 
 <div class="save-load-section">
-	<h3>Saved Builds</h3>
+	<h3 class="section-title">
+		<span class="title-icon">💾</span>
+		Saved Builds
+	</h3>
 	<div class="save-controls">
-		<button class="save-btn" onclick={() => showSaveDialog = true} aria-label="Save current build">Save Current</button>
+		<button class="save-btn" onclick={() => showSaveDialog = true} aria-label="Save current build">
+			Save Current
+		</button>
 		<select
 			class="load-select"
 			onchange={(e) => {
@@ -107,7 +112,16 @@
 			aria-modal="true"
 			tabindex="-1"
 		>
-			<h3 id="modal-title">Save Build</h3>
+			<div class="modal-header">
+				<h3 id="modal-title">Save Build</h3>
+				<button 
+					class="close-btn"
+					onclick={() => showSaveDialog = false}
+					aria-label="Close dialog"
+				>
+					×
+				</button>
+			</div>
 			<input
 				bind:value={saveName}
 				placeholder="Enter build name..."
@@ -116,14 +130,14 @@
 			/>
 			<div class="modal-actions">
 				<button
-					class="cancel-btn"
+					class="btn btn-secondary"
 					onclick={() => showSaveDialog = false}
 					aria-label="Cancel saving build"
 				>
 					Cancel
 				</button>
 				<button
-					class="save-confirm-btn"
+					class="btn btn-primary"
 					onclick={() => {
 						if (saveName.trim()) {
 							saveCurrentBuild(saveName.trim());
@@ -134,7 +148,7 @@
 					}}
 					aria-label="Save build with current name"
 				>
-					Save
+					Save Build
 				</button>
 			</div>
 		</div>
@@ -145,16 +159,24 @@
 	.save-load-section {
 		margin-bottom: 24px;
 		padding: 16px;
-		background: #f8fafc;
+		background-color: var(--bg-tertiary);
 		border-radius: 12px;
-		border: 1px solid #e2e8f0;
+		border: 1px solid var(--border-primary);
+		transition: var(--transition-theme);
 	}
 
-	.save-load-section h3 {
+	.section-title {
 		margin: 0 0 12px 0;
 		font-size: 16px;
 		font-weight: 600;
-		color: #4b5563;
+		color: var(--text-primary);
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.title-icon {
+		font-size: 1.25rem;
 	}
 
 	.save-controls {
@@ -163,36 +185,39 @@
 	}
 
 	.save-btn {
-		background: #667eea;
-		color: white;
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
 		border: none;
 		border-radius: 6px;
 		padding: 8px 16px;
 		font-size: 12px;
 		font-weight: 500;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
 	}
 
 	.save-btn:hover {
-		background: #5b67d1;
+		background-color: var(--color-primary-hover);
 		transform: translateY(-1px);
+		box-shadow: 0 2px 4px var(--shadow-medium);
 	}
 
 	.load-select {
 		flex: 1;
 		padding: 8px 12px;
-		border: 1px solid #d1d5db;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		border: 1px solid var(--border-primary);
 		border-radius: 6px;
 		font-size: 12px;
-		background: white;
 		cursor: pointer;
+		transition: var(--transition-theme);
 	}
 
 	.load-select:focus {
 		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.1);
 	}
 
 	.modal-overlay {
@@ -201,143 +226,153 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
+		background: var(--bg-overlay);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 1000;
+		animation: fadeIn 0.2s ease-out;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
 	}
 
 	.modal {
-		background: white;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
 		border-radius: 12px;
-		padding: 24px;
+		padding: 0;
 		min-width: 300px;
-		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+		max-width: 90vw;
+		box-shadow: 0 20px 40px var(--shadow-heavy);
+		animation: slideUp 0.3s ease-out;
 	}
 
-	.modal h3 {
-		margin: 0 0 16px 0;
+	@keyframes slideUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 20px 24px;
+		border-bottom: 1px solid var(--border-primary);
+	}
+
+	.modal-header h3 {
+		margin: 0;
 		font-size: 18px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
+	}
+
+	.close-btn {
+		background: none;
+		border: none;
+		font-size: 24px;
+		color: var(--text-muted);
+		cursor: pointer;
+		padding: 0;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		transition: var(--transition-theme);
+	}
+
+	.close-btn:hover {
+		color: var(--color-error);
+		background-color: rgba(var(--color-error), 0.1);
 	}
 
 	.save-input {
 		width: 100%;
-		padding: 12px 16px;
-		border: 1px solid #d1d5db;
-		border-radius: 8px;
+		padding: 12px 24px;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		border: 1px solid var(--border-primary);
 		font-size: 14px;
-		margin-bottom: 20px;
+		margin: 20px 0;
 		box-sizing: border-box;
+		border-left: none;
+		border-right: none;
+		transition: var(--transition-theme);
 	}
 
 	.save-input:focus {
 		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		background-color: var(--bg-tertiary);
+		border-color: var(--color-primary);
 	}
 
 	.modal-actions {
 		display: flex;
 		gap: 12px;
 		justify-content: flex-end;
+		padding: 20px 24px;
+		border-top: 1px solid var(--border-primary);
 	}
 
-	.cancel-btn {
-		background: #f3f4f6;
-		border: 1px solid #d1d5db;
-		border-radius: 6px;
+	.btn {
 		padding: 8px 16px;
-		font-size: 14px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.cancel-btn:hover {
-		background: #e5e7eb;
-	}
-
-	.save-confirm-btn {
-		background: #667eea;
-		color: white;
 		border: none;
 		border-radius: 6px;
-		padding: 8px 16px;
 		font-size: 14px;
+		font-weight: 500;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: var(--transition-theme);
 	}
 
-	.save-confirm-btn:hover {
-		background: #5b67d1;
+	.btn-secondary {
+		background-color: var(--bg-tertiary);
+		color: var(--text-primary);
+		border: 1px solid var(--border-primary);
 	}
 
-	@media (prefers-color-scheme: dark) {
-		.save-load-section {
-			background: #111827;
-			border-color: #4b5563;
-		}
+	.btn-secondary:hover {
+		background-color: var(--bg-primary);
+		border-color: var(--color-secondary);
+	}
 
-		.save-load-section h3 {
-			color: #d1d5db;
-		}
+	.btn-primary {
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
+	}
 
-		.save-btn {
-			background: #7c3aed;
-		}
+	.btn-primary:hover {
+		background-color: var(--color-primary-hover);
+		box-shadow: 0 2px 4px var(--shadow-medium);
+	}
 
-		.save-btn:hover {
-			background: #6d28d9;
-		}
-
-		.load-select {
-			background: #111827;
-			border-color: #4b5563;
-			color: #e5e7eb;
-		}
-
-		.load-select:focus {
-			border-color: #7c3aed;
-			box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+	/* Mobile responsive */
+	@media (max-width: 480px) {
+		.save-controls {
+			flex-direction: column;
 		}
 
 		.modal {
-			background: #1f2937;
+			margin: 20px;
+			min-width: auto;
 		}
 
-		.modal h3 {
-			color: #f9fafb;
+		.modal-actions {
+			flex-direction: column;
 		}
 
-		.save-input {
-			background: #111827;
-			border-color: #4b5563;
-			color: #f9fafb;
-		}
-
-		.save-input:focus {
-			border-color: #7c3aed;
-			box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-		}
-
-		.cancel-btn {
-			background: #374151;
-			border-color: #4b5563;
-			color: #e5e7eb;
-		}
-
-		.cancel-btn:hover {
-			background: #4b5563;
-		}
-
-		.save-confirm-btn {
-			background: #7c3aed;
-		}
-
-		.save-confirm-btn:hover {
-			background: #6d28d9;
+		.btn {
+			width: 100%;
 		}
 	}
 </style>

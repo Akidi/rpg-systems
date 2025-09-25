@@ -1,3 +1,490 @@
+/* app.css */
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+/* =============================================================================
+   DUNGEON CRAWLER RPG THEME SYSTEM
+   ============================================================================= */
+
+/* Base Theme Variables - Default/Fallback */
+:root {
+  /* Core Colors */
+  --color-primary: #4a5568;
+  --color-primary-hover: #2d3748;
+  --color-secondary: #718096;
+  --color-accent: #ed8936;
+  
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7fafc;
+  --bg-tertiary: #edf2f7;
+  --bg-overlay: rgba(0, 0, 0, 0.8);
+  
+  /* Text Colors */
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  --text-inverse: #ffffff;
+  
+  /* UI Elements */
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e0;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-heavy: rgba(0, 0, 0, 0.25);
+  
+  /* Status Colors */
+  --color-success: #38a169;
+  --color-warning: #d69e2e;
+  --color-error: #e53e3e;
+  --color-info: #3182ce;
+  
+  /* RPG Specific */
+  --color-health: #e53e3e;
+  --color-mana: #3182ce;
+  --color-experience: #38a169;
+  --color-gold: #d69e2e;
+  
+  /* Rarity Colors */
+  --rarity-common: #718096;
+  --rarity-uncommon: #38a169;
+  --rarity-rare: #3182ce;
+  --rarity-epic: #805ad5;
+  --rarity-legendary: #ed8936;
+  
+  /* Theme Transitions */
+  --transition-theme: all 0.3s ease;
+}
+
+/* =============================================================================
+   DUNGEON CLASSIC THEME
+   ============================================================================= */
+
+[data-theme="dungeon-classic"][data-mode="light"] {
+  /* Stone and Earth Tones */
+  --color-primary: #8b6914;
+  --color-primary-hover: #744d02;
+  --color-secondary: #a0845c;
+  --color-accent: #d2691e;
+  
+  --bg-primary: #f5f5dc;
+  --bg-secondary: #faebd7;
+  --bg-tertiary: #deb887;
+  --bg-overlay: rgba(61, 43, 31, 0.85);
+  
+  --text-primary: #3d2b1f;
+  --text-secondary: #5d4e37;
+  --text-muted: #8b7355;
+  --text-inverse: #f5f5dc;
+  
+  --border-primary: #d2b48c;
+  --border-secondary: #bc9a6a;
+  --shadow-light: rgba(61, 43, 31, 0.1);
+  --shadow-medium: rgba(61, 43, 31, 0.2);
+  --shadow-heavy: rgba(61, 43, 31, 0.3);
+}
+
+[data-theme="dungeon-classic"][data-mode="dark"] {
+  --color-primary: #d2691e;
+  --color-primary-hover: #ff8c00;
+  --color-secondary: #cd853f;
+  --color-accent: #ffa500;
+  
+  --bg-primary: #2f1b14;
+  --bg-secondary: #3d2b1f;
+  --bg-tertiary: #4a3426;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  
+  --text-primary: #f5deb3;
+  --text-secondary: #deb887;
+  --text-muted: #bc9a6a;
+  --text-inverse: #2f1b14;
+  
+  --border-primary: #5d4e37;
+  --border-secondary: #8b7355;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  --shadow-heavy: rgba(0, 0, 0, 0.7);
+}
+
+/* =============================================================================
+   SHADOW REALM THEME
+   ============================================================================= */
+
+[data-theme="shadow-realm"][data-mode="light"] {
+  /* Gothic Purple and Silver */
+  --color-primary: #6b46c1;
+  --color-primary-hover: #553c9a;
+  --color-secondary: #8b5cf6;
+  --color-accent: #c084fc;
+  
+  --bg-primary: #faf7ff;
+  --bg-secondary: #f3f0ff;
+  --bg-tertiary: #e9d5ff;
+  --bg-overlay: rgba(68, 28, 130, 0.85);
+  
+  --text-primary: #441c82;
+  --text-secondary: #6b46c1;
+  --text-muted: #8b5cf6;
+  --text-inverse: #faf7ff;
+  
+  --border-primary: #d8b4fe;
+  --border-secondary: #c084fc;
+  --shadow-light: rgba(68, 28, 130, 0.1);
+  --shadow-medium: rgba(68, 28, 130, 0.2);
+  --shadow-heavy: rgba(68, 28, 130, 0.3);
+}
+
+[data-theme="shadow-realm"][data-mode="dark"] {
+  --color-primary: #a855f7;
+  --color-primary-hover: #c084fc;
+  --color-secondary: #8b5cf6;
+  --color-accent: #d8b4fe;
+  
+  --bg-primary: #1e1b26;
+  --bg-secondary: #2d2438;
+  --bg-tertiary: #3c2e4a;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  
+  --text-primary: #f3f0ff;
+  --text-secondary: #e9d5ff;
+  --text-muted: #d8b4fe;
+  --text-inverse: #1e1b26;
+  
+  --border-primary: #6b46c1;
+  --border-secondary: #8b5cf6;
+  --shadow-light: rgba(0, 0, 0, 0.4);
+  --shadow-medium: rgba(0, 0, 0, 0.6);
+  --shadow-heavy: rgba(0, 0, 0, 0.8);
+}
+
+/* =============================================================================
+   CRYSTAL CAVERNS THEME
+   ============================================================================= */
+
+[data-theme="crystal-caverns"][data-mode="light"] {
+  /* Bright Crystals and Gems */
+  --color-primary: #0891b2;
+  --color-primary-hover: #0e7490;
+  --color-secondary: #06b6d4;
+  --color-accent: #22d3ee;
+  
+  --bg-primary: #f0fdff;
+  --bg-secondary: #ecfeff;
+  --bg-tertiary: #cffafe;
+  --bg-overlay: rgba(8, 145, 178, 0.85);
+  
+  --text-primary: #083344;
+  --text-secondary: #155e75;
+  --text-muted: #0891b2;
+  --text-inverse: #f0fdff;
+  
+  --border-primary: #a5f3fc;
+  --border-secondary: #67e8f9;
+  --shadow-light: rgba(8, 51, 68, 0.1);
+  --shadow-medium: rgba(8, 51, 68, 0.2);
+  --shadow-heavy: rgba(8, 51, 68, 0.3);
+}
+
+[data-theme="crystal-caverns"][data-mode="dark"] {
+  --color-primary: #22d3ee;
+  --color-primary-hover: #67e8f9;
+  --color-secondary: #06b6d4;
+  --color-accent: #a5f3fc;
+  
+  --bg-primary: #0c1821;
+  --bg-secondary: #164e63;
+  --bg-tertiary: #0e7490;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  
+  --text-primary: #f0fdff;
+  --text-secondary: #cffafe;
+  --text-muted: #a5f3fc;
+  --text-inverse: #0c1821;
+  
+  --border-primary: #155e75;
+  --border-secondary: #0891b2;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  --shadow-heavy: rgba(0, 0, 0, 0.7);
+}
+
+/* =============================================================================
+   INFERNAL DEPTHS THEME
+   ============================================================================= */
+
+[data-theme="infernal-depths"][data-mode="light"] {
+  /* Fire and Lava */
+  --color-primary: #dc2626;
+  --color-primary-hover: #b91c1c;
+  --color-secondary: #ea580c;
+  --color-accent: #f97316;
+  
+  --bg-primary: #fef2f2;
+  --bg-secondary: #fee2e2;
+  --bg-tertiary: #fecaca;
+  --bg-overlay: rgba(153, 27, 27, 0.85);
+  
+  --text-primary: #7f1d1d;
+  --text-secondary: #991b1b;
+  --text-muted: #dc2626;
+  --text-inverse: #fef2f2;
+  
+  --border-primary: #fca5a5;
+  --border-secondary: #f87171;
+  --shadow-light: rgba(127, 29, 29, 0.1);
+  --shadow-medium: rgba(127, 29, 29, 0.2);
+  --shadow-heavy: rgba(127, 29, 29, 0.3);
+}
+
+[data-theme="infernal-depths"][data-mode="dark"] {
+  --color-primary: #f97316;
+  --color-primary-hover: #fb923c;
+  --color-secondary: #ea580c;
+  --color-accent: #fdba74;
+  
+  --bg-primary: #1c0f0a;
+  --bg-secondary: #431407;
+  --bg-tertiary: #9a3412;
+  --bg-overlay: rgba(0, 0, 0, 0.95);
+  
+  --text-primary: #fed7aa;
+  --text-secondary: #fdba74;
+  --text-muted: #fb923c;
+  --text-inverse: #1c0f0a;
+  
+  --border-primary: #9a3412;
+  --border-secondary: #c2410c;
+  --shadow-light: rgba(0, 0, 0, 0.4);
+  --shadow-medium: rgba(0, 0, 0, 0.6);
+  --shadow-heavy: rgba(0, 0, 0, 0.8);
+}
+
+/* =============================================================================
+   FROST KEEP THEME
+   ============================================================================= */
+
+[data-theme="frost-keep"][data-mode="light"] {
+  /* Ice and Winter */
+  --color-primary: #1e40af;
+  --color-primary-hover: #1d4ed8;
+  --color-secondary: #3b82f6;
+  --color-accent: #60a5fa;
+  
+  --bg-primary: #f8faff;
+  --bg-secondary: #f1f5f9;
+  --bg-tertiary: #e2e8f0;
+  --bg-overlay: rgba(30, 64, 175, 0.85);
+  
+  --text-primary: #1e3a8a;
+  --text-secondary: #1e40af;
+  --text-muted: #3b82f6;
+  --text-inverse: #f8faff;
+  
+  --border-primary: #cbd5e1;
+  --border-secondary: #94a3b8;
+  --shadow-light: rgba(30, 58, 138, 0.1);
+  --shadow-medium: rgba(30, 58, 138, 0.2);
+  --shadow-heavy: rgba(30, 58, 138, 0.3);
+}
+
+[data-theme="frost-keep"][data-mode="dark"] {
+  --color-primary: #60a5fa;
+  --color-primary-hover: #93c5fd;
+  --color-secondary: #3b82f6;
+  --color-accent: #bfdbfe;
+  
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #e2e8f0;
+  --text-muted: #cbd5e1;
+  --text-inverse: #0f172a;
+  
+  --border-primary: #475569;
+  --border-secondary: #64748b;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  --shadow-heavy: rgba(0, 0, 0, 0.7);
+}
+
+/* =============================================================================
+   VERDANT RUINS THEME
+   ============================================================================= */
+
+[data-theme="verdant-ruins"][data-mode="light"] {
+  /* Nature and Overgrown */
+  --color-primary: #15803d;
+  --color-primary-hover: #166534;
+  --color-secondary: #22c55e;
+  --color-accent: #4ade80;
+  
+  --bg-primary: #f7fdf7;
+  --bg-secondary: #f0fdf4;
+  --bg-tertiary: #dcfce7;
+  --bg-overlay: rgba(21, 128, 61, 0.85);
+  
+  --text-primary: #14532d;
+  --text-secondary: #166534;
+  --text-muted: #15803d;
+  --text-inverse: #f7fdf7;
+  
+  --border-primary: #bbf7d0;
+  --border-secondary: #86efac;
+  --shadow-light: rgba(20, 83, 45, 0.1);
+  --shadow-medium: rgba(20, 83, 45, 0.2);
+  --shadow-heavy: rgba(20, 83, 45, 0.3);
+}
+
+[data-theme="verdant-ruins"][data-mode="dark"] {
+  --color-primary: #4ade80;
+  --color-primary-hover: #86efac;
+  --color-secondary: #22c55e;
+  --color-accent: #bbf7d0;
+  
+  --bg-primary: #0f1a0f;
+  --bg-secondary: #1a2e1a;
+  --bg-tertiary: #22543d;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  
+  --text-primary: #f0fdf4;
+  --text-secondary: #dcfce7;
+  --text-muted: #bbf7d0;
+  --text-inverse: #0f1a0f;
+  
+  --border-primary: #166534;
+  --border-secondary: #15803d;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  --shadow-heavy: rgba(0, 0, 0, 0.7);
+}
+
+/* =============================================================================
+   BASE COMPONENT STYLES
+   ============================================================================= */
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: var(--transition-theme);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation */
+nav {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: 0 1px 3px var(--shadow-light);
+}
+
+/* Cards */
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow-light);
+  transition: var(--transition-theme);
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px var(--shadow-medium);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--text-inverse);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition-theme);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--text-inverse);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition-theme);
+}
+
+/* Form Elements */
+input, select, textarea {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  padding: 0.5rem;
+  transition: var(--transition-theme);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
+}
+
+/* RPG Specific Elements */
+.health-bar {
+  background-color: var(--color-health);
+}
+
+.mana-bar {
+  background-color: var(--color-mana);
+}
+
+.exp-bar {
+  background-color: var(--color-experience);
+}
+
+.gold-text {
+  color: var(--color-gold);
+}
+
+/* Rarity Colors */
+.rarity-common { color: var(--rarity-common); }
+.rarity-uncommon { color: var(--rarity-uncommon); }
+.rarity-rare { color: var(--rarity-rare); }
+.rarity-epic { color: var(--rarity-epic); }
+.rarity-legendary { color: var(--rarity-legendary); }
+
+/* Theme Transition Animation */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Calculator Links Styling */
+.calculator-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.calculator-links a {
+  background-color: var(--bg-secondary);
+  color: var(--color-primary);
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: var(--transition-theme);
+  font-weight: 500;
+}
+
+.calculator-links a:hover {
+  background-color: var(--color-primary);
+  color: var(--text-inverse);
+  box-shadow: 0 2px 4px var(--shadow-medium);
+}
