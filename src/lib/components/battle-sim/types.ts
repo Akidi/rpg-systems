@@ -74,3 +74,27 @@ export type TelegraphedAction = {
 	caster: CharacterKey;
 	targetKey?: CharacterKey;
 };
+
+export type CombatLogCategory =
+	| 'damage'
+	| 'healing'
+	| 'focus'
+	| 'effect'
+	| 'resource'
+	| 'system';
+
+export type CombatLogEntry = {
+	id: string;
+	turn: number;
+	actionNumber: number;
+	category: CombatLogCategory;
+	message: string;
+	actor?: string;
+	target?: string;
+	action?: string;
+	source?: string;
+	amount?: number;
+	critical?: boolean;
+	detail?: string;
+	tags?: string[];
+};

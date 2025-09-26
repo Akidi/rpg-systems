@@ -5,6 +5,7 @@
 		ActionDefinition,
 		Character,
 		CharacterKey,
+		CombatLogEntry,
 		TelegraphedAction
 	} from './types';
 
@@ -17,7 +18,7 @@
 		globalActionCount: number;
 		telegraphedActions: Partial<Record<CharacterKey, TelegraphedAction>>;
 		actions: ActionDefinition[];
-		combatLog: string[];
+		combatLog: CombatLogEntry[];
 		onSelectTarget: (key: CharacterKey) => void;
 	};
 

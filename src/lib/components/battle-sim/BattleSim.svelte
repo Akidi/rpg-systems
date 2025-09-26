@@ -19,6 +19,8 @@
 		Character,
 		CharacterKey,
 		CharactersState,
+		CombatLogEntry,
+		CombatLogCategory,
 		Enhancement,
 		EnhancementId,
 		Effect,
@@ -107,7 +109,7 @@
 
 	let characters = $state(createInitialCharacters());
 	let currentTurn = $state<CharacterKey>('player');
-	let combatLog = $state<string[]>([]);
+	let combatLog = $state<CombatLogEntry[]>([]);
 	let turnCount = $state(1);
 	let globalActionCount = $state(0);
 	let selectedTarget = $state<CharacterKey>('enemy1');
@@ -237,9 +239,45 @@
 		return cloned;
 	}
 
-	function logMessage(message: string) {
-		const entry = `Turn ${turnCount}: ${message}`;
-		combatLog = [entry, ...combatLog].slice(0, 10);
+	const LOG_HISTORY_LIMIT = 20;
+
+	type CombatLogPayload = {
+		message: string;
+		category: CombatLogCategory;
+		actor?: string;
+		target?: string;
+		action?: string;
+		source?: string;
+		amount?: number;
+		critical?: boolean;
+		detail?: string;
+		tags?: string[];
+		turn?: number;
+		actionNumber?: number;
+	};
+
+	function createLogId() {
+		return `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+	}
+
+	function logMessage(entry: CombatLogPayload) {
+		const resolved: CombatLogEntry = {
+			id: createLogId(),
+			turn: entry.turn ?? turnCount,
+			actionNumber: entry.actionNumber ?? globalActionCount,
+			category: entry.category,
+			message: entry.message,
+			actor: entry.actor,
+			target: entry.target,
+			action: entry.action,
+			source: entry.source,
+			amount: entry.amount,
+			critical: entry.critical ?? false,
+			detail: entry.detail,
+			tags: entry.tags ?? []
+		};
+
+		combatLog = [resolved, ...combatLog].slice(0, LOG_HISTORY_LIMIT);
 	}
 
 	function getAliveEnemies() {
@@ -476,15 +514,44 @@
 					shouldTick = true;
 					updatedEffect.hasFirstTick = true;
 					updatedEffect.nextTick = globalActions + rollNextTickInterval();
-					logMessage(`${character.name} takes ${effect.damage} ${effect.name} damage (First Tick)`);
+					logMessage({
+						category: 'damage',
+						message: `${effect.name} scorches ${character.name}`,
+						actor: effect.name,
+						target: character.name,
+						source: effect.name,
+						amount: effect.damage,
+						detail: 'First tick',
+						tags: ['DoT'],
+						actionNumber: globalActions
+					});
 				} else if (globalActions === effect.nextTick) {
 					shouldTick = true;
 					updatedEffect.nextTick = globalActions + rollNextTickInterval();
-					logMessage(`${character.name} takes ${effect.damage} ${effect.name} damage`);
+					logMessage({
+						category: 'damage',
+						message: `${effect.name} damages ${character.name}`,
+						actor: effect.name,
+						target: character.name,
+						source: effect.name,
+						amount: effect.damage,
+						tags: ['DoT'],
+						actionNumber: globalActions
+					});
 				} else if (actionsElapsed === 12 && !effect.hasFinalTick) {
 					shouldTick = true;
 					updatedEffect.hasFinalTick = true;
-					logMessage(`${character.name} takes ${effect.damage} ${effect.name} damage (Final Tick)`);
+					logMessage({
+						category: 'damage',
+						message: `${effect.name} sears ${character.name}`,
+						actor: effect.name,
+						target: character.name,
+						source: effect.name,
+						amount: effect.damage,
+						detail: 'Final tick',
+						tags: ['DoT'],
+						actionNumber: globalActions
+					});
 				}
 
 				if (shouldTick) {
@@ -494,7 +561,14 @@
 				if (actionsElapsed < 12) {
 					activeEffects.push(updatedEffect);
 				} else {
-					logMessage(`${effect.name} effect on ${character.name} has ended`);
+					logMessage({
+						category: 'effect',
+						message: `${effect.name} on ${character.name} fades`,
+						target: character.name,
+						source: effect.name,
+						tags: ['DoT'],
+						actionNumber: globalActions
+					});
 				}
 			} else if (effect.duration > 0) {
 				activeEffects.push({
@@ -531,7 +605,14 @@
 		let baseApCost = action.apCost;
 		if (action.type === 'focus') {
 			if (attacker.focus >= attacker.maxFocus) {
-				logMessage(`${attacker.name} cannot build more focus`);
+				logMessage({
+					category: 'focus',
+					message: `${attacker.name} cannot build more focus`,
+					actor: attacker.name,
+					action: action.name,
+					detail: `Focus capped at ${attacker.focus}/${attacker.maxFocus}`,
+					tags: ['Focus']
+				});
 				return {
 					attacker: cloneCharacter(attacker),
 					targets: cloneTargets(targets)
@@ -544,7 +625,15 @@
 		const totalApCost = baseApCost + enhancementApCost;
 
 		if (!skipResourceCosts && attacker.ap < totalApCost) {
-			logMessage(`${attacker.name} lacks AP for ${action.name} (${totalApCost} needed)`);
+			logMessage({
+				category: 'resource',
+				message: `${attacker.name} lacks AP for ${action.name}`,
+				actor: attacker.name,
+				action: action.name,
+				amount: totalApCost,
+				detail: `Needs ${totalApCost} AP but only has ${attacker.ap}`,
+				tags: ['AP']
+			});
 			return {
 				attacker: cloneCharacter(attacker),
 				targets: cloneTargets(targets)
@@ -568,7 +657,15 @@
 			totalEnhancementStacks > 0 &&
 			newAttacker.mana < enhancementManaCost
 		) {
-			logMessage(`${attacker.name} lacks mana for enhancements (${enhancementManaCost} needed)`);
+			logMessage({
+				category: 'resource',
+				message: `${attacker.name} lacks mana for enhancements`,
+				actor: attacker.name,
+				action: action.name,
+				amount: enhancementManaCost,
+				detail: `Needs ${enhancementManaCost} mana but has ${attacker.mana}`,
+				tags: ['Mana', 'Enhancement']
+			});
 			return {
 				attacker: cloneCharacter(attacker),
 				targets: cloneTargets(targets)
@@ -586,9 +683,14 @@
 				if (attacker.focus > 0) {
 					const focusMultiplier = getFocusMultiplier(attacker.focus);
 					damage = Math.floor(damage * focusMultiplier);
-					logMessage(
-						`${attacker.name} uses ${attacker.focus} focus stacks (${focusMultiplier}x multiplier)`
-					);
+					logMessage({
+						category: 'focus',
+						message: `${attacker.name} channels stored focus`,
+						actor: attacker.name,
+						action: action.name,
+						detail: `${attacker.focus} stack(s) → ${focusMultiplier.toFixed(2)}x damage`,
+						tags: ['Focus']
+					});
 					newAttacker.focus = 0;
 					newAttacker.focusDecay = 0;
 				}
@@ -622,16 +724,26 @@
 				const multiSelected = (selectedEnhancements.multi ?? 0) > 0;
 				if (multiSelected && isMultiTargetUseful()) {
 					damage = Math.floor(damage * 0.5);
-					logMessage(
-						`${attacker.name} ${action.name}s all enemies for ${damage} damage each${
-							isCrit ? ' (CRIT!)' : ''
-						}`
-					);
-
 					getAliveEnemies().forEach(([enemyKey, enemy]) => {
 						const target = newTargets[enemyKey];
 						if (target) {
 							target.hp = Math.max(0, target.hp - damage);
+
+							const damageTags = ['AoE'];
+							if (totalEnhancementStacks > 0) damageTags.push('Enhancement');
+							if (isCrit) damageTags.push('Critical');
+
+							logMessage({
+								category: 'damage',
+								message: `${attacker.name} hits ${enemy.name} with ${action.name}`,
+								actor: attacker.name,
+								target: enemy.name,
+								action: action.name,
+								amount: damage,
+								critical: isCrit,
+								detail: 'AoE strike (50% damage per target)',
+								tags: damageTags
+							});
 
 							if (action.dot) {
 								const dotDamage = Math.floor(damage * 0.3);
@@ -645,9 +757,17 @@
 									hasFinalTick: false
 								};
 								target.effects = [...target.effects, newDoT];
-								logMessage(
-									`${enemy.name} is burning for ${dotDamage} damage per tick over 12 actions`
-								);
+								logMessage({
+									category: 'effect',
+									message: `${enemy.name} is burning`,
+									actor: attacker.name,
+									target: enemy.name,
+									action: action.name,
+									source: 'Burning',
+									amount: dotDamage,
+									detail: 'Deals damage over 12 actions',
+									tags: ['DoT']
+								});
 							}
 						}
 					});
@@ -656,13 +776,24 @@
 					const target = newTargets[targetKey];
 					const targetName = target?.name ?? 'Unknown';
 
-					logMessage(
-						`${attacker.name} ${action.name}s ${targetName} for ${damage} damage${
-							isCrit ? ' (CRIT!)' : ''
-						}`
-					);
 					if (target) {
 						target.hp = Math.max(0, target.hp - damage);
+
+						const damageTags: string[] = [];
+						if (totalEnhancementStacks > 0) damageTags.push('Enhancement');
+						if (isCrit) damageTags.push('Critical');
+
+						logMessage({
+							category: 'damage',
+							message: `${attacker.name} hits ${targetName} with ${action.name}`,
+							actor: attacker.name,
+							target: targetName,
+							action: action.name,
+							amount: damage,
+							critical: isCrit,
+							detail: isCrit ? 'Critical strike!' : undefined,
+							tags: damageTags
+						});
 
 						if (action.dot) {
 							const dotDamage = Math.floor(damage * 0.3);
@@ -676,9 +807,17 @@
 								hasFinalTick: false
 							};
 							target.effects = [...target.effects, newDoT];
-							logMessage(
-								`${targetName} is burning for ${dotDamage} damage per tick over 12 actions`
-							);
+							logMessage({
+								category: 'effect',
+								message: `${targetName} is burning`,
+								actor: attacker.name,
+								target: targetName,
+								action: action.name,
+								source: 'Burning',
+								amount: dotDamage,
+								detail: 'Deals damage over 12 actions',
+								tags: ['DoT']
+							});
 						}
 					}
 				}
@@ -692,9 +831,14 @@
 				if (attacker.focus > 0) {
 					const focusMultiplier = getFocusMultiplier(attacker.focus);
 					healing = Math.floor(healing * focusMultiplier);
-					logMessage(
-						`${attacker.name} uses ${attacker.focus} focus stacks (${focusMultiplier}x multiplier)`
-					);
+					logMessage({
+						category: 'focus',
+						message: `${attacker.name} channels focus into healing`,
+						actor: attacker.name,
+						action: action.name,
+						detail: `${attacker.focus} stack(s) → ${focusMultiplier.toFixed(2)}x healing`,
+						tags: ['Focus']
+					});
 					newAttacker.focus = 0;
 					newAttacker.focusDecay = 0;
 				}
@@ -706,7 +850,18 @@
 				}
 
 				newAttacker.hp = Math.min(newAttacker.maxHp, newAttacker.hp + healing);
-				logMessage(`${attacker.name} heals for ${healing} HP`);
+				const healingTags: string[] = [];
+				if (healingPowerStacks > 0) healingTags.push('Enhancement');
+				logMessage({
+					category: 'healing',
+					message: `${attacker.name} restores ${healing} HP`,
+					actor: attacker.name,
+					target: attacker.name,
+					action: action.name,
+					amount: healing,
+					detail: `HP now ${newAttacker.hp}/${newAttacker.maxHp}`,
+					tags: healingTags
+				});
 				newAttacker.focusDecay += 1;
 				break;
 			}
@@ -714,13 +869,26 @@
 				const focusCost = baseApCost;
 				newAttacker.focus += 1;
 				newAttacker.focusDecay = 0;
-				logMessage(
-					`${attacker.name} builds focus (${newAttacker.focus}/${newAttacker.maxFocus}) - cost ${focusCost} AP`
-				);
+				logMessage({
+					category: 'focus',
+					message: `${attacker.name} builds focus`,
+					actor: attacker.name,
+					action: action.name,
+					amount: newAttacker.focus,
+					detail: `Focus ${newAttacker.focus}/${newAttacker.maxFocus} (cost ${focusCost} AP)`,
+					tags: ['Focus']
+				});
 				break;
 			}
 			case 'defend': {
-				logMessage(`${attacker.name} defends (50% damage reduction next turn)`);
+				logMessage({
+					category: 'effect',
+					message: `${attacker.name} takes a defensive stance`,
+					actor: attacker.name,
+					action: action.name,
+					detail: '50% damage reduction next turn',
+					tags: ['Buff']
+				});
 				newAttacker.effects = [
 					...newAttacker.effects,
 					{
@@ -753,14 +921,30 @@
 		const totalApCost = action.apCost + enhancementApCost;
 
 		if (attacker.ap < totalApCost) {
-			logMessage(`${attacker.name} lacks AP for ${action.name} (${totalApCost} needed)`);
+			logMessage({
+				category: 'resource',
+				message: `${attacker.name} lacks AP for ${action.name}`,
+				actor: attacker.name,
+				action: action.name,
+				amount: totalApCost,
+				detail: `Needs ${totalApCost} AP but only has ${attacker.ap}`,
+				tags: ['AP', 'Enhancement']
+			});
 			return;
 		}
 
 		const totalEnhancementStacks = getTotalEnhancementCount(selectedEnhancements);
 		const actualManaCost = getEnhancementCost(totalEnhancementStacks, attacker.mana * 0.2);
 		if (attacker.mana < actualManaCost) {
-			logMessage(`${attacker.name} lacks mana for enhancements (${actualManaCost} needed)`);
+			logMessage({
+				category: 'resource',
+				message: `${attacker.name} lacks mana for enhancements`,
+				actor: attacker.name,
+				action: action.name,
+				amount: actualManaCost,
+				detail: `Needs ${actualManaCost} mana but has ${attacker.mana}`,
+				tags: ['Mana', 'Enhancement']
+			});
 			return;
 		}
 
@@ -783,7 +967,20 @@
 			}
 		};
 
-		logMessage(`${attacker.name} prepares an enhanced ${action.name} (will fire next turn)`);
+		const telegraphTargetName =
+			currentTurn === 'player'
+				? characters[selectedTarget]?.name ?? selectedTarget
+				: characters.player.name;
+
+		logMessage({
+			category: 'system',
+			message: `${attacker.name} prepares an enhanced ${action.name}`,
+			actor: attacker.name,
+			action: action.name,
+			target: telegraphTargetName,
+			detail: 'Telegraphed attack will resolve next turn',
+			tags: ['Telegraph', 'Enhancement']
+		});
 
 		clearEnhancements();
 		enhancementMode = false;
@@ -834,7 +1031,22 @@
 		telegraphedActions = rest;
 
 		const actionName = actions.find((item) => item.id === telegraphed.actionId)?.name ?? 'Action';
-		logMessage(`${attacker.name}'s telegraphed ${actionName} fires!`);
+		const telegraphedTargetName = telegraphed.targetKey
+			? characters[telegraphed.targetKey]?.name ?? telegraphed.targetKey
+			: caster === 'player'
+				? 'All enemies'
+				: characters.player.name;
+		const enhancementStacks = getTotalEnhancementCount(telegraphed.enhancements);
+		const telegraphTags = enhancementStacks > 0 ? ['Telegraph', 'Enhancement'] : ['Telegraph'];
+		logMessage({
+			category: 'system',
+			message: `${attacker.name}'s telegraphed ${actionName} fires`,
+			actor: attacker.name,
+			action: actionName,
+			target: telegraphedTargetName,
+			detail: 'Stored action resolves',
+			tags: telegraphTags
+		});
 	}
 
 	function handleAction(actionId: string) {
