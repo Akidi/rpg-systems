@@ -3,7 +3,18 @@
 	interface Props {
 		selectedDistribution: string;
 		currentLevel: number;
-		onClassBuild: (classType: 'balanced' | 'warrior' | 'mage' | 'rogue' | 'ranger' | 'paladin' | 'assassin' | 'necromancer' | 'custom') => void;
+		onClassBuild: (
+			classType:
+				| 'balanced'
+				| 'warrior'
+				| 'mage'
+				| 'rogue'
+				| 'ranger'
+				| 'paladin'
+				| 'assassin'
+				| 'necromancer'
+				| 'custom'
+		) => void;
 		onCustomDistribution?: () => void;
 	}
 
@@ -38,12 +49,12 @@
 				</div>
 			</button>
 		{/each}
-		
+
 		<!-- Custom Distribution Button -->
 		<button
 			class="build-card custom-card"
 			class:active={selectedDistribution === 'custom'}
-			onclick={() => onCustomDistribution ? onCustomDistribution() : onClassBuild('custom')}
+			onclick={() => (onCustomDistribution ? onCustomDistribution() : onClassBuild('custom'))}
 			aria-label="Create custom stat distribution"
 		>
 			<div class="build-icon">🎨</div>

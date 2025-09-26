@@ -1,9 +1,9 @@
 <!-- src/routes/demo/system/formula-planner/+page.svelte -->
 <script lang="ts">
-	import type { 
-		CharacterStats, 
-		DerivedStats, 
-		FormulaSet, 
+	import type {
+		CharacterStats,
+		DerivedStats,
+		FormulaSet,
 		CharacterBuild
 	} from '$lib/types/formulaPlanner.js';
 	import { DEFAULT_FORMULAS, EXAMPLE_BUILDS } from '$lib/types/formulaPlanner.js';
@@ -18,17 +18,26 @@
 	let selectedBuild = $state<CharacterBuild>({ ...EXAMPLE_BUILDS[0] });
 
 	// Calculate derived stats using formulas
-	function calculateDerivedStats(stats: CharacterStats, formulas: Record<keyof DerivedStats, string>): DerivedStats | null {
+	function calculateDerivedStats(
+		stats: CharacterStats,
+		formulas: Record<keyof DerivedStats, string>
+	): DerivedStats | null {
 		try {
 			// Create context with both full names and abbreviations
 			const context = {
 				level: stats.level,
-				strength: stats.strength, STR: stats.strength,
-				dexterity: stats.dexterity, DEX: stats.dexterity,
-				intelligence: stats.intelligence, INT: stats.intelligence,
-				constitution: stats.constitution, CON: stats.constitution,
-				wisdom: stats.wisdom, WIS: stats.wisdom,
-				charisma: stats.charisma, CHA: stats.charisma,
+				strength: stats.strength,
+				STR: stats.strength,
+				dexterity: stats.dexterity,
+				DEX: stats.dexterity,
+				intelligence: stats.intelligence,
+				INT: stats.intelligence,
+				constitution: stats.constitution,
+				CON: stats.constitution,
+				wisdom: stats.wisdom,
+				WIS: stats.wisdom,
+				charisma: stats.charisma,
+				CHA: stats.charisma,
 				// Math functions
 				Math: Math,
 				// Helper functions
@@ -50,7 +59,7 @@
 					// Create a function that evaluates the formula in the context
 					const func = new Function(...Object.keys(context), `return ${formula}`);
 					const value = func(...Object.values(context));
-					
+
 					if (typeof value === 'number' && !isNaN(value)) {
 						result[key as keyof DerivedStats] = Math.round(value * 100) / 100; // Round to 2 decimals
 					} else {
@@ -90,7 +99,10 @@
 
 <svelte:head>
 	<title>Formula Planner - RPG Stat Calculator</title>
-	<meta name="description" content="Design and test mathematical formulas for RPG game statistics with real-time preview and visual feedback" />
+	<meta
+		name="description"
+		content="Design and test mathematical formulas for RPG game statistics with real-time preview and visual feedback"
+	/>
 </svelte:head>
 
 <main class="app">
@@ -106,18 +118,18 @@
 
 	<nav class="navigation">
 		<div class="nav-container">
-			<button 
+			<button
 				class="nav-tab"
 				class:active={activeTab === 'planner'}
-				onclick={() => activeTab = 'planner'}
+				onclick={() => (activeTab = 'planner')}
 			>
 				<span class="nav-icon">🔧</span>
 				<span class="nav-text">Formula Builder</span>
 			</button>
-			<button 
+			<button
 				class="nav-tab"
 				class:active={activeTab === 'reference'}
-				onclick={() => activeTab = 'reference'}
+				onclick={() => (activeTab = 'reference')}
 			>
 				<span class="nav-icon">📚</span>
 				<span class="nav-text">Math Reference</span>
@@ -127,7 +139,7 @@
 
 	<div class="content">
 		{#if activeTab === 'planner'}
-			<FormulaCalculator 
+			<FormulaCalculator
 				{currentFormulas}
 				{selectedBuild}
 				{derivedStats}
@@ -145,7 +157,10 @@
 	.app {
 		min-height: 100vh;
 		background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-		font-family: system-ui, -apple-system, sans-serif;
+		font-family:
+			system-ui,
+			-apple-system,
+			sans-serif;
 		transition: var(--transition-theme);
 	}
 

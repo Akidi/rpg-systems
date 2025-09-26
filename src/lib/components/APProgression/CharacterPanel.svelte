@@ -42,14 +42,15 @@
 		<span class="panel-icon">👤</span>
 		Character Stats
 	</h2>
-	
+
 	<div class="form-group">
 		<label for="characterLevel" class="form-label">Level:</label>
-		<input 
+		<input
 			id="characterLevel"
-			type="number" 
+			type="number"
 			value={character.level}
-			oninput={(e) => updateCharacter({ level: parseInt((e.target as HTMLInputElement).value) || 1 })}
+			oninput={(e) =>
+				updateCharacter({ level: parseInt((e.target as HTMLInputElement).value) || 1 })}
 			min="1"
 			max="10000"
 			class="form-input"
@@ -61,21 +62,24 @@
 
 	<div class="form-group">
 		<label for="characterDexterity" class="form-label">Dexterity:</label>
-		<input 
+		<input
 			id="characterDexterity"
-			type="number" 
+			type="number"
 			value={character.dexterity}
-			oninput={(e) => updateCharacter({ dexterity: parseInt((e.target as HTMLInputElement).value) || 0 })}
+			oninput={(e) =>
+				updateCharacter({ dexterity: parseInt((e.target as HTMLInputElement).value) || 0 })}
 			min="0"
 			max="1000"
 			class="form-input"
 		/>
 		{#if selectedFormula.type === 'universal'}
-			<div class="form-hint">Investment to reach soft cap earlier or push beyond natural limits</div>
+			<div class="form-hint">
+				Investment to reach soft cap earlier or push beyond natural limits
+			</div>
 		{:else}
 			<div class="form-hint">Every 10 Dex = +1 AP (diminishing returns after 50)</div>
 		{/if}
-		
+
 		<!-- Dex investment warning if over available stat points -->
 		{#if character.dexterity > maxStatPoints}
 			<div class="investment-warning">
@@ -86,16 +90,19 @@
 
 	<div class="form-group">
 		<label for="characterAscensions" class="form-label">Ascensions:</label>
-		<input 
+		<input
 			id="characterAscensions"
-			type="number" 
+			type="number"
 			value={character.ascensions}
-			oninput={(e) => updateCharacter({ ascensions: parseInt((e.target as HTMLInputElement).value) || 0 })}
+			oninput={(e) =>
+				updateCharacter({ ascensions: parseInt((e.target as HTMLInputElement).value) || 0 })}
 			min="0"
 			max="100"
 			class="form-input"
 		/>
-		<div class="form-hint">Permanent AP bonuses from previous runs (+{character.ascensions} AP)</div>
+		<div class="form-hint">
+			Permanent AP bonuses from previous runs (+{character.ascensions} AP)
+		</div>
 	</div>
 
 	<div class="character-presets">
@@ -131,7 +138,8 @@
 			<div class="analysis-item">
 				<span class="analysis-label">Dex Allocation:</span>
 				<span class="analysis-value">
-					{((character.dexterity / Math.max(1, maxStatPoints)) * 100).toFixed(1)}% of available points
+					{((character.dexterity / Math.max(1, maxStatPoints)) * 100).toFixed(1)}% of available
+					points
 				</span>
 			</div>
 			<div class="analysis-item">
@@ -338,7 +346,7 @@
 		.preset-grid {
 			grid-template-columns: 1fr;
 		}
-		
+
 		.analysis-item {
 			flex-direction: column;
 			align-items: flex-start;

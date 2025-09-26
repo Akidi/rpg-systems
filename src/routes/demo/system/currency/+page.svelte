@@ -4,9 +4,9 @@
 	import CurrencyDisplay from '$lib/components/CurrencySystem/CurrencyDisplay.svelte';
 	import PresetButton from '$lib/components/CurrencySystem/PresetButton.svelte';
 	import ItemCard from '$lib/components/CurrencySystem/ItemCard.svelte';
-	import { 
-		breakdownToCopper, 
-		copperToBreakdown, 
+	import {
+		breakdownToCopper,
+		copperToBreakdown,
 		getCurrencyColor,
 		createPrice,
 		type CurrencyBreakdown,
@@ -42,45 +42,45 @@
 
 	// Sample item prices with multi-currency support using createPrice for validation
 	const sampleItems: SampleItem[] = [
-		{ 
-			name: "Health Potion", 
-			price: createPrice(5), 
-			category: "consumable" 
+		{
+			name: 'Health Potion',
+			price: createPrice(5),
+			category: 'consumable'
 		},
-		{ 
-			name: "Basic Sword", 
-			price: createPrice(15), 
-			category: "weapon" 
+		{
+			name: 'Basic Sword',
+			price: createPrice(15),
+			category: 'weapon'
 		},
-		{ 
-			name: "Iron Armor", 
-			price: createPrice(0, 8), 
-			category: "armor" 
+		{
+			name: 'Iron Armor',
+			price: createPrice(0, 8),
+			category: 'armor'
 		},
-		{ 
-			name: "Magic Ring", 
-			price: createPrice(15, 1), 
-			category: "accessory" 
+		{
+			name: 'Magic Ring',
+			price: createPrice(15, 1),
+			category: 'accessory'
 		},
-		{ 
-			name: "Epic Weapon", 
-			price: createPrice(0, 0, 12), 
-			category: "weapon" 
+		{
+			name: 'Epic Weapon',
+			price: createPrice(0, 0, 12),
+			category: 'weapon'
 		},
-		{ 
-			name: "Legendary Armor", 
-			price: createPrice(50, 25, 2), 
-			category: "armor" 
+		{
+			name: 'Legendary Armor',
+			price: createPrice(50, 25, 2),
+			category: 'armor'
 		},
-		{ 
-			name: "Ascension Bonus", 
-			price: createPrice(0, 0, 0, 2), 
-			category: "meta" 
+		{
+			name: 'Ascension Bonus',
+			price: createPrice(0, 0, 0, 2),
+			category: 'meta'
 		},
-		{ 
-			name: "Premium Cosmetic", 
+		{
+			name: 'Premium Cosmetic',
 			price: createPrice(25, 10, 1, 1), // This will auto-optimize to remove excess copper
-			category: "cosmetic" 
+			category: 'cosmetic'
 		}
 	];
 
@@ -97,14 +97,14 @@
 	// Buy item function
 	function buyItem(item: SampleItem): boolean {
 		if (!canAffordItem(item)) return false;
-		
+
 		const itemCopperCost = getItemCopperCost(item);
 		const newTotal = totalCopperValue - itemCopperCost;
-		
+
 		// Convert back to denominations
 		const newBreakdown = copperToBreakdown(newTotal, conversionRates);
 		playerCurrency = newBreakdown;
-		
+
 		return true;
 	}
 
@@ -141,7 +141,10 @@
 
 <svelte:head>
 	<title>Currency Conversion Calculator</title>
-	<meta name="description" content="Test the 3x scaling currency system for the Diablo-like web game" />
+	<meta
+		name="description"
+		content="Test the 3x scaling currency system for the Diablo-like web game"
+	/>
 </svelte:head>
 
 <div class="currency-calculator">
@@ -154,7 +157,7 @@
 			Test the multi-tier currency system with automatic conversion and item pricing
 		</p>
 	</header>
-	
+
 	<div class="calculator-grid">
 		<!-- Currency Input Panel -->
 		<section class="panel currency-panel">
@@ -162,95 +165,97 @@
 				<span class="panel-icon">🏦</span>
 				Your Currency
 			</h2>
-			
+
 			<div class="currency-inputs">
-				<CurrencyInput 
+				<CurrencyInput
 					label="Copper"
 					bind:value={playerCurrency.copper}
 					currency="copper"
 					onInput={(value) => updateCurrency('copper', value)}
 				/>
-				
-				<CurrencyInput 
+
+				<CurrencyInput
 					label="Silver"
 					bind:value={playerCurrency.silver}
 					currency="silver"
 					onInput={(value) => updateCurrency('silver', value)}
 				/>
-				
-				<CurrencyInput 
+
+				<CurrencyInput
 					label="Gold"
 					bind:value={playerCurrency.gold}
 					currency="gold"
 					onInput={(value) => updateCurrency('gold', value)}
 				/>
-				
-				<CurrencyInput 
+
+				<CurrencyInput
 					label="Platinum"
 					bind:value={playerCurrency.platinum}
 					currency="platinum"
 					onInput={(value) => updateCurrency('platinum', value)}
 				/>
 			</div>
-			
+
 			<div class="action-buttons">
-				<button onclick={convertUp} class="btn btn-primary">
-					⚡ Convert Up
-				</button>
-				<button onclick={resetCurrency} class="btn btn-secondary">
-					🔄 Reset
-				</button>
+				<button onclick={convertUp} class="btn btn-primary"> ⚡ Convert Up </button>
+				<button onclick={resetCurrency} class="btn btn-secondary"> 🔄 Reset </button>
 			</div>
 		</section>
-		
+
 		<!-- Conversion Info Panel -->
 		<section class="panel info-panel">
 			<h2 class="panel-title">
 				<span class="panel-icon">⚖️</span>
 				Conversion Rates
 			</h2>
-			
+
 			<div class="conversion-info">
 				<div class="rate-item">
 					<strong>1 Silver</strong> = {conversionRates.copperToSilver} Copper
 				</div>
 				<div class="rate-item">
-					<strong>1 Gold</strong> = {conversionRates.silverToGold} Silver = {formatNumber(conversionRates.silverToGold * conversionRates.copperToSilver)} Copper
+					<strong>1 Gold</strong> = {conversionRates.silverToGold} Silver = {formatNumber(
+						conversionRates.silverToGold * conversionRates.copperToSilver
+					)} Copper
 				</div>
 				<div class="rate-item">
-					<strong>1 Platinum</strong> = {conversionRates.goldToPlatinum} Gold = {formatNumber(conversionRates.goldToPlatinum * conversionRates.silverToGold * conversionRates.copperToSilver)} Copper
+					<strong>1 Platinum</strong> = {conversionRates.goldToPlatinum} Gold = {formatNumber(
+						conversionRates.goldToPlatinum *
+							conversionRates.silverToGold *
+							conversionRates.copperToSilver
+					)} Copper
 				</div>
 			</div>
-			
-			<CurrencyDisplay 
+
+			<CurrencyDisplay
 				title="Total Value"
 				breakdown={playerCurrency}
 				totalCopper={totalCopperValue}
 				variant="default"
 			/>
-			
-			<CurrencyDisplay 
+
+			<CurrencyDisplay
 				title="Optimized Breakdown"
 				breakdown={optimizedBreakdown}
 				totalCopper={totalCopperValue}
 				variant="optimized"
 			/>
 		</section>
-		
+
 		<!-- Quick Add Presets Panel -->
 		<section class="panel preset-panel">
 			<h2 class="panel-title">
 				<span class="panel-icon">⚡</span>
 				Quick Add
 			</h2>
-			
+
 			<div class="preset-grid">
 				<PresetButton amount={100} currency="copper" onClick={addPresetAmount} />
 				<PresetButton amount={10} currency="silver" onClick={addPresetAmount} />
 				<PresetButton amount={5} currency="gold" onClick={addPresetAmount} />
 				<PresetButton amount={1} currency="platinum" onClick={addPresetAmount} />
 			</div>
-			
+
 			<div class="preset-shortcuts">
 				<button onclick={() => addPresetAmount(1000, 'copper')} class="shortcut-btn">
 					+1K Copper
@@ -260,7 +265,7 @@
 				</button>
 			</div>
 		</section>
-		
+
 		<!-- Sample Items Panel -->
 		<section class="panel items-panel">
 			<h2 class="panel-title">
@@ -270,10 +275,10 @@
 			<p class="panel-description">
 				Items can have mixed currency prices. Purchase them to test the conversion system!
 			</p>
-			
+
 			<div class="items-grid">
 				{#each sampleItems as item}
-					<ItemCard 
+					<ItemCard
 						{item}
 						canAfford={canAffordItem(item)}
 						totalCopperCost={getItemCopperCost(item)}

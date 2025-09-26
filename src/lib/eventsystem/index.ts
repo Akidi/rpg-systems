@@ -1,1 +1,1 @@
-export * from "./eventsystem"
+export * from './eventsystem';

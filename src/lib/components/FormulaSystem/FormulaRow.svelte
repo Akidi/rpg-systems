@@ -12,7 +12,15 @@
 		onCopy: (formula: string) => void;
 	}
 
-	let { label, statName, formula, isPercentage = false, stats, onFormulaUpdate, onCopy }: Props = $props();
+	let {
+		label,
+		statName,
+		formula,
+		isPercentage = false,
+		stats,
+		onFormulaUpdate,
+		onCopy
+	}: Props = $props();
 
 	// Define the validation result type
 	interface ValidationResult {
@@ -29,12 +37,18 @@
 		try {
 			const context = {
 				level: stats.level,
-				strength: stats.strength, STR: stats.strength,
-				dexterity: stats.dexterity, DEX: stats.dexterity,
-				intelligence: stats.intelligence, INT: stats.intelligence,
-				constitution: stats.constitution, CON: stats.constitution,
-				wisdom: stats.wisdom, WIS: stats.wisdom,
-				charisma: stats.charisma, CHA: stats.charisma,
+				strength: stats.strength,
+				STR: stats.strength,
+				dexterity: stats.dexterity,
+				DEX: stats.dexterity,
+				intelligence: stats.intelligence,
+				INT: stats.intelligence,
+				constitution: stats.constitution,
+				CON: stats.constitution,
+				wisdom: stats.wisdom,
+				WIS: stats.wisdom,
+				charisma: stats.charisma,
+				CHA: stats.charisma,
 				Math: Math,
 				min: Math.min,
 				exp: Math.exp,
@@ -49,7 +63,7 @@
 
 			const func = new Function(...Object.keys(context), `return ${formula}`);
 			const result = func(...Object.values(context));
-			
+
 			if (typeof result !== 'number') {
 				return { isValid: false, error: 'Formula must return a number' };
 			}
@@ -80,7 +94,9 @@
 	<div class="formula-label">{label}</div>
 	<div class="formula-value">
 		{#if validation.isValid && validation.result !== undefined}
-			<span class="value-number">{isPercentage ? validation.result.toFixed(1) + '%' : validation.result}</span>
+			<span class="value-number"
+				>{isPercentage ? validation.result.toFixed(1) + '%' : validation.result}</span
+			>
 		{:else}
 			<span class="value-error" title={validation.error}>Error</span>
 		{/if}

@@ -80,7 +80,7 @@
 		margin: 0;
 	}
 
-	.stat-input-compact[type=number] {
+	.stat-input-compact[type='number'] {
 		-moz-appearance: textfield;
 		appearance: textfield;
 	}

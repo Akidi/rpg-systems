@@ -1,6 +1,11 @@
 <!-- src/lib/components/FormulaSystem/SaveLoadPanel.svelte -->
 <script lang="ts">
-	import type { CharacterStats, DerivedStats, FormulaSet, CharacterBuild } from '$lib/types/formulaPlanner.js';
+	import type {
+		CharacterStats,
+		DerivedStats,
+		FormulaSet,
+		CharacterBuild
+	} from '$lib/types/formulaPlanner.js';
 
 	interface SavedBuild {
 		name: string;
@@ -28,7 +33,7 @@
 			formulas: { ...currentFormulas.formulas },
 			savedAt: new Date().toISOString()
 		};
-		
+
 		builds[name] = buildToSave;
 		localStorage.setItem('formulaPlanner_builds', JSON.stringify(builds));
 		savedBuilds = { ...builds };
@@ -75,7 +80,11 @@
 		Saved Builds
 	</h3>
 	<div class="save-controls">
-		<button class="save-btn" onclick={() => showSaveDialog = true} aria-label="Save current build">
+		<button
+			class="save-btn"
+			onclick={() => (showSaveDialog = true)}
+			aria-label="Save current build"
+		>
 			Save Current
 		</button>
 		<select
@@ -95,28 +104,28 @@
 </div>
 
 {#if showSaveDialog}
-	<div 
-		class="modal-overlay" 
-		onclick={() => showSaveDialog = false}
+	<div
+		class="modal-overlay"
+		onclick={() => (showSaveDialog = false)}
 		onkeydown={(e) => e.key === 'Escape' && (showSaveDialog = false)}
 		role="button"
 		tabindex="0"
 		aria-label="Close dialog"
 	>
-		<div 
-			class="modal" 
-			onclick={(e) => e.stopPropagation()} 
+		<div
+			class="modal"
+			onclick={(e) => e.stopPropagation()}
 			onkeydown={(e) => e.stopPropagation()}
-			role="dialog" 
+			role="dialog"
 			aria-labelledby="modal-title"
 			aria-modal="true"
 			tabindex="-1"
 		>
 			<div class="modal-header">
 				<h3 id="modal-title">Save Build</h3>
-				<button 
+				<button
 					class="close-btn"
-					onclick={() => showSaveDialog = false}
+					onclick={() => (showSaveDialog = false)}
 					aria-label="Close dialog"
 				>
 					×
@@ -131,7 +140,7 @@
 			<div class="modal-actions">
 				<button
 					class="btn btn-secondary"
-					onclick={() => showSaveDialog = false}
+					onclick={() => (showSaveDialog = false)}
 					aria-label="Cancel saving build"
 				>
 					Cancel
@@ -235,8 +244,12 @@
 	}
 
 	@keyframes fadeIn {
-		from { opacity: 0; }
-		to { opacity: 1; }
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	.modal {

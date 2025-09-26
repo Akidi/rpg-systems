@@ -19,10 +19,7 @@
 	const currencyClass = $derived(`currency-${currency}`);
 </script>
 
-<button 
-	onclick={() => onClick(amount, currency)} 
-	class="preset-btn {currencyClass}"
->
+<button onclick={() => onClick(amount, currency)} class="preset-btn {currencyClass}">
 	<CoinIcon {currency} size={14} />
 	<span>+{amount} {capitalizeFirst(currency)}</span>
 </button>

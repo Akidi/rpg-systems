@@ -15,11 +15,11 @@
 		onChartMaxLevelChange: (level: number) => void;
 	}
 
-	let { 
-		config, 
-		selectedFormula, 
+	let {
+		config,
+		selectedFormula,
 		chartMaxLevel,
-		onConfigChange, 
+		onConfigChange,
 		onFormulaChange,
 		onChartMaxLevelChange
 	}: Props = $props();
@@ -28,7 +28,7 @@
 	function updateFormula(event: Event) {
 		const target = event.target as HTMLSelectElement;
 		if (target) {
-			const formula = SCALING_FORMULAS.find(f => f.type === target.value);
+			const formula = SCALING_FORMULAS.find((f) => f.type === target.value);
 			if (formula) {
 				onFormulaChange(formula);
 				const newConfig = { ...config, scalingType: formula.type };
@@ -111,12 +111,12 @@
 		<span class="panel-icon">⚙️</span>
 		Base Configuration
 	</h2>
-	
+
 	<div class="form-group">
 		<label for="baseAP" class="form-label">Base AP (Level 1):</label>
-		<input 
+		<input
 			id="baseAP"
-			type="number" 
+			type="number"
 			value={config.baseAP}
 			oninput={(e) => updateConfig({ baseAP: parseInt((e.target as HTMLInputElement).value) || 3 })}
 			min="1"
@@ -127,7 +127,7 @@
 
 	<div class="form-group">
 		<label for="scalingFormula" class="form-label">Scaling Formula:</label>
-		<select 
+		<select
 			id="scalingFormula"
 			value={config.scalingType}
 			onchange={updateFormula}
@@ -144,28 +144,32 @@
 	{#if selectedFormula.type === 'universal'}
 		<div class="universal-parameters">
 			<h3 class="subsection-title">Universal Progression Settings</h3>
-			
+
 			<div class="form-group">
 				<label for="softCapLevel" class="form-label">Soft Cap Level:</label>
-				<input 
+				<input
 					id="softCapLevel"
-					type="number" 
+					type="number"
 					value={config.softCapLevel}
-					oninput={(e) => updateConfig({ softCapLevel: parseInt((e.target as HTMLInputElement).value) || 50 })}
+					oninput={(e) =>
+						updateConfig({ softCapLevel: parseInt((e.target as HTMLInputElement).value) || 50 })}
 					min="10"
 					max="200"
 					class="form-input"
 				/>
-				<div class="form-hint">Level where all characters naturally reach soft cap (default: 50)</div>
+				<div class="form-hint">
+					Level where all characters naturally reach soft cap (default: 50)
+				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="softCapAP" class="form-label">Soft Cap AP:</label>
-				<input 
+				<input
 					id="softCapAP"
-					type="number" 
+					type="number"
 					value={config.softCapAP}
-					oninput={(e) => updateConfig({ softCapAP: parseInt((e.target as HTMLInputElement).value) || 8 })}
+					oninput={(e) =>
+						updateConfig({ softCapAP: parseInt((e.target as HTMLInputElement).value) || 8 })}
 					min="5"
 					max="20"
 					class="form-input"
@@ -175,48 +179,61 @@
 
 			<div class="dex-acceleration-config">
 				<h4 class="config-subtitle">Dexterity Acceleration</h4>
-				
+
 				<div class="form-group">
 					<label for="dexPerAP" class="form-label">Dex per Acceleration Level:</label>
-					<input 
+					<input
 						id="dexPerAP"
-						type="number" 
+						type="number"
 						value={config.dexPerAP}
-						oninput={(e) => updateConfig({ dexPerAP: parseInt((e.target as HTMLInputElement).value) || 10 })}
+						oninput={(e) =>
+							updateConfig({ dexPerAP: parseInt((e.target as HTMLInputElement).value) || 10 })}
 						min="5"
 						max="25"
 						class="form-input"
 					/>
-					<div class="form-hint">Dex needed to "advance" one level toward soft cap (default: 10)</div>
+					<div class="form-hint">
+						Dex needed to "advance" one level toward soft cap (default: 10)
+					</div>
 				</div>
 
 				<div class="form-group">
 					<label for="postSoftCapDexBase" class="form-label">Post-Soft-Cap Base Cost:</label>
-					<input 
+					<input
 						id="postSoftCapDexBase"
-						type="number" 
+						type="number"
 						value={config.postSoftCapDexBase}
-						oninput={(e) => updateConfig({ postSoftCapDexBase: parseInt((e.target as HTMLInputElement).value) || 50 })}
+						oninput={(e) =>
+							updateConfig({
+								postSoftCapDexBase: parseInt((e.target as HTMLInputElement).value) || 50
+							})}
 						min="20"
 						max="200"
 						class="form-input"
 					/>
-					<div class="form-hint">Initial dex cost for 9th AP (first post-soft-cap) (default: 50)</div>
+					<div class="form-hint">
+						Initial dex cost for 9th AP (first post-soft-cap) (default: 50)
+					</div>
 				</div>
 
 				<div class="form-group">
 					<label for="postSoftCapDexMultiplier" class="form-label">Post-Soft-Cap Multiplier:</label>
-					<input 
+					<input
 						id="postSoftCapDexMultiplier"
-						type="number" 
+						type="number"
 						value={config.postSoftCapDexMultiplier}
-						oninput={(e) => updateConfig({ postSoftCapDexMultiplier: parseFloat((e.target as HTMLInputElement).value) || 2.0 })}
+						oninput={(e) =>
+							updateConfig({
+								postSoftCapDexMultiplier: parseFloat((e.target as HTMLInputElement).value) || 2.0
+							})}
 						min="1.5"
 						max="5.0"
 						step="0.1"
 						class="form-input"
 					/>
-					<div class="form-hint">Cost multiplier for each additional post-soft-cap AP (default: 2.0)</div>
+					<div class="form-hint">
+						Cost multiplier for each additional post-soft-cap AP (default: 2.0)
+					</div>
 				</div>
 			</div>
 
@@ -235,11 +252,14 @@
 			{#if selectedFormula.type === 'linear'}
 				<div class="form-group">
 					<label for="linearMultiplier" class="form-label">Linear Multiplier:</label>
-					<input 
+					<input
 						id="linearMultiplier"
-						type="number" 
+						type="number"
 						value={config.linearMultiplier}
-						oninput={(e) => updateConfig({ linearMultiplier: parseFloat((e.target as HTMLInputElement).value) || 0.5 })}
+						oninput={(e) =>
+							updateConfig({
+								linearMultiplier: parseFloat((e.target as HTMLInputElement).value) || 0.5
+							})}
 						min="0.1"
 						max="5"
 						step="0.1"
@@ -250,11 +270,14 @@
 			{:else if selectedFormula.type === 'logarithmic'}
 				<div class="form-group">
 					<label for="logarithmicMultiplier" class="form-label">Logarithmic Multiplier:</label>
-					<input 
+					<input
 						id="logarithmicMultiplier"
-						type="number" 
+						type="number"
 						value={config.logarithmicMultiplier}
-						oninput={(e) => updateConfig({ logarithmicMultiplier: parseFloat((e.target as HTMLInputElement).value) || 2 })}
+						oninput={(e) =>
+							updateConfig({
+								logarithmicMultiplier: parseFloat((e.target as HTMLInputElement).value) || 2
+							})}
 						min="0.5"
 						max="10"
 						step="0.5"
@@ -265,11 +288,14 @@
 			{:else if selectedFormula.type === 'softCap'}
 				<div class="form-group">
 					<label for="softCapMultiplier" class="form-label">Soft Cap Multiplier:</label>
-					<input 
+					<input
 						id="softCapMultiplier"
-						type="number" 
+						type="number"
 						value={config.softCapMultiplier}
-						oninput={(e) => updateConfig({ softCapMultiplier: parseFloat((e.target as HTMLInputElement).value) || 1.5 })}
+						oninput={(e) =>
+							updateConfig({
+								softCapMultiplier: parseFloat((e.target as HTMLInputElement).value) || 1.5
+							})}
 						min="0.5"
 						max="5"
 						step="0.1"
@@ -280,11 +306,14 @@
 			{:else if selectedFormula.type === 'milestone'}
 				<div class="form-group">
 					<label for="milestoneInterval" class="form-label">Milestone Interval:</label>
-					<input 
+					<input
 						id="milestoneInterval"
-						type="number" 
+						type="number"
 						value={config.milestoneInterval}
-						oninput={(e) => updateConfig({ milestoneInterval: parseInt((e.target as HTMLInputElement).value) || 10 })}
+						oninput={(e) =>
+							updateConfig({
+								milestoneInterval: parseInt((e.target as HTMLInputElement).value) || 10
+							})}
 						min="1"
 						max="100"
 						step="1"
@@ -297,14 +326,15 @@
 			<!-- Legacy Dex Configuration -->
 			<div class="legacy-dex-config">
 				<h3 class="subsection-title">Legacy Dexterity Scaling:</h3>
-				
+
 				<div class="form-group">
 					<label for="legacyDexPerAP" class="form-label">Dex per AP:</label>
-					<input 
+					<input
 						id="legacyDexPerAP"
-						type="number" 
+						type="number"
 						value={config.dexPerAP}
-						oninput={(e) => updateConfig({ dexPerAP: parseInt((e.target as HTMLInputElement).value) || 10 })}
+						oninput={(e) =>
+							updateConfig({ dexPerAP: parseInt((e.target as HTMLInputElement).value) || 10 })}
 						min="1"
 						max="50"
 						step="1"
@@ -315,11 +345,14 @@
 
 				<div class="form-group">
 					<label for="dexDiminishingThreshold" class="form-label">Diminishing Threshold:</label>
-					<input 
+					<input
 						id="dexDiminishingThreshold"
-						type="number" 
+						type="number"
 						value={config.dexDiminishingThreshold}
-						oninput={(e) => updateConfig({ dexDiminishingThreshold: parseInt((e.target as HTMLInputElement).value) || 50 })}
+						oninput={(e) =>
+							updateConfig({
+								dexDiminishingThreshold: parseInt((e.target as HTMLInputElement).value) || 50
+							})}
 						min="10"
 						max="200"
 						step="10"
@@ -330,11 +363,14 @@
 
 				<div class="form-group">
 					<label for="dexDiminishingRatio" class="form-label">Diminishing Ratio:</label>
-					<input 
+					<input
 						id="dexDiminishingRatio"
-						type="number" 
+						type="number"
 						value={config.dexDiminishingRatio}
-						oninput={(e) => updateConfig({ dexDiminishingRatio: parseFloat((e.target as HTMLInputElement).value) || 2 })}
+						oninput={(e) =>
+							updateConfig({
+								dexDiminishingRatio: parseFloat((e.target as HTMLInputElement).value) || 2
+							})}
 						min="1.5"
 						max="5"
 						step="0.5"
@@ -347,7 +383,8 @@
 			<div class="preset-buttons">
 				<h4 class="preset-title">Legacy Formula Presets:</h4>
 				<div class="button-group">
-					<button onclick={setConservativeScaling} class="btn btn-preset-small">Conservative</button>
+					<button onclick={setConservativeScaling} class="btn btn-preset-small">Conservative</button
+					>
 					<button onclick={setBalancedScaling} class="btn btn-preset-small">Balanced</button>
 					<button onclick={setAggressiveScaling} class="btn btn-preset-small">Aggressive</button>
 				</div>
@@ -357,9 +394,9 @@
 
 	<div class="form-group">
 		<label for="chartMaxLevel" class="form-label">Chart Max Level:</label>
-		<input 
+		<input
 			id="chartMaxLevel"
-			type="number" 
+			type="number"
 			value={chartMaxLevel}
 			oninput={(e) => onChartMaxLevelChange(parseInt((e.target as HTMLInputElement).value) || 100)}
 			min="10"
@@ -460,7 +497,8 @@
 		transition: var(--transition-theme);
 	}
 
-	.form-input, .form-select {
+	.form-input,
+	.form-select {
 		width: 100%;
 		padding: 0.5rem 0.75rem;
 		background-color: var(--bg-primary);
@@ -472,7 +510,8 @@
 		transition: var(--transition-theme);
 	}
 
-	.form-input:focus, .form-select:focus {
+	.form-input:focus,
+	.form-select:focus {
 		outline: none;
 		border-color: var(--color-primary);
 		box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.1);

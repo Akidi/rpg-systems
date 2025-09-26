@@ -10,10 +10,10 @@ declare global {
 			meta?: {
 				title: string;
 				description: string;
-			}
+			};
 		}
 	} // interface Error {}
-} 
+}
 // interface PageState {}
 
 // interface Platform {}

@@ -15,15 +15,15 @@
 	function getNextPostSoftCapCost(): number {
 		const dexForSoftCap = Math.max(0, (config.softCapLevel - character.level) * config.dexPerAP);
 		const excessDex = Math.max(0, character.dexterity - dexForSoftCap);
-		
+
 		let currentCost = config.postSoftCapDexBase;
 		let usedDex = 0;
-		
+
 		while (usedDex + currentCost <= excessDex) {
 			usedDex += currentCost;
 			currentCost = Math.floor(currentCost * config.postSoftCapDexMultiplier);
 		}
-		
+
 		return dexForSoftCap + usedDex + currentCost;
 	}
 </script>
@@ -33,7 +33,7 @@
 		<span class="panel-icon">📊</span>
 		Current Character AP
 	</h2>
-	
+
 	<div class="ap-display">
 		<div class="ap-total">{result.totalAP} AP</div>
 		<div class="ap-formula">{result.formula}</div>
@@ -84,7 +84,9 @@
 				<div class="efficiency-section post-cap">
 					<div class="efficiency-label">Post-Soft-Cap Progression:</div>
 					<div class="efficiency-details">
-						<div>Next AP costs: <strong>{getNextPostSoftCapCost().toLocaleString()}</strong> total dex</div>
+						<div>
+							Next AP costs: <strong>{getNextPostSoftCapCost().toLocaleString()}</strong> total dex
+						</div>
 						<div>Each additional AP becomes exponentially more expensive</div>
 						<div class="cost-warning">⚠️ Extreme investment required for further gains</div>
 					</div>
@@ -93,10 +95,22 @@
 				<div class="efficiency-section pre-cap">
 					<div class="efficiency-label">Acceleration Status:</div>
 					<div class="efficiency-details">
-						<div>Acting like level <strong>{result.effectiveLevel}</strong> ({result.levelsAheadOfNatural} levels ahead)</div>
-						<div>Dex needed for early soft cap: <strong>{Math.max(0, (config.softCapLevel - character.level) * config.dexPerAP - character.dexterity).toLocaleString()}</strong> more</div>
+						<div>
+							Acting like level <strong>{result.effectiveLevel}</strong>
+							({result.levelsAheadOfNatural} levels ahead)
+						</div>
+						<div>
+							Dex needed for early soft cap: <strong
+								>{Math.max(
+									0,
+									(config.softCapLevel - character.level) * config.dexPerAP - character.dexterity
+								).toLocaleString()}</strong
+							> more
+						</div>
 						{#if result.levelsAheadOfNatural > 0}
-							<div class="acceleration-benefit">🚀 Dex investment paying off - ahead of natural progression!</div>
+							<div class="acceleration-benefit">
+								🚀 Dex investment paying off - ahead of natural progression!
+							</div>
 						{/if}
 					</div>
 				</div>
@@ -131,10 +145,25 @@
 			<h4 class="efficiency-title">Legacy System Analysis</h4>
 			<div class="efficiency-section">
 				<div class="efficiency-details">
-					<div>Dex efficiency: <strong>{(result.dexAcceleration / Math.max(1, character.dexterity) * 100).toFixed(2)}%</strong> AP per dex point</div>
-					<div>Next AP cost: <strong>{config.dexPerAP * (character.dexterity >= config.dexDiminishingThreshold ? config.dexDiminishingRatio : 1)}</strong> dex</div>
+					<div>
+						Dex efficiency: <strong
+							>{((result.dexAcceleration / Math.max(1, character.dexterity)) * 100).toFixed(
+								2
+							)}%</strong
+						> AP per dex point
+					</div>
+					<div>
+						Next AP cost: <strong
+							>{config.dexPerAP *
+								(character.dexterity >= config.dexDiminishingThreshold
+									? config.dexDiminishingRatio
+									: 1)}</strong
+						> dex
+					</div>
 					{#if character.dexterity >= config.dexDiminishingThreshold}
-						<div class="diminishing-warning">⚠️ Diminishing returns active - {config.dexDiminishingRatio}x cost</div>
+						<div class="diminishing-warning">
+							⚠️ Diminishing returns active - {config.dexDiminishingRatio}x cost
+						</div>
 					{/if}
 				</div>
 			</div>
@@ -336,7 +365,8 @@
 		margin-bottom: 0.25rem;
 	}
 
-	.cost-warning, .diminishing-warning {
+	.cost-warning,
+	.diminishing-warning {
 		color: var(--color-warning);
 		font-weight: 600;
 		margin-top: 0.5rem;
@@ -418,12 +448,12 @@
 		.ap-total {
 			font-size: 2.5rem;
 		}
-		
+
 		.status-indicator {
 			flex-direction: column;
 			gap: 0.25rem;
 		}
-		
+
 		.breakdown-item {
 			flex-direction: column;
 			align-items: flex-start;

@@ -1,6 +1,11 @@
 <!-- src/lib/components/APProgression/ProgressionChart.svelte -->
 <script lang="ts">
-	import type { APConfig, Character, ScalingFormula, ProgressionPoint } from '$lib/types/apProgression';
+	import type {
+		APConfig,
+		Character,
+		ScalingFormula,
+		ProgressionPoint
+	} from '$lib/types/apProgression';
 
 	interface Props {
 		progressionData: ProgressionPoint[];
@@ -18,8 +23,8 @@
 	}
 
 	// Calculate chart dimensions and scales
-	const maxAP = $derived(Math.max(...progressionData.map(d => d.ap)));
-	const minAP = $derived(Math.min(...progressionData.map(d => d.ap)));
+	const maxAP = $derived(Math.max(...progressionData.map((d) => d.ap)));
+	const minAP = $derived(Math.min(...progressionData.map((d) => d.ap)));
 
 	// Sample data points for table (every ~20th point)
 	const sampleData = $derived(
@@ -27,7 +32,10 @@
 	);
 
 	// Calculate growth rates
-	function getGrowthRate(currentPoint: ProgressionPoint, prevPoint: ProgressionPoint | null): string {
+	function getGrowthRate(
+		currentPoint: ProgressionPoint,
+		prevPoint: ProgressionPoint | null
+	): string {
 		if (!prevPoint) return '-';
 		const growthRate = ((currentPoint.ap - prevPoint.ap) / prevPoint.ap) * 100;
 		return growthRate > 0 ? `+${growthRate.toFixed(1)}%` : '-';
@@ -44,7 +52,8 @@
 		</p>
 		{#if selectedFormula.type === 'universal'}
 			<div class="universal-note">
-				<strong>Universal System:</strong> All characters reach {config.softCapAP} AP naturally at level {config.softCapLevel}
+				<strong>Universal System:</strong> All characters reach {config.softCapAP} AP naturally at level
+				{config.softCapLevel}
 			</div>
 		{/if}
 	</div>
@@ -61,8 +70,8 @@
 			{#each progressionData as point, index}
 				{@const height = (point.ap / maxAP) * 100}
 				{@const left = (index / (progressionData.length - 1)) * 100}
-				
-				<div 
+
+				<div
 					class="chart-point"
 					style="left: {left}%; bottom: {height}%"
 					title="Level {point.level}: {point.ap} AP"
@@ -77,18 +86,20 @@
 					fill="none"
 					stroke="var(--color-primary)"
 					stroke-width="0.5"
-					points={progressionData.map((point, index) => {
-						const x = (index / (progressionData.length - 1)) * 100;
-						const y = 100 - (point.ap / maxAP) * 100;
-						return `${x},${y}`;
-					}).join(' ')}
+					points={progressionData
+						.map((point, index) => {
+							const x = (index / (progressionData.length - 1)) * 100;
+							const y = 100 - (point.ap / maxAP) * 100;
+							return `${x},${y}`;
+						})
+						.join(' ')}
 				/>
 			</svg>
 
 			<!-- Soft cap indicator line for universal system -->
 			{#if selectedFormula.type === 'universal' && chartMaxLevel >= config.softCapLevel}
 				{@const softCapX = ((config.softCapLevel - 1) / (chartMaxLevel - 1)) * 100}
-				<div 
+				<div
 					class="soft-cap-line"
 					style="left: {softCapX}%"
 					title="Soft cap reached at level {config.softCapLevel}"
@@ -138,9 +149,11 @@
 			{@const prevPoint = index > 0 ? sampleData[index - 1] : null}
 			<div class="table-row">
 				<div class="table-cell">{formatNumber(point.level)}</div>
-				<div class="table-cell ap-value">{point.ap}</div>
+				<div class="ap-value table-cell">{point.ap}</div>
 				{#if selectedFormula.type === 'universal'}
-					<div class="table-cell">+{point.breakdown.naturalLevelBonus + point.breakdown.dexAcceleration}</div>
+					<div class="table-cell">
+						+{point.breakdown.naturalLevelBonus + point.breakdown.dexAcceleration}
+					</div>
 					<div class="table-cell">+{point.breakdown.postSoftCapBonus}</div>
 				{:else}
 					<div class="table-cell">+{point.breakdown.naturalLevelBonus}</div>
@@ -423,8 +436,8 @@
 			gap: 2px;
 		}
 
-		.table-header .table-cell:nth-child(n+3),
-		.table-row .table-cell:nth-child(n+3) {
+		.table-header .table-cell:nth-child(n + 3),
+		.table-row .table-cell:nth-child(n + 3) {
 			display: none;
 		}
 	}
@@ -456,8 +469,8 @@
 			grid-template-columns: 1fr;
 		}
 
-		.table-header .table-cell:nth-child(n+2),
-		.table-row .table-cell:nth-child(n+2) {
+		.table-header .table-cell:nth-child(n + 2),
+		.table-row .table-cell:nth-child(n + 2) {
 			display: none;
 		}
 	}

@@ -1,6 +1,10 @@
 <!-- src/lib/components/APProgression/ExamplesGrid.svelte -->
 <script lang="ts">
-	import { calculateTotalAP, type APConfig, type ScalingFormula } from '$lib/types/apProgression.js';
+	import {
+		calculateTotalAP,
+		type APConfig,
+		type ScalingFormula
+	} from '$lib/types/apProgression.js';
 
 	interface Props {
 		config: APConfig;
@@ -11,18 +15,18 @@
 
 	// Example scenarios for universal system
 	const scenarios = [
-		{ level: 10, dex: 0, name: "No Dex Investment", description: "Pure natural progression" },
-		{ level: 10, dex: 50, name: "Heavy Dex Investment", description: "Early game dex focus" },
-		{ level: 25, dex: 0, name: "Mid-Game Natural", description: "Halfway to soft cap" },
-		{ level: 25, dex: 100, name: "Mid-Game with Dex", description: "Accelerated progression" },
-		{ level: 50, dex: 0, name: "Soft Cap Natural", description: "Universal baseline reached" },
-		{ level: 50, dex: 150, name: "Soft Cap + Post-Cap Push", description: "Beyond natural limits" },
-		{ level: 100, dex: 500, name: "Endgame Whale", description: "Maximum investment build" }
+		{ level: 10, dex: 0, name: 'No Dex Investment', description: 'Pure natural progression' },
+		{ level: 10, dex: 50, name: 'Heavy Dex Investment', description: 'Early game dex focus' },
+		{ level: 25, dex: 0, name: 'Mid-Game Natural', description: 'Halfway to soft cap' },
+		{ level: 25, dex: 100, name: 'Mid-Game with Dex', description: 'Accelerated progression' },
+		{ level: 50, dex: 0, name: 'Soft Cap Natural', description: 'Universal baseline reached' },
+		{ level: 50, dex: 150, name: 'Soft Cap + Post-Cap Push', description: 'Beyond natural limits' },
+		{ level: 100, dex: 500, name: 'Endgame Whale', description: 'Maximum investment build' }
 	];
 
 	// Calculate results for each scenario
 	const scenarioResults = $derived.by(() => {
-		return scenarios.map(scenario => {
+		return scenarios.map((scenario) => {
 			const testChar = { level: scenario.level, dexterity: scenario.dex, ascensions: 0 };
 			const result = calculateTotalAP(testChar, config, selectedFormula);
 			return {
@@ -41,7 +45,7 @@
 	<p class="section-description">
 		See how different character builds perform under the universal AP progression system
 	</p>
-	
+
 	<div class="examples-grid">
 		{#each scenarioResults as scenario}
 			<div class="example-card">
@@ -49,7 +53,7 @@
 					<h3 class="card-title">{scenario.name}</h3>
 					<p class="card-description">{scenario.description}</p>
 				</div>
-				
+
 				<div class="card-stats">
 					<div class="stat-item">
 						<span class="stat-label">Level:</span>
@@ -60,14 +64,14 @@
 						<span class="stat-value">{scenario.dex}</span>
 					</div>
 				</div>
-				
+
 				<div class="card-result">
 					<div class="ap-display">
 						<span class="ap-value">{scenario.result.totalAP}</span>
 						<span class="ap-label">AP</span>
 					</div>
 				</div>
-				
+
 				<div class="card-status">
 					{#if scenario.result.reachedSoftCap}
 						<div class="status-badge reached">
@@ -94,7 +98,7 @@
 			</div>
 		{/each}
 	</div>
-	
+
 	<!-- Key Insights -->
 	<div class="insights-section">
 		<h3 class="insights-title">Key Insights</h3>
@@ -104,27 +108,30 @@
 				<div class="insight-content">
 					<h4 class="insight-title">Build Flexibility</h4>
 					<p class="insight-text">
-						Zero dex builds reach {config.softCapAP} AP naturally, while dex investment provides acceleration or post-cap scaling
+						Zero dex builds reach {config.softCapAP} AP naturally, while dex investment provides acceleration
+						or post-cap scaling
 					</p>
 				</div>
 			</div>
-			
+
 			<div class="insight-card">
 				<div class="insight-icon">⚡</div>
 				<div class="insight-content">
 					<h4 class="insight-title">Early vs Late Investment</h4>
 					<p class="insight-text">
-						Early dex investment accelerates progression to soft cap, late investment enables transcendent power levels
+						Early dex investment accelerates progression to soft cap, late investment enables
+						transcendent power levels
 					</p>
 				</div>
 			</div>
-			
+
 			<div class="insight-card">
 				<div class="insight-icon">🔄</div>
 				<div class="insight-content">
 					<h4 class="insight-title">Ascension Synergy</h4>
 					<p class="insight-text">
-						Multiple ascensions make extreme dex investments more viable through accumulated stat bonuses
+						Multiple ascensions make extreme dex investments more viable through accumulated stat
+						bonuses
 					</p>
 				</div>
 			</div>

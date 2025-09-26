@@ -97,20 +97,22 @@ class EventSystem<TEvents extends { [K in keyof TEvents]: unknown }> {
 		const eventCounts: Record<string, number> = {};
 		let totalListeners = 0;
 
-		(Object.keys(this.listeners) as Array<keyof TEvents>).forEach(eventName => {
-      const listeners = this.listeners[eventName];
-      if (listeners) {
-        const count = listeners.size;
-        eventCounts[String(eventName)] = count;
-        totalListeners += count;
-      }
-    });
+		(Object.keys(this.listeners) as Array<keyof TEvents>).forEach((eventName) => {
+			const listeners = this.listeners[eventName];
+			if (listeners) {
+				const count = listeners.size;
+				eventCounts[String(eventName)] = count;
+				totalListeners += count;
+			}
+		});
 
-		console.table([{
-			'Total Events': Object.keys(this.listeners).length,
-			'Total Listeners': totalListeners,
-			'Events with Listeners': Object.keys(eventCounts).length
-		}]);
+		console.table([
+			{
+				'Total Events': Object.keys(this.listeners).length,
+				'Total Listeners': totalListeners,
+				'Events with Listeners': Object.keys(eventCounts).length
+			}
+		]);
 
 		if (Object.keys(eventCounts).length > 0) {
 			console.table([eventCounts]);

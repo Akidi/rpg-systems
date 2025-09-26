@@ -1,6 +1,11 @@
 <!-- src/lib/components/FormulaSystem/FormulaCalculator.svelte -->
 <script lang="ts">
-	import type { CharacterStats, DerivedStats, FormulaSet, CharacterBuild } from '$lib/types/formulaPlanner.js';
+	import type {
+		CharacterStats,
+		DerivedStats,
+		FormulaSet,
+		CharacterBuild
+	} from '$lib/types/formulaPlanner.js';
 	import BuildSelector from './BuildSelector.svelte';
 	import StatInput from './StatInput.svelte';
 	import FormulaRow from './FormulaRow.svelte';
@@ -17,7 +22,14 @@
 		onStatUpdate: (statName: keyof CharacterStats, value: number) => void;
 	}
 
-	let { currentFormulas, selectedBuild, derivedStats, onFormulaUpdate, onBuildLoad, onStatUpdate }: Props = $props();
+	let {
+		currentFormulas,
+		selectedBuild,
+		derivedStats,
+		onFormulaUpdate,
+		onBuildLoad,
+		onStatUpdate
+	}: Props = $props();
 
 	// Custom distribution modal state
 	let showCustomModal = $state(false);
@@ -28,8 +40,15 @@
 	}
 
 	function getUsedStatPoints(stats: CharacterStats): number {
-		return (stats.strength - 5) + (stats.dexterity - 5) + (stats.intelligence - 5) + 
-		       (stats.constitution - 5) + (stats.wisdom - 5) + (stats.charisma - 5);
+		return (
+			stats.strength -
+			5 +
+			(stats.dexterity - 5) +
+			(stats.intelligence - 5) +
+			(stats.constitution - 5) +
+			(stats.wisdom - 5) +
+			(stats.charisma - 5)
+		);
 	}
 
 	function getAvailablePoints(stats: CharacterStats): number {
@@ -53,9 +72,9 @@
 	function distributeStatsByClass(level: number, classType: ClassType): CharacterStats {
 		const totalPoints = getTotalStatPoints(level);
 		const distribution = classDistributions[classType];
-		
+
 		const statNames: (keyof typeof distribution)[] = ['STR', 'DEX', 'INT', 'CON', 'WIS', 'CHA'];
-		const exactAllocations = statNames.map(stat => ({
+		const exactAllocations = statNames.map((stat) => ({
 			stat,
 			exact: (totalPoints * distribution[stat]) / 100,
 			whole: Math.floor((totalPoints * distribution[stat]) / 100),
@@ -72,7 +91,7 @@
 		}
 
 		const finalStats: Record<string, number> = {};
-		exactAllocations.forEach(alloc => {
+		exactAllocations.forEach((alloc) => {
 			const statKey = alloc.stat.toLowerCase();
 			finalStats[statKey] = 5 + alloc.whole;
 		});
@@ -88,11 +107,14 @@
 		};
 	}
 
-	function distributeStatsByCustom(level: number, distribution: Record<string, number>): CharacterStats {
+	function distributeStatsByCustom(
+		level: number,
+		distribution: Record<string, number>
+	): CharacterStats {
 		const totalPoints = getTotalStatPoints(level);
-		
+
 		const statNames: string[] = ['STR', 'DEX', 'INT', 'CON', 'WIS', 'CHA'];
-		const exactAllocations = statNames.map(stat => ({
+		const exactAllocations = statNames.map((stat) => ({
 			stat,
 			exact: (totalPoints * distribution[stat]) / 100,
 			whole: Math.floor((totalPoints * distribution[stat]) / 100),
@@ -109,7 +131,7 @@
 		}
 
 		const finalStats: Record<string, number> = {};
-		exactAllocations.forEach(alloc => {
+		exactAllocations.forEach((alloc) => {
 			const statKey = alloc.stat.toLowerCase();
 			finalStats[statKey] = 5 + alloc.whole;
 		});
@@ -125,7 +147,18 @@
 		};
 	}
 
-	function handleClassBuild(classType: 'balanced' | 'warrior' | 'mage' | 'rogue' | 'ranger' | 'paladin' | 'assassin' | 'necromancer' | 'custom') {
+	function handleClassBuild(
+		classType:
+			| 'balanced'
+			| 'warrior'
+			| 'mage'
+			| 'rogue'
+			| 'ranger'
+			| 'paladin'
+			| 'assassin'
+			| 'necromancer'
+			| 'custom'
+	) {
 		if (classType === 'custom') {
 			showCustomModal = true;
 			return;
@@ -161,7 +194,7 @@
 			const currentValue = selectedBuild.stats[statName];
 			const pointDifference = newValue - currentValue;
 			const availablePoints = getAvailablePoints(selectedBuild.stats);
-			
+
 			if (newValue >= 5 && (pointDifference <= availablePoints || pointDifference < 0)) {
 				onStatUpdate(statName, newValue);
 			}
@@ -179,7 +212,14 @@
 		const maxPerStat = Math.floor(availablePoints / 6);
 		const remainder = availablePoints % 6;
 
-		const stats: (keyof CharacterStats)[] = ['strength', 'dexterity', 'intelligence', 'constitution', 'wisdom', 'charisma'];
+		const stats: (keyof CharacterStats)[] = [
+			'strength',
+			'dexterity',
+			'intelligence',
+			'constitution',
+			'wisdom',
+			'charisma'
+		];
 		stats.forEach((stat, index) => {
 			const extraPoint = index < remainder ? 1 : 0;
 			onStatUpdate(stat, 5 + maxPerStat + extraPoint);
@@ -187,20 +227,23 @@
 	}
 
 	function copyFormula(formula: string) {
-		navigator.clipboard.writeText(formula).then(() => {
-			// Could add toast notification here
-		}).catch(() => {
-			try {
-				const textArea = document.createElement('textarea');
-				textArea.value = formula;
-				document.body.appendChild(textArea);
-				textArea.select();
-				document.execCommand('copy');
-				document.body.removeChild(textArea);
-			} catch (err) {
-				console.warn('Failed to copy formula');
-			}
-		});
+		navigator.clipboard
+			.writeText(formula)
+			.then(() => {
+				// Could add toast notification here
+			})
+			.catch(() => {
+				try {
+					const textArea = document.createElement('textarea');
+					textArea.value = formula;
+					document.body.appendChild(textArea);
+					textArea.select();
+					document.execCommand('copy');
+					document.body.removeChild(textArea);
+				} catch (err) {
+					console.warn('Failed to copy formula');
+				}
+			});
 	}
 </script>
 
@@ -208,7 +251,7 @@
 <CustomDistributionModal
 	isOpen={showCustomModal}
 	currentLevel={selectedBuild.stats.level}
-	onClose={() => showCustomModal = false}
+	onClose={() => (showCustomModal = false)}
 	onApply={handleCustomDistribution}
 />
 
@@ -225,14 +268,16 @@
 				<code class="info-code">pow(), sqrt(), log(), min(), max(), floor(), ceil(), round()</code>
 			</div>
 		</div>
-		
+
 		<div class="points-tracker">
 			<div class="points-display">
 				<span class="points-used">{getUsedStatPoints(selectedBuild.stats)}</span>
 				<span class="points-separator">/</span>
 				<span class="points-total">{getTotalStatPoints(selectedBuild.stats.level)}</span>
 			</div>
-			<div class="points-label {getAvailablePoints(selectedBuild.stats) < 0 ? 'over-allocated' : ''}">
+			<div
+				class="points-label {getAvailablePoints(selectedBuild.stats) < 0 ? 'over-allocated' : ''}"
+			>
 				{getAvailablePoints(selectedBuild.stats)} remaining
 			</div>
 		</div>
@@ -244,12 +289,12 @@
 		<div class="setup-panel">
 			<div class="panel-section">
 				<h2 class="section-title">Character Setup</h2>
-				
+
 				<BuildSelector
 					selectedDistribution={selectedBuild.statDistribution}
 					currentLevel={selectedBuild.stats.level}
 					onClassBuild={handleClassBuild}
-					onCustomDistribution={() => showCustomModal = true}
+					onCustomDistribution={() => (showCustomModal = true)}
 				/>
 
 				<div class="stat-controls">
@@ -260,15 +305,64 @@
 							<button class="quick-btn secondary" onclick={maxAllStats}>Max All</button>
 						</div>
 					</div>
-					
+
 					<div class="stats-grid">
-						<StatInput statName="level" value={selectedBuild.stats.level} min={1} max={1000} label="Level" onStatUpdate={handleStatChange} />
-						<StatInput statName="strength" value={selectedBuild.stats.strength} min={5} max={999} label="STR" onStatUpdate={handleStatChange} />
-						<StatInput statName="dexterity" value={selectedBuild.stats.dexterity} min={5} max={999} label="DEX" onStatUpdate={handleStatChange} />
-						<StatInput statName="intelligence" value={selectedBuild.stats.intelligence} min={5} max={999} label="INT" onStatUpdate={handleStatChange} />
-						<StatInput statName="constitution" value={selectedBuild.stats.constitution} min={5} max={999} label="CON" onStatUpdate={handleStatChange} />
-						<StatInput statName="wisdom" value={selectedBuild.stats.wisdom} min={5} max={999} label="WIS" onStatUpdate={handleStatChange} />
-						<StatInput statName="charisma" value={selectedBuild.stats.charisma} min={5} max={999} label="CHA" onStatUpdate={handleStatChange} />
+						<StatInput
+							statName="level"
+							value={selectedBuild.stats.level}
+							min={1}
+							max={1000}
+							label="Level"
+							onStatUpdate={handleStatChange}
+						/>
+						<StatInput
+							statName="strength"
+							value={selectedBuild.stats.strength}
+							min={5}
+							max={999}
+							label="STR"
+							onStatUpdate={handleStatChange}
+						/>
+						<StatInput
+							statName="dexterity"
+							value={selectedBuild.stats.dexterity}
+							min={5}
+							max={999}
+							label="DEX"
+							onStatUpdate={handleStatChange}
+						/>
+						<StatInput
+							statName="intelligence"
+							value={selectedBuild.stats.intelligence}
+							min={5}
+							max={999}
+							label="INT"
+							onStatUpdate={handleStatChange}
+						/>
+						<StatInput
+							statName="constitution"
+							value={selectedBuild.stats.constitution}
+							min={5}
+							max={999}
+							label="CON"
+							onStatUpdate={handleStatChange}
+						/>
+						<StatInput
+							statName="wisdom"
+							value={selectedBuild.stats.wisdom}
+							min={5}
+							max={999}
+							label="WIS"
+							onStatUpdate={handleStatChange}
+						/>
+						<StatInput
+							statName="charisma"
+							value={selectedBuild.stats.charisma}
+							min={5}
+							max={999}
+							label="CHA"
+							onStatUpdate={handleStatChange}
+						/>
 					</div>
 				</div>
 
@@ -280,7 +374,7 @@
 		<div class="formula-panel">
 			<div class="panel-section">
 				<h2 class="section-title">Formula Editor</h2>
-				
+
 				<div class="formula-sections">
 					<div class="formula-group">
 						<h3 class="group-title">Core Stats</h3>

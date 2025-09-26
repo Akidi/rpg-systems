@@ -77,29 +77,29 @@ export const TURN_PATTERNS: Record<string, TurnPattern> = {
 			{ type: 'manual_end', apCost: 0, description: 'End Turn' }
 		]
 	},
-	
+
 	balanced: {
 		name: 'Balanced',
 		description: 'Attacks then enhanced skill (auto-ends turn)',
 		actions: [
 			{ type: 'physical_attack', apCost: 1, description: 'Physical Attack (1 AP)' },
 			{ type: 'physical_attack', apCost: 1, description: 'Physical Attack (1 AP)' },
-			{ 
-				type: 'enhancement', 
-				apCost: 2, 
+			{
+				type: 'enhancement',
+				apCost: 2,
 				description: 'Enhanced Skill (1 + 1 AP, 1 enhancement)',
 				enhancements: [{ name: 'Basic Enhancement', apCost: 1, description: 'Basic boost' }]
 			}
 		]
 	},
-	
+
 	aggressive: {
 		name: 'Aggressive',
 		description: 'Enhanced skill immediately (auto-ends turn)',
 		actions: [
-			{ 
-				type: 'enhancement', 
-				apCost: 4, 
+			{
+				type: 'enhancement',
+				apCost: 4,
 				description: 'Enhanced Skill (1 + 3 AP, 2 enhancements)',
 				enhancements: [
 					{ name: 'Basic Enhancement', apCost: 1, description: 'Basic boost' },

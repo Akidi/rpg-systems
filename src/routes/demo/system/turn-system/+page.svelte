@@ -1,6 +1,11 @@
 <!-- src/routes/ap-recovery/+page.svelte -->
 <script lang="ts">
-	import type { Character, TurnPattern, APRecoveryConfig, SimulationResult } from '$lib/types/turnSystem.js';
+	import type {
+		Character,
+		TurnPattern,
+		APRecoveryConfig,
+		SimulationResult
+	} from '$lib/types/turnSystem.js';
 	import { DEFAULT_CONFIG, TURN_PATTERNS } from '$lib/types/turnSystem.js';
 	import { simulateMultipleTurns } from '$lib/calculations/turnSystem.js';
 	import { calculateTotalAP, SCALING_FORMULAS, type APConfig } from '$lib/types/apProgression.js';
@@ -81,26 +86,34 @@
 	// Sustainability color
 	const sustainabilityColor = $derived(() => {
 		switch (simulationResult.sustainabilityRating) {
-			case 'excellent': return '#10b981';
-			case 'good': return '#3b82f6';
-			case 'fair': return '#f59e0b';
-			case 'poor': return '#ef4444';
-			default: return '#6b7280';
+			case 'excellent':
+				return 'var(--color-success)';
+			case 'good':
+				return 'var(--color-primary)';
+			case 'fair':
+				return 'var(--color-warning)';
+			case 'poor':
+				return 'var(--color-error)';
+			default:
+				return 'var(--text-muted)';
 		}
 	});
 </script>
 
 <svelte:head>
 	<title>Turn-Based AP Recovery Calculator</title>
-	<meta name="description" content="Analyze turn-based AP recovery patterns with multiple actions per turn" />
+	<meta
+		name="description"
+		content="Analyze turn-based AP recovery patterns with multiple actions per turn"
+	/>
 </svelte:head>
 
 <div class="container">
 	<header class="page-header">
 		<h1>Turn-Based AP Recovery Calculator</h1>
 		<p class="subtitle">
-			Design and test turn patterns with multiple actions. 
-			See how different strategies affect AP sustainability over time.
+			Design and test turn patterns with multiple actions. See how different strategies affect AP
+			sustainability over time.
 		</p>
 	</header>
 
@@ -109,12 +122,12 @@
 		<aside class="sidebar">
 			<div class="config-section">
 				<h2>Character Setup</h2>
-				
+
 				<div class="form-group">
 					<label for="level" class="form-label">Level:</label>
-					<input 
+					<input
 						id="level"
-						type="number" 
+						type="number"
 						bind:value={character.level}
 						min="1"
 						max="1000"
@@ -124,9 +137,9 @@
 
 				<div class="form-group">
 					<label for="dexterity" class="form-label">Dexterity:</label>
-					<input 
+					<input
 						id="dexterity"
-						type="number" 
+						type="number"
 						bind:value={character.dexterity}
 						min="0"
 						max="1000"
@@ -136,9 +149,9 @@
 
 				<div class="form-group">
 					<label for="ascensions" class="form-label">Ascensions:</label>
-					<input 
+					<input
 						id="ascensions"
-						type="number" 
+						type="number"
 						bind:value={character.ascensions}
 						min="0"
 						max="100"
@@ -154,12 +167,12 @@
 
 			<div class="config-section">
 				<h3>Recovery Settings</h3>
-				
+
 				<div class="form-group">
 					<label for="fullRecovery" class="form-label">Full Recovery Rate:</label>
-					<input 
+					<input
 						id="fullRecovery"
-						type="number" 
+						type="number"
 						bind:value={recoveryConfig.fullRecoveryRate}
 						min="0.1"
 						max="1.0"
@@ -171,9 +184,9 @@
 
 				<div class="form-group">
 					<label for="minPartial" class="form-label">Min Partial Recovery:</label>
-					<input 
+					<input
 						id="minPartial"
-						type="number" 
+						type="number"
 						bind:value={recoveryConfig.minPartialRecovery}
 						min="0.1"
 						max="1.0"
@@ -185,9 +198,9 @@
 
 				<div class="form-group">
 					<label for="maxPartial" class="form-label">Max Partial Recovery:</label>
-					<input 
+					<input
 						id="maxPartial"
-						type="number" 
+						type="number"
 						bind:value={recoveryConfig.maxPartialRecovery}
 						min="0.1"
 						max="1.0"
@@ -200,12 +213,12 @@
 
 			<div class="config-section">
 				<h3>Simulation</h3>
-				
+
 				<div class="form-group">
 					<label for="numTurns" class="form-label">Number of Turns:</label>
-					<input 
+					<input
 						id="numTurns"
-						type="number" 
+						type="number"
 						bind:value={numTurns}
 						min="3"
 						max="20"
@@ -215,11 +228,7 @@
 
 				<div class="form-group checkbox-group">
 					<label class="checkbox-label">
-						<input 
-							type="checkbox" 
-							bind:checked={showDetailedTurns}
-							class="checkbox"
-						/>
+						<input type="checkbox" bind:checked={showDetailedTurns} class="checkbox" />
 						Show detailed turns
 					</label>
 				</div>
@@ -229,12 +238,8 @@
 					<button class="btn-preset" onclick={() => loadPattern('conservative')}>
 						Conservative
 					</button>
-					<button class="btn-preset" onclick={() => loadPattern('balanced')}>
-						Balanced
-					</button>
-					<button class="btn-preset" onclick={() => loadPattern('aggressive')}>
-						Aggressive
-					</button>
+					<button class="btn-preset" onclick={() => loadPattern('balanced')}> Balanced </button>
+					<button class="btn-preset" onclick={() => loadPattern('aggressive')}> Aggressive </button>
 				</div>
 			</div>
 		</aside>
@@ -244,11 +249,7 @@
 			<!-- Turn Pattern Builder -->
 			<section class="pattern-section">
 				<h2>Turn Pattern Builder</h2>
-				<TurnBuilder 
-					pattern={currentPattern}
-					maxAP={maxAP}
-					onPatternChange={updatePattern}
-				/>
+				<TurnBuilder pattern={currentPattern} {maxAP} onPatternChange={updatePattern} />
 			</section>
 
 			<!-- Simulation Results -->
@@ -270,7 +271,9 @@
 						<div class="stat-label">Total Turns</div>
 					</div>
 					<div class="stat-card">
-						<div class="stat-value">{((simulationResult.averageAPPerTurn / maxAP) * 100).toFixed(0)}%</div>
+						<div class="stat-value">
+							{((simulationResult.averageAPPerTurn / maxAP) * 100).toFixed(0)}%
+						</div>
 						<div class="stat-label">Efficiency</div>
 					</div>
 				</div>
@@ -279,24 +282,25 @@
 					<div class="turns-container">
 						<h3>Turn by Turn Results</h3>
 						{#each simulationResult.turns as turn, index}
-							<TurnDisplay 
-								turn={turn}
-								turnNumber={index + 1}
-								maxAP={maxAP}
-							/>
+							<TurnDisplay {turn} turnNumber={index + 1} {maxAP} />
 						{/each}
 					</div>
 				{:else}
 					<div class="summary-only">
 						<h3>Summary</h3>
 						<p>
-							Your <strong>{currentPattern.name}</strong> pattern averages 
-							<strong>{simulationResult.averageAPPerTurn.toFixed(1)} AP per turn</strong> 
-							with <strong style="color: {sustainabilityColor()}">{simulationResult.sustainabilityRating}</strong> 
+							Your <strong>{currentPattern.name}</strong> pattern averages
+							<strong>{simulationResult.averageAPPerTurn.toFixed(1)} AP per turn</strong>
+							with
+							<strong style="color: {sustainabilityColor()}"
+								>{simulationResult.sustainabilityRating}</strong
+							>
 							sustainability.
 						</p>
 						<p>
-							This represents <strong>{((simulationResult.averageAPPerTurn / maxAP) * 100).toFixed(0)}%</strong> 
+							This represents <strong
+								>{((simulationResult.averageAPPerTurn / maxAP) * 100).toFixed(0)}%</strong
+							>
 							efficiency of your maximum AP pool.
 						</p>
 					</div>
@@ -309,15 +313,18 @@
 <style>
 	.container {
 		min-height: 100vh;
-		background-color: #f8fafc;
-		font-family: system-ui, sans-serif;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
 	.page-header {
 		text-align: center;
 		padding: 24px 16px;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
+		background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+		color: var(--text-inverse);
+		box-shadow: 0 12px 32px var(--shadow-medium);
+		border-bottom: 1px solid var(--border-primary);
 	}
 
 	.page-header h1 {
@@ -327,12 +334,11 @@
 	}
 
 	.subtitle {
-		margin: 0;
+		margin: 0 auto;
 		font-size: clamp(14px, 3vw, 16px);
-		opacity: 0.9;
 		line-height: 1.5;
 		max-width: 600px;
-		margin: 0 auto;
+		opacity: 0.9;
 	}
 
 	.layout {
@@ -345,30 +351,37 @@
 	}
 
 	.sidebar {
-		background: white;
-		border-bottom: 1px solid #e5e7eb;
+		background: var(--bg-secondary);
+		border-bottom: 1px solid var(--border-primary);
 		order: 2;
+		box-shadow: 0 12px 24px var(--shadow-light);
 	}
 
 	.main-content {
 		padding: 16px;
 		order: 1;
+		transition: var(--transition-theme);
 	}
 
 	.config-section {
 		padding: 16px;
-		border-bottom: 1px solid #f3f4f6;
+		border-bottom: 1px solid var(--border-primary);
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		transition: var(--transition-theme);
 	}
 
 	.config-section:last-child {
 		border-bottom: none;
 	}
 
-	.config-section h2, .config-section h3 {
-		margin: 0 0 12px 0;
+	.config-section h2,
+	.config-section h3 {
+		margin: 0;
 		font-size: 18px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.config-section h3 {
@@ -376,82 +389,90 @@
 	}
 
 	.form-group {
-		margin-bottom: 12px;
+		margin-bottom: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	.form-label {
 		display: block;
 		font-size: 14px;
 		font-weight: 500;
-		margin-bottom: 4px;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.form-input {
 		width: 100%;
 		padding: 8px 12px;
-		border: 1px solid #d1d5db;
-		border-radius: 6px;
+		border: 1px solid var(--border-secondary);
+		border-radius: 8px;
 		font-size: 14px;
 		box-sizing: border-box;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
 	.form-input:focus {
 		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 20%, transparent);
 	}
 
 	.form-hint {
 		font-size: 12px;
-		color: #6b7280;
-		margin-top: 2px;
+		color: var(--text-secondary);
 	}
 
 	.checkbox-group {
-		margin-bottom: 16px;
+		margin-bottom: 4px;
 	}
 
 	.checkbox-label {
 		display: flex;
 		align-items: center;
 		font-size: 14px;
-		color: #374151;
-		cursor: pointer;
+		color: var(--text-primary);
+		gap: 8px;
 	}
 
 	.checkbox {
-		margin-right: 8px;
 		width: 16px;
 		height: 16px;
+		accent-color: var(--color-primary);
 	}
 
 	.ap-display {
 		text-align: center;
 		margin: 16px 0;
 		padding: 16px;
-		background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-		border-radius: 8px;
-		border: 1px solid #bfdbfe;
+		background: linear-gradient(
+			135deg,
+			color-mix(in oklab, var(--bg-secondary) 85%, var(--color-primary) 15%) 0%,
+			color-mix(in oklab, var(--bg-secondary) 70%, var(--color-primary) 30%) 100%
+		);
+		border-radius: 12px;
+		border: 1px solid color-mix(in oklab, var(--border-primary) 60%, var(--color-primary) 40%);
+		box-shadow: 0 8px 24px var(--shadow-light);
 	}
 
 	.ap-value {
 		font-size: 28px;
 		font-weight: 700;
-		color: #3b82f6;
-		margin-bottom: 4px;
+		color: var(--color-primary);
 	}
 
 	.ap-label {
 		font-size: 14px;
-		color: #6b7280;
+		color: var(--text-secondary);
 	}
 
 	.preset-patterns h4 {
 		font-size: 14px;
 		font-weight: 600;
 		margin: 0 0 8px 0;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.btn-preset {
@@ -459,46 +480,52 @@
 		width: 100%;
 		margin-bottom: 6px;
 		padding: 8px 12px;
-		background-color: #f9fafb;
-		border: 1px solid #e5e7eb;
-		border-radius: 6px;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-primary);
+		border-radius: 8px;
 		cursor: pointer;
 		font-size: 13px;
-		color: #374151;
-		transition: all 0.2s;
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
 	.btn-preset:hover {
-		background-color: #f3f4f6;
-		border-color: #d1d5db;
+		background-color: color-mix(in oklab, var(--bg-tertiary) 70%, var(--color-primary) 30%);
+		border-color: var(--color-primary);
 	}
 
-	.pattern-section, .results-section {
+	.pattern-section,
+	.results-section {
 		margin-bottom: 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
 	}
 
-	.pattern-section h2, .results-section h2 {
-		margin: 0 0 16px 0;
+	.pattern-section h2,
+	.results-section h2 {
+		margin: 0;
 		font-size: 20px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.results-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 16px;
+		gap: 12px;
 	}
 
 	.sustainability-badge {
 		padding: 6px 12px;
-		border-radius: 20px;
-		color: white;
+		border-radius: 999px;
+		color: var(--text-inverse);
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
+		box-shadow: 0 4px 12px var(--shadow-light);
 	}
 
 	.stats-grid {
@@ -509,52 +536,67 @@
 	}
 
 	.stat-card {
-		background: white;
+		background: var(--bg-secondary);
 		padding: 16px;
-		border-radius: 8px;
-		border: 1px solid #e5e7eb;
+		border-radius: 12px;
+		border: 1px solid var(--border-primary);
 		text-align: center;
+		box-shadow: 0 6px 18px var(--shadow-light);
+		transition: var(--transition-theme);
 	}
 
 	.stat-value {
 		font-size: 24px;
 		font-weight: 700;
-		color: #374151;
+		color: var(--text-primary);
 		margin-bottom: 4px;
 	}
 
 	.stat-label {
-		font-size: 12px;
-		color: #6b7280;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
+		font-size: 13px;
+		color: var(--text-secondary);
 	}
 
-	.turns-container h3, .summary-only h3 {
-		margin: 0 0 16px 0;
+	.turns-container {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.turns-container h3 {
+		margin: 0;
 		font-size: 18px;
 		font-weight: 600;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.summary-only {
-		background: white;
-		padding: 20px;
-		border-radius: 8px;
-		border: 1px solid #e5e7eb;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
+		border-radius: 12px;
+		padding: 16px;
+		box-shadow: 0 6px 18px var(--shadow-light);
+	}
+
+	.summary-only h3 {
+		margin: 0;
+		font-size: 18px;
+		font-weight: 600;
 	}
 
 	.summary-only p {
-		margin: 0 0 12px 0;
-		line-height: 1.6;
-		color: #374151;
+		margin: 0;
+		color: var(--text-secondary);
+		line-height: 1.5;
 	}
 
-	.summary-only p:last-child {
-		margin-bottom: 0;
+	.summary-only strong {
+		color: var(--text-primary);
 	}
 
-	/* Desktop Layout */
 	@media (min-width: 1024px) {
 		.layout {
 			grid-template-columns: 280px 1fr;
@@ -564,7 +606,7 @@
 
 		.sidebar {
 			border-bottom: none;
-			border-right: 1px solid #e5e7eb;
+			border-right: 1px solid var(--border-primary);
 			order: 1;
 			position: sticky;
 			top: 0;
@@ -575,7 +617,6 @@
 		.main-content {
 			order: 2;
 			padding: 24px 0;
-			max-width: none;
 		}
 
 		.config-section {
@@ -583,7 +624,6 @@
 		}
 
 		.stats-grid {
-			grid-template-columns: repeat(3, 1fr);
 			gap: 16px;
 		}
 
@@ -605,7 +645,6 @@
 		}
 	}
 
-	/* Large Desktop */
 	@media (min-width: 1280px) {
 		.layout {
 			grid-template-columns: 320px 1fr;
@@ -622,7 +661,6 @@
 		}
 	}
 
-	/* Extra Large Desktop */
 	@media (min-width: 1400px) {
 		.layout {
 			grid-template-columns: 360px 1fr;
@@ -631,7 +669,6 @@
 		}
 	}
 
-	/* Mobile Enhancements */
 	@media (max-width: 640px) {
 		.results-header {
 			flex-direction: column;
@@ -657,21 +694,21 @@
 		}
 	}
 
-	/* Scrollbar styling */
 	.sidebar::-webkit-scrollbar {
 		width: 6px;
 	}
 
 	.sidebar::-webkit-scrollbar-track {
-		background: #f1f5f9;
+		background: var(--bg-tertiary);
+		border-radius: 999px;
 	}
 
 	.sidebar::-webkit-scrollbar-thumb {
-		background: #cbd5e1;
-		border-radius: 3px;
+		background: color-mix(in oklab, var(--border-secondary) 80%, var(--color-primary) 20%);
+		border-radius: 999px;
 	}
 
 	.sidebar::-webkit-scrollbar-thumb:hover {
-		background: #94a3b8;
+		background: color-mix(in oklab, var(--border-secondary) 60%, var(--color-primary) 40%);
 	}
 </style>

@@ -41,13 +41,20 @@
 	// Determine rarity class based on category
 	const rarityClass = $derived.by(() => {
 		switch (item.category) {
-			case 'consumable': return 'rarity-common';
-			case 'weapon': return 'rarity-uncommon';
-			case 'armor': return 'rarity-rare';
-			case 'accessory': return 'rarity-epic';
-			case 'meta': return 'rarity-legendary';
-			case 'cosmetic': return 'rarity-legendary';
-			default: return 'rarity-common';
+			case 'consumable':
+				return 'rarity-common';
+			case 'weapon':
+				return 'rarity-uncommon';
+			case 'armor':
+				return 'rarity-rare';
+			case 'accessory':
+				return 'rarity-epic';
+			case 'meta':
+				return 'rarity-legendary';
+			case 'cosmetic':
+				return 'rarity-legendary';
+			default:
+				return 'rarity-common';
 		}
 	});
 </script>
@@ -57,7 +64,7 @@
 		<div class="item-name {rarityClass}">{item.name}</div>
 		<div class="item-category">{capitalizeFirst(item.category)}</div>
 	</div>
-	
+
 	<div class="item-price">
 		{#if priceComponents.length > 0}
 			<div class="price-components">
@@ -78,13 +85,13 @@
 			</div>
 		{/if}
 	</div>
-	
+
 	<div class="item-copper">
 		<CoinIcon currency="copper" size={12} />
 		<span>({formatNumber(totalCopperCost)} copper total)</span>
 	</div>
-	
-	<button 
+
+	<button
 		onclick={() => onBuy(item)}
 		disabled={!canAfford}
 		class="buy-btn"

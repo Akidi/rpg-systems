@@ -8,7 +8,7 @@
 		type Character,
 		type ScalingFormula
 	} from '$lib/types/apProgression.js';
-	
+
 	import ConfigPanel from '$lib/components/APProgression/ConfigPanel.svelte';
 	import CharacterPanel from '$lib/components/APProgression/CharacterPanel.svelte';
 	import ResultsPanel from '$lib/components/APProgression/ResultsPanel.svelte';
@@ -86,7 +86,10 @@
 
 <svelte:head>
 	<title>AP Progression Simulator</title>
-	<meta name="description" content="Test AP scaling formulas including universal progression for the Diablo-like web game" />
+	<meta
+		name="description"
+		content="Test AP scaling formulas including universal progression for the Diablo-like web game"
+	/>
 </svelte:head>
 
 <div class="ap-simulator">
@@ -99,10 +102,10 @@
 			Test different AP scaling formulas including the new universal progression system
 		</p>
 	</header>
-	
+
 	<div class="simulator-grid">
 		<!-- Configuration Panel -->
-		<ConfigPanel 
+		<ConfigPanel
 			{config}
 			{selectedFormula}
 			{chartMaxLevel}
@@ -112,37 +115,19 @@
 		/>
 
 		<!-- Character Settings -->
-		<CharacterPanel 
-			{character}
-			{selectedFormula}
-			onCharacterChange={handleCharacterChange}
-		/>
+		<CharacterPanel {character} {selectedFormula} onCharacterChange={handleCharacterChange} />
 
 		<!-- Current Result -->
-		<ResultsPanel 
-			result={currentAP}
-			{character}
-			{config}
-			{selectedFormula}
-		/>
+		<ResultsPanel result={currentAP} {character} {config} {selectedFormula} />
 
 		<!-- Progression Visualization -->
 		<div class="chart-section">
-			<ProgressionChart 
-				{progressionData}
-				{selectedFormula}
-				{character}
-				{config}
-				{chartMaxLevel}
-			/>
+			<ProgressionChart {progressionData} {selectedFormula} {character} {config} {chartMaxLevel} />
 		</div>
 
 		<!-- Universal System Examples -->
 		{#if selectedFormula.type === 'universal'}
-			<ExamplesGrid 
-				{config}
-				{selectedFormula}
-			/>
+			<ExamplesGrid {config} {selectedFormula} />
 		{/if}
 	</div>
 </div>

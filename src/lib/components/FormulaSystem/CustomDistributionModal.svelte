@@ -22,9 +22,7 @@
 	});
 
 	// Calculate total percentage
-	const totalPercentage = $derived(
-		Object.values(percentages).reduce((sum, val) => sum + val, 0)
-	);
+	const totalPercentage = $derived(Object.values(percentages).reduce((sum, val) => sum + val, 0));
 
 	// Validation
 	const isValid = $derived(Math.abs(totalPercentage - 100) < 0.01);
@@ -43,7 +41,7 @@
 	function normalizePercentages() {
 		const total = totalPercentage;
 		if (total > 0) {
-			Object.keys(percentages).forEach(key => {
+			Object.keys(percentages).forEach((key) => {
 				percentages[key] = (percentages[key] / total) * 100;
 			});
 		}
@@ -63,31 +61,35 @@
 	// Preset quick actions
 	const presets = [
 		{ name: 'Tank', dist: { STR: 30, DEX: 10, INT: 5, CON: 40, WIS: 10, CHA: 5 }, icon: '🛡️' },
-		{ name: 'Glass Cannon', dist: { STR: 5, DEX: 15, INT: 50, CON: 10, WIS: 15, CHA: 5 }, icon: '💥' },
+		{
+			name: 'Glass Cannon',
+			dist: { STR: 5, DEX: 15, INT: 50, CON: 10, WIS: 15, CHA: 5 },
+			icon: '💥'
+		},
 		{ name: 'Speedster', dist: { STR: 15, DEX: 50, INT: 10, CON: 15, WIS: 5, CHA: 5 }, icon: '💨' },
 		{ name: 'Support', dist: { STR: 5, DEX: 10, INT: 20, CON: 15, WIS: 35, CHA: 15 }, icon: '🤝' },
 		{ name: 'Hybrid', dist: { STR: 20, DEX: 20, INT: 20, CON: 20, WIS: 10, CHA: 10 }, icon: '⚖️' }
 	];
 
-	function applyPreset(preset: typeof presets[0]) {
+	function applyPreset(preset: (typeof presets)[0]) {
 		percentages = { ...preset.dist };
 	}
 </script>
 
 {#if isOpen}
-	<div 
-		class="modal-overlay" 
+	<div
+		class="modal-overlay"
 		onclick={onClose}
 		onkeydown={(e) => e.key === 'Escape' && onClose()}
 		role="button"
 		tabindex="0"
 		aria-label="Close dialog"
 	>
-		<div 
-			class="modal custom-modal" 
-			onclick={(e) => e.stopPropagation()} 
+		<div
+			class="modal custom-modal"
+			onclick={(e) => e.stopPropagation()}
 			onkeydown={(e) => e.stopPropagation()}
-			role="dialog" 
+			role="dialog"
 			aria-labelledby="custom-modal-title"
 			aria-modal="true"
 			tabindex="-1"
@@ -97,13 +99,7 @@
 					<h3 id="custom-modal-title">Custom Stat Distribution</h3>
 					<p class="modal-subtitle">Set percentage allocation for each stat (must total 100%)</p>
 				</div>
-				<button 
-					class="close-btn"
-					onclick={onClose}
-					aria-label="Close dialog"
-				>
-					×
-				</button>
+				<button class="close-btn" onclick={onClose} aria-label="Close dialog"> × </button>
 			</div>
 
 			<div class="modal-body">
@@ -111,7 +107,7 @@
 					<h4 class="section-title">Quick Presets</h4>
 					<div class="presets-grid">
 						{#each presets as preset}
-							<button 
+							<button
 								class="preset-btn"
 								onclick={() => applyPreset(preset)}
 								aria-label="Apply {preset.name} preset"
@@ -134,7 +130,8 @@
 										id="{stat}-percentage"
 										type="number"
 										value={value.toFixed(2)}
-										oninput={(e) => updatePercentage(stat, parseFloat((e.target as HTMLInputElement).value) || 0)}
+										oninput={(e) =>
+											updatePercentage(stat, parseFloat((e.target as HTMLInputElement).value) || 0)}
 										min="0"
 										max="100"
 										step="0.01"
@@ -157,17 +154,13 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="action-btn secondary" onclick={resetToBalanced}>
-					Reset to Balanced
-				</button>
+				<button class="action-btn secondary" onclick={resetToBalanced}> Reset to Balanced </button>
 				<button class="action-btn secondary" onclick={normalizePercentages}>
 					Auto-Normalize
 				</button>
-				<button class="action-btn secondary" onclick={onClose}>
-					Cancel
-				</button>
-				<button 
-					class="action-btn primary {isValid ? '' : 'disabled'}" 
+				<button class="action-btn secondary" onclick={onClose}> Cancel </button>
+				<button
+					class="action-btn primary {isValid ? '' : 'disabled'}"
 					onclick={handleApply}
 					disabled={!isValid}
 				>
@@ -194,8 +187,12 @@
 	}
 
 	@keyframes fadeIn {
-		from { opacity: 0; }
-		to { opacity: 1; }
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	.custom-modal {

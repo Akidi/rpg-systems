@@ -95,7 +95,7 @@
 
 <nav class="calculator-navigation" class:expanded={isExpanded}>
 	<!-- Compact Toggle Button -->
-	<button 
+	<button
 		onclick={toggleNavigation}
 		class="nav-toggle"
 		title="Calculator Navigation"
@@ -104,7 +104,7 @@
 		<span class="nav-icon">🧮</span>
 		<span class="expand-arrow" class:rotated={isExpanded}>▼</span>
 	</button>
-	
+
 	<!-- Navigation Panel -->
 	{#if isExpanded}
 		<div class="nav-panel">
@@ -112,12 +112,12 @@
 				<h3 class="nav-title">System Calculators</h3>
 				<p class="nav-subtitle">Test game mechanics and formulas</p>
 			</div>
-			
+
 			<div class="nav-content">
 				<div class="nav-grid">
 					{#each calculators as calc}
 						{@const statusInfo = getStatusInfo(calc.status)}
-						<a 
+						<a
 							href={calc.href}
 							class="calc-card"
 							class:active={isActive(calc)}
@@ -132,19 +132,19 @@
 									</span>
 								</div>
 							</div>
-							
+
 							<div class="card-content">
 								<h4 class="card-title">{calc.name}</h4>
 								<p class="card-description">{calc.description}</p>
 							</div>
-							
+
 							{#if isActive(calc)}
 								<div class="active-indicator"></div>
 							{/if}
 						</a>
 					{/each}
 				</div>
-				
+
 				<div class="nav-footer">
 					<div class="status-legend">
 						<div class="legend-item">

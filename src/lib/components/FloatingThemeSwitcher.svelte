@@ -3,40 +3,40 @@
 	import { themeStore, themeActions } from '$lib/stores/themes';
 	import { themeConfigs, getAllThemes } from '$lib/config/themes';
 	import type { ThemeVariant } from '$lib/types/layout.js';
-	
+
 	// Get current theme state
 	let themeState = $state($themeStore);
-	
+
 	// Derived values
 	const currentTheme = $derived(themeState.theme);
 	const currentMode = $derived(themeState.mode);
 	const currentThemeConfig = $derived(themeConfigs[currentTheme]);
-	
+
 	// Get available themes
 	const availableThemes = getAllThemes();
-	
+
 	// Component state
 	let isExpanded = $state(false);
-	
+
 	// Theme change handlers
 	const handleThemeChange = (theme: ThemeVariant) => {
 		themeActions.setTheme(theme);
 		isExpanded = false; // Collapse after selection
 	};
-	
+
 	const handleModeToggle = () => {
 		themeActions.toggleMode();
 	};
-	
+
 	const toggleExpanded = () => {
 		isExpanded = !isExpanded;
 	};
-	
+
 	// Update local state when store changes
-	themeStore.subscribe(value => {
+	themeStore.subscribe((value) => {
 		themeState = value;
 	});
-	
+
 	// Close when clicking outside
 	function handleClickOutside(event: MouseEvent) {
 		const target = event.target as HTMLElement;
@@ -44,17 +44,17 @@
 			isExpanded = false;
 		}
 	}
-	
+
 	// Icons for themes
 	const themeIcons = {
 		'dungeon-classic': '🏰',
-		'shadow-realm': '🌙', 
+		'shadow-realm': '🌙',
 		'crystal-caverns': '💎',
 		'infernal-depths': '🔥',
 		'frost-keep': '❄️',
 		'verdant-ruins': '🌿'
 	};
-	
+
 	// Mode icons
 	const modeIcons = {
 		light: '☀️',
@@ -66,7 +66,7 @@
 
 <div class="floating-theme-switcher" class:expanded={isExpanded}>
 	<!-- Compact Toggle Button -->
-	<button 
+	<button
 		onclick={toggleExpanded}
 		class="theme-toggle"
 		title="Change Theme"
@@ -75,13 +75,13 @@
 		<span class="theme-icon">{themeIcons[currentTheme]}</span>
 		<span class="expand-icon" class:rotated={isExpanded}>⚙️</span>
 	</button>
-	
+
 	<!-- Expanded Panel -->
 	{#if isExpanded}
 		<div class="theme-panel">
 			<div class="panel-header">
 				<h3 class="panel-title">Themes</h3>
-				<button 
+				<button
 					onclick={handleModeToggle}
 					class="mode-toggle"
 					title={`Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`}
@@ -89,7 +89,7 @@
 					{modeIcons[currentMode]}
 				</button>
 			</div>
-			
+
 			<div class="theme-grid">
 				{#each availableThemes as theme}
 					<button
@@ -103,7 +103,7 @@
 					</button>
 				{/each}
 			</div>
-			
+
 			<div class="current-theme-info">
 				<div class="info-title">{currentThemeConfig.displayName}</div>
 				<div class="info-mode">{currentMode} mode</div>

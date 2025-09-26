@@ -20,8 +20,8 @@
 	<div class="math-intro">
 		<h3>Game Math Reference</h3>
 		<p>
-			Different mathematical functions create different gameplay experiences. 
-			Use these patterns to design stat systems that feel balanced and engaging.
+			Different mathematical functions create different gameplay experiences. Use these patterns to
+			design stat systems that feel balanced and engaging.
 		</p>
 	</div>
 
@@ -36,39 +36,99 @@
 					<div class="chart-section">
 						<svg class="progression-chart" width="100" height="50" viewBox="0 0 100 50">
 							{#if example.name === 'Linear Scaling'}
-								<path d="M 5 45 L 95 5" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path d="M 5 45 L 95 5" stroke="#8b5cf6" stroke-width="2.5" fill="none" />
 							{:else if example.name === 'Logarithmic (Diminishing Returns)'}
-								<path d="M 5 45 Q 25 20, 50 12 T 95 8" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 Q 25 20, 50 12 T 95 8"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Square Root Scaling'}
-								<path d="M 5 45 Q 30 25, 65 18 L 95 15" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 Q 30 25, 65 18 L 95 15"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Exponential Growth'}
-								<path d="M 5 45 L 30 38 Q 55 25, 70 15 L 95 5" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 L 30 38 Q 55 25, 70 15 L 95 5"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Soft Cap with Breakpoint'}
-								<path d="M 5 45 L 50 18 L 95 15" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path d="M 5 45 L 50 18 L 95 15" stroke="#8b5cf6" stroke-width="2.5" fill="none" />
 							{:else if example.name === 'Percentage Modifier'}
-								<path d="M 5 45 Q 50 25, 95 10" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path d="M 5 45 Q 50 25, 95 10" stroke="#8b5cf6" stroke-width="2.5" fill="none" />
 							{:else if example.name === 'Sigmoid Curve (S-Curve)'}
-								<path d="M 5 40 Q 25 38, 30 30 Q 50 20, 70 20 Q 75 20, 95 15" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 40 Q 25 38, 30 30 Q 50 20, 70 20 Q 75 20, 95 15"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Compound Formula'}
-								<path d="M 5 45 Q 40 28, 65 22 L 80 18 L 95 18" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 Q 40 28, 65 22 L 80 18 L 95 18"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Stepped Progression'}
-								<path d="M 5 45 L 30 32 L 30 28 L 65 22 L 65 18 L 95 15" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 L 30 32 L 30 28 L 65 22 L 65 18 L 95 15"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Multi-Breakpoint System'}
-								<path d="M 5 45 L 18 38 L 18 35 L 40 28 L 40 25 L 70 20 L 70 17 L 95 12" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 L 18 38 L 18 35 L 40 28 L 40 25 L 70 20 L 70 17 L 95 12"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Synergy Bonus'}
-								<path d="M 5 45 Q 30 32, 55 20 Q 75 10, 95 5" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 Q 30 32, 55 20 Q 75 10, 95 5"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Conditional Scaling'}
-								<path d="M 5 45 L 40 30 L 40 26 Q 65 20, 95 15" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 L 40 30 L 40 26 Q 65 20, 95 15"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Weighted Average'}
-								<path d="M 5 45 L 95 10" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path d="M 5 45 L 95 10" stroke="#8b5cf6" stroke-width="2.5" fill="none" />
 							{:else if example.name === 'Asymptotic Curve'}
-								<path d="M 5 45 Q 30 22, 55 15 Q 80 10, 95 9" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 Q 30 22, 55 15 Q 80 10, 95 9"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Resource Regeneration'}
-								<path d="M 5 45 Q 40 25, 65 18 Q 85 13, 95 12" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 Q 40 25, 65 18 Q 85 13, 95 12"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else if example.name === 'Risk/Reward Balance'}
-								<path d="M 5 45 Q 40 22, 65 15 Q 85 11, 95 10" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path
+									d="M 5 45 Q 40 22, 65 15 Q 85 11, 95 10"
+									stroke="#8b5cf6"
+									stroke-width="2.5"
+									fill="none"
+								/>
 							{:else}
-								<path d="M 5 45 L 95 10" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+								<path d="M 5 45 L 95 10" stroke="#8b5cf6" stroke-width="2.5" fill="none" />
 							{/if}
 						</svg>
 					</div>
@@ -78,7 +138,7 @@
 					<div class="formula-display">
 						<code>{example.formula}</code>
 					</div>
-					<button 
+					<button
 						class="copy-btn"
 						onclick={() => copyFormula(example.formula)}
 						title="Copy formula to clipboard"
@@ -90,7 +150,8 @@
 				<div class="explanation-section">
 					<p class="explanation">{example.explanation}</p>
 					<div class="usage-tag">
-						<strong>Best for:</strong> {example.usage}
+						<strong>Best for:</strong>
+						{example.usage}
 					</div>
 				</div>
 			</div>
@@ -104,8 +165,12 @@
 				<div class="ref-item"><code>level</code> - Character level</div>
 				<div class="ref-item"><code>STR</code> or <code>strength</code> - Strength stat</div>
 				<div class="ref-item"><code>DEX</code> or <code>dexterity</code> - Dexterity stat</div>
-				<div class="ref-item"><code>INT</code> or <code>intelligence</code> - Intelligence stat</div>
-				<div class="ref-item"><code>CON</code> or <code>constitution</code> - Constitution stat</div>
+				<div class="ref-item">
+					<code>INT</code> or <code>intelligence</code> - Intelligence stat
+				</div>
+				<div class="ref-item">
+					<code>CON</code> or <code>constitution</code> - Constitution stat
+				</div>
 				<div class="ref-item"><code>WIS</code> or <code>wisdom</code> - Wisdom stat</div>
 				<div class="ref-item"><code>CHA</code> or <code>charisma</code> - Charisma stat</div>
 			</div>
@@ -362,7 +427,9 @@
 			align-self: center;
 		}
 
-		.math-intro, .math-example, .reference-card {
+		.math-intro,
+		.math-example,
+		.reference-card {
 			padding: 16px;
 		}
 

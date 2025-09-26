@@ -5,25 +5,22 @@
 	import { themeConfigs, getAllThemes } from '$lib/config/themes';
 	import { page } from '$app/state';
 	import type { ThemeVariant } from '$lib/types/layout.js';
-	
+
 	interface Props {
 		children: import('svelte').Snippet;
 		title?: string;
 	}
-	
-	const { 
-		children, 
-		title = 'Dungeon Crawler RPG' 
-	}: Props = $props();
-	
+
+	const { children, title = 'Dungeon Crawler RPG' }: Props = $props();
+
 	// Theme state
 	let themeState = $state($themeStore);
 	let isThemeDropdownOpen = $state(false);
 	let isCalculatorDropdownOpen = $state(false);
-	
+
 	// Available themes
 	const availableThemes = getAllThemes();
-	
+
 	// Calculator links
 	const calculators = [
 		{
@@ -69,63 +66,63 @@
 			status: 'wip'
 		}
 	];
-	
+
 	// Derived values
 	const currentTheme = $derived(themeState.theme);
 	const currentMode = $derived(themeState.mode);
 	const currentThemeConfig = $derived(themeConfigs[currentTheme]);
 	const currentPath = $derived(page?.url?.pathname || '');
-	
+
 	// Theme icons
 	const themeIcons = {
 		'dungeon-classic': '🏰',
-		'shadow-realm': '🌙', 
+		'shadow-realm': '🌙',
 		'crystal-caverns': '💎',
 		'infernal-depths': '🔥',
 		'frost-keep': '❄️',
 		'verdant-ruins': '🌿'
 	};
-	
+
 	// Mode icons
 	const modeIcons = {
 		light: '☀️',
 		dark: '🌙'
 	};
-	
+
 	// Initialize theme system
 	onMount(() => {
 		themeActions.initialize();
 	});
-	
+
 	// Update local state when store changes
-	themeStore.subscribe(value => {
+	themeStore.subscribe((value) => {
 		themeState = value;
 	});
-	
+
 	// Event handlers
 	const handleThemeChange = (theme: ThemeVariant) => {
 		themeActions.setTheme(theme);
 		isThemeDropdownOpen = false;
 	};
-	
+
 	const handleModeToggle = () => {
 		themeActions.toggleMode();
 	};
-	
+
 	const toggleThemeDropdown = () => {
 		isThemeDropdownOpen = !isThemeDropdownOpen;
 		if (isThemeDropdownOpen) {
 			isCalculatorDropdownOpen = false;
 		}
 	};
-	
+
 	const toggleCalculatorDropdown = () => {
 		isCalculatorDropdownOpen = !isCalculatorDropdownOpen;
 		if (isCalculatorDropdownOpen) {
 			isThemeDropdownOpen = false;
 		}
 	};
-	
+
 	// Close dropdowns when clicking outside
 	const handleClickOutside = (event: Event) => {
 		const target = event.target as HTMLElement;
@@ -136,11 +133,11 @@
 			isCalculatorDropdownOpen = false;
 		}
 	};
-	
+
 	// Check if calculator is active
 	const isCalculatorActive = (href: string) => currentPath === href;
 	const isCalculatorSectionActive = () => currentPath.startsWith('/demo/system');
-	
+
 	// Get status info for calculators
 	const getStatusInfo = (status: string) => {
 		switch (status) {
@@ -154,7 +151,7 @@
 				return { label: 'Unknown', class: 'unknown' };
 		}
 	};
-	
+
 	// Close dropdowns on navigation
 	$effect(() => {
 		if (currentPath) {
@@ -166,7 +163,10 @@
 
 <svelte:head>
 	<title>{title}</title>
-	<meta name="description" content="A turn-based dungeon crawling RPG with deep character progression" />
+	<meta
+		name="description"
+		content="A turn-based dungeon crawling RPG with deep character progression"
+	/>
 </svelte:head>
 
 <svelte:window onclick={handleClickOutside} />
@@ -184,17 +184,15 @@
 					</h1>
 				</a>
 			</div>
-			
+
 			<!-- Center: Main Navigation -->
 			<div class="header-center">
 				<nav class="main-nav" aria-label="Main navigation">
-					<a href="/" class="nav-link" class:active={currentPath === '/'}>
-						Home
-					</a>
-					
+					<a href="/" class="nav-link" class:active={currentPath === '/'}> Home </a>
+
 					<!-- Calculator Dropdown -->
 					<div class="calculator-dropdown-container">
-						<button 
+						<button
 							onclick={toggleCalculatorDropdown}
 							class="nav-link dropdown-trigger"
 							class:active={isCalculatorSectionActive()}
@@ -205,18 +203,18 @@
 							Calculators
 							<span class="dropdown-arrow" class:rotated={isCalculatorDropdownOpen}>▼</span>
 						</button>
-						
+
 						{#if isCalculatorDropdownOpen}
 							<div class="dropdown-panel calculator-dropdown" role="menu">
 								<div class="dropdown-header">
 									<h3>System Calculators</h3>
 									<p>Test game mechanics and formulas</p>
 								</div>
-								
+
 								<div class="dropdown-content">
 									{#each calculators as calc}
 										{@const statusInfo = getStatusInfo(calc.status)}
-										<a 
+										<a
 											href={calc.href}
 											class="calculator-item"
 											class:active={isCalculatorActive(calc.href)}
@@ -238,18 +236,18 @@
 							</div>
 						{/if}
 					</div>
-					
+
 					<a href="/docs" class="nav-link" class:active={currentPath.includes('/docs')}>
 						Documentation
 					</a>
 				</nav>
 			</div>
-			
+
 			<!-- Right: Theme Controls -->
 			<div class="header-right">
 				<div class="theme-controls">
 					<!-- Mode Toggle -->
-					<button 
+					<button
 						onclick={handleModeToggle}
 						class="mode-toggle"
 						title={`Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`}
@@ -257,10 +255,10 @@
 					>
 						<span aria-hidden="true">{modeIcons[currentMode]}</span>
 					</button>
-					
+
 					<!-- Theme Dropdown -->
 					<div class="theme-dropdown-container">
-						<button 
+						<button
 							onclick={toggleThemeDropdown}
 							class="theme-toggle"
 							aria-expanded={isThemeDropdownOpen}
@@ -271,13 +269,13 @@
 							<span class="theme-icon" aria-hidden="true">{themeIcons[currentTheme]}</span>
 							<span class="dropdown-arrow" class:rotated={isThemeDropdownOpen}>▼</span>
 						</button>
-						
+
 						{#if isThemeDropdownOpen}
 							<div class="dropdown-panel theme-dropdown" role="menu">
 								<div class="dropdown-header">
 									<h3>Select Theme</h3>
 								</div>
-								
+
 								<div class="theme-grid">
 									{#each availableThemes as theme}
 										<button
@@ -292,7 +290,7 @@
 										</button>
 									{/each}
 								</div>
-								
+
 								<div class="current-theme-info">
 									<div class="current-theme-name">{currentThemeConfig.displayName}</div>
 									<div class="current-theme-mode">{currentMode} mode</div>
@@ -306,18 +304,18 @@
 	</header>
 
 	<!-- Main Content -->
-	<main class="app-main" >
+	<main class="app-main">
 		<div class="main-content">
 			{@render children()}
 		</div>
 	</main>
 
 	<!-- Footer -->
-	<footer class="app-footer" >
+	<footer class="app-footer">
 		<div class="footer-content">
 			<p class="footer-text">
-				Built with Svelte 5 • 
-				<a href="https://github.com" class="footer-link">Source Code</a> • 
+				Built with Svelte 5 •
+				<a href="https://github.com" class="footer-link">Source Code</a> •
 				<span class="version">v0.1.0</span>
 			</p>
 		</div>
@@ -764,11 +762,11 @@
 		.header-content {
 			gap: 1rem;
 		}
-		
+
 		.app-title {
 			font-size: 1.25rem;
 		}
-		
+
 		.title-icon {
 			font-size: 1.5rem;
 		}
@@ -777,51 +775,51 @@
 	@media (max-width: 768px) {
 		.header-content {
 			grid-template-columns: 1fr auto;
-			grid-template-areas: 
-				"logo controls"
-				"nav nav";
+			grid-template-areas:
+				'logo controls'
+				'nav nav';
 			gap: 1rem;
 			padding: 1rem;
 		}
-		
+
 		.header-left {
 			grid-area: logo;
 		}
-		
+
 		.header-center {
 			grid-area: nav;
 			justify-content: flex-start;
 		}
-		
+
 		.header-right {
 			grid-area: controls;
 		}
-		
+
 		.main-nav {
 			gap: 0.25rem;
 			flex-wrap: wrap;
 		}
-		
+
 		.nav-link {
 			padding: 0.5rem 0.75rem;
 			font-size: 0.875rem;
 		}
-		
+
 		.dropdown-panel {
 			left: 0;
 			right: auto;
 			min-width: 280px;
 			max-width: calc(100vw - 2rem);
 		}
-		
+
 		.calculator-dropdown {
 			width: 300px;
 		}
-		
+
 		.main-content {
 			padding: 1rem;
 		}
-		
+
 		.footer-content {
 			padding: 1rem;
 		}
@@ -831,24 +829,24 @@
 		.app-title {
 			font-size: 1.125rem;
 		}
-		
+
 		.title-icon {
 			font-size: 1.25rem;
 		}
-		
+
 		.nav-link {
 			padding: 0.375rem 0.5rem;
 		}
-		
+
 		.theme-controls {
 			gap: 0.25rem;
 		}
-		
+
 		.mode-toggle,
 		.theme-toggle {
 			padding: 0.375rem;
 		}
-		
+
 		.theme-grid {
 			grid-template-columns: 1fr;
 		}

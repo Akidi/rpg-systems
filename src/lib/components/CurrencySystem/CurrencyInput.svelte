@@ -25,13 +25,7 @@
 		<CoinIcon {currency} size={20} />
 		<span class="currency-label">{label}:</span>
 	</div>
-	<input 
-		type="number" 
-		{value}
-		oninput={handleInput}
-		min="0"
-		class="currency-input"
-	/>
+	<input type="number" {value} oninput={handleInput} min="0" class="currency-input" />
 </div>
 
 <style>

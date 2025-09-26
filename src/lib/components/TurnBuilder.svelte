@@ -2,7 +2,11 @@
 <script lang="ts">
 	import type { Action, TurnPattern, Enhancement } from '$lib/types/turnSystem.js';
 	import { ENHANCEMENTS } from '$lib/types/turnSystem.js';
-	import { createPhysicalAttack, createEnhancedAction, createDefendAction } from '$lib/calculations/turnSystem.js';
+	import {
+		createPhysicalAttack,
+		createEnhancedAction,
+		createDefendAction
+	} from '$lib/calculations/turnSystem.js';
 
 	interface Props {
 		pattern: TurnPattern;
@@ -67,9 +71,10 @@
 	function addEnhancement(enhancementKey: string) {
 		const enhancement = ENHANCEMENTS[enhancementKey];
 		if (enhancement) {
-			const newCost = enhancementSkillCost + 
+			const newCost =
+				enhancementSkillCost +
 				[...selectedEnhancements, enhancement].reduce((sum, enh) => sum + enh.apCost, 0);
-			
+
 			if (totalAPCost() + newCost <= maxAP) {
 				selectedEnhancements = [...selectedEnhancements, enhancement];
 			}
@@ -117,9 +122,9 @@
 	<div class="pattern-header">
 		<div class="form-group">
 			<label for="patternName" class="form-label">Pattern Name:</label>
-			<input 
+			<input
 				id="patternName"
-				type="text" 
+				type="text"
 				value={patternName}
 				oninput={updatePatternName}
 				class="form-input"
@@ -129,7 +134,7 @@
 
 		<div class="form-group">
 			<label for="patternDescription" class="form-label">Description:</label>
-			<textarea 
+			<textarea
 				id="patternDescription"
 				value={patternDescription}
 				oninput={updatePatternDescription}
@@ -158,10 +163,7 @@
 			<span class="budget-label">AP</span>
 		</div>
 		<div class="budget-bar">
-			<div 
-				class="budget-fill"
-				style="width: {Math.min((totalAPCost() / maxAP) * 100, 100)}%"
-			></div>
+			<div class="budget-fill" style="width: {Math.min((totalAPCost() / maxAP) * 100, 100)}%"></div>
 		</div>
 	</div>
 
@@ -173,11 +175,7 @@
 					<span class="action-description">{action.description}</span>
 					<span class="action-cost">{action.apCost} AP</span>
 				</div>
-				<button 
-					class="btn-remove"
-					onclick={() => removeAction(index)}
-					title="Remove action"
-				>
+				<button class="btn-remove" onclick={() => removeAction(index)} title="Remove action">
 					✕
 				</button>
 			</div>
@@ -192,9 +190,9 @@
 
 	<div class="action-buttons">
 		<h4>Add Actions:</h4>
-		
+
 		<div class="button-grid">
-			<button 
+			<button
 				class="btn-action"
 				onclick={addPhysicalAttack}
 				disabled={totalAPCost() + 1 > maxAP}
@@ -204,7 +202,7 @@
 				<span class="button-cost">1 AP</span>
 			</button>
 
-			<button 
+			<button
 				class="btn-action"
 				onclick={() => addDefendAction('quick')}
 				disabled={totalAPCost() + 1 > maxAP}
@@ -214,7 +212,7 @@
 				<span class="button-cost">1 AP</span>
 			</button>
 
-			<button 
+			<button
 				class="btn-action"
 				onclick={() => addDefendAction('full')}
 				disabled={totalAPCost() + 3 > maxAP}
@@ -224,9 +222,9 @@
 				<span class="button-cost">3 AP</span>
 			</button>
 
-			<button 
+			<button
 				class="btn-action btn-enhancement"
-				onclick={() => showEnhancementBuilder = true}
+				onclick={() => (showEnhancementBuilder = true)}
 				disabled={totalAPCost() + 2 > maxAP}
 				title="Build Enhanced Action (ends turn immediately)"
 			>
@@ -234,11 +232,7 @@
 				<span class="button-cost">2+ AP</span>
 			</button>
 
-			<button 
-				class="btn-action btn-end"
-				onclick={addManualEnd}
-				title="End Turn manually"
-			>
+			<button class="btn-action btn-end" onclick={addManualEnd} title="End Turn manually">
 				End Turn
 				<span class="button-cost">0 AP</span>
 			</button>
@@ -249,19 +243,14 @@
 		<div class="enhancement-builder">
 			<div class="enhancement-header">
 				<h4>Build Enhanced Action</h4>
-				<button 
-					class="btn-cancel"
-					onclick={cancelEnhancementBuilder}
-				>
-					Cancel
-				</button>
+				<button class="btn-cancel" onclick={cancelEnhancementBuilder}> Cancel </button>
 			</div>
 
 			<div class="form-group">
 				<label for="skillCost" class="form-label">Base Skill Cost:</label>
-				<input 
+				<input
 					id="skillCost"
-					type="number" 
+					type="number"
 					bind:value={enhancementSkillCost}
 					min="1"
 					max="10"
@@ -273,9 +262,10 @@
 				<h5>Add Enhancements:</h5>
 				<div class="enhancement-buttons">
 					{#each Object.entries(ENHANCEMENTS) as [key, enhancement]}
-						{@const currentCost = enhancementSkillCost + selectedEnhancements.reduce((sum, enh) => sum + enh.apCost, 0)}
+						{@const currentCost =
+							enhancementSkillCost + selectedEnhancements.reduce((sum, enh) => sum + enh.apCost, 0)}
 						{@const wouldExceed = totalAPCost() + currentCost + enhancement.apCost > maxAP}
-						<button 
+						<button
 							class="btn-enhancement-add"
 							onclick={() => addEnhancement(key)}
 							disabled={wouldExceed}
@@ -294,10 +284,7 @@
 							<div class="enhancement-item">
 								<span class="enhancement-name">{enhancement.name}</span>
 								<span class="enhancement-ap">{enhancement.apCost} AP</span>
-								<button 
-									class="btn-remove-small"
-									onclick={() => removeEnhancement(index)}
-								>
+								<button class="btn-remove-small" onclick={() => removeEnhancement(index)}>
 									✕
 								</button>
 							</div>
@@ -308,9 +295,10 @@
 
 			<div class="enhancement-footer">
 				<div class="enhancement-total">
-					Total Cost: {enhancementSkillCost + selectedEnhancements.reduce((sum, enh) => sum + enh.apCost, 0)} AP
+					Total Cost: {enhancementSkillCost +
+						selectedEnhancements.reduce((sum, enh) => sum + enh.apCost, 0)} AP
 				</div>
-				<button 
+				<button
 					class="btn-add-enhanced"
 					onclick={addEnhancedAction}
 					disabled={selectedEnhancements.length === 0}
@@ -324,17 +312,18 @@
 
 <style>
 	.turn-builder {
-		background: white;
-		border-radius: 12px;
+		background: var(--bg-secondary);
+		border-radius: 16px;
 		padding: 16px;
-		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-		border: 1px solid #e5e7eb;
+		box-shadow: 0 8px 24px var(--shadow-light);
+		border: 1px solid var(--border-primary);
+		transition: var(--transition-theme);
 	}
 
 	.pattern-header {
 		margin-bottom: 20px;
 		padding-bottom: 16px;
-		border-bottom: 1px solid #f3f4f6;
+		border-bottom: 1px solid var(--border-primary);
 	}
 
 	.form-group {
@@ -346,30 +335,65 @@
 		font-size: 14px;
 		font-weight: 500;
 		margin-bottom: 4px;
-		color: #374151;
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
-	.form-input, .form-textarea {
+	.form-input,
+	.form-textarea {
 		width: 100%;
 		padding: 8px 12px;
-		border: 1px solid #d1d5db;
-		border-radius: 6px;
+		border: 1px solid var(--border-secondary);
+		border-radius: 8px;
 		font-size: 14px;
 		box-sizing: border-box;
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
-	.form-input:focus, .form-textarea:focus {
+	.form-input:focus,
+	.form-textarea:focus {
 		outline: none;
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 25%, transparent);
+	}
+
+	.turn-end-info {
+		margin-top: 16px;
+		padding: 12px;
+		background: color-mix(in oklab, var(--bg-secondary) 80%, var(--color-primary) 20%);
+		border: 1px solid color-mix(in oklab, var(--border-primary) 60%, var(--color-primary) 40%);
+		border-radius: 10px;
+		transition: var(--transition-theme);
+	}
+
+	.turn-end-info h4 {
+		margin: 0 0 8px 0;
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--color-primary);
+	}
+
+	.turn-rules {
+		margin: 0;
+		padding-left: 16px;
+		font-size: 12px;
+		color: color-mix(in oklab, var(--color-primary) 75%, var(--text-secondary) 25%);
+		line-height: 1.4;
+	}
+
+	.turn-rules li {
+		margin-bottom: 2px;
 	}
 
 	.ap-budget {
 		margin-bottom: 20px;
 		padding: 12px;
-		background-color: #f8fafc;
-		border-radius: 8px;
-		border: 1px solid #e2e8f0;
+		background-color: var(--bg-tertiary);
+		border-radius: 12px;
+		border: 1px solid var(--border-primary);
+		transition: var(--transition-theme);
 	}
 
 	.budget-display {
@@ -377,42 +401,47 @@
 		align-items: baseline;
 		justify-content: center;
 		margin-bottom: 8px;
+		gap: 4px;
 	}
 
 	.budget-used {
 		font-size: 24px;
-		font-weight: bold;
-		color: #3b82f6;
+		font-weight: 700;
+		color: var(--color-primary);
 	}
 
 	.budget-separator {
 		font-size: 18px;
-		color: #6b7280;
-		margin: 0 4px;
+		color: var(--text-secondary);
 	}
 
 	.budget-max {
 		font-size: 18px;
 		font-weight: 500;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.budget-label {
 		font-size: 14px;
-		color: #6b7280;
-		margin-left: 4px;
+		color: var(--text-secondary);
 	}
 
 	.budget-bar {
 		height: 6px;
-		background-color: #e5e7eb;
-		border-radius: 3px;
+		background-color: var(--border-primary);
+		border-radius: 999px;
 		overflow: hidden;
 	}
 
 	.budget-fill {
 		height: 100%;
-		background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #f59e0b 80%, #ef4444 100%);
+		background: linear-gradient(
+			90deg,
+			var(--color-success) 0%,
+			var(--color-primary) 50%,
+			var(--color-warning) 80%,
+			var(--color-error) 100%
+		);
 		transition: width 0.3s ease;
 	}
 
@@ -420,11 +449,12 @@
 		margin-bottom: 20px;
 	}
 
-	.actions-list h4, .action-buttons h4 {
+	.actions-list h4,
+	.action-buttons h4 {
 		font-size: 16px;
 		font-weight: 600;
 		margin-bottom: 12px;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.action-item {
@@ -432,10 +462,11 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 8px 12px;
-		background-color: #f9fafb;
-		border: 1px solid #e5e7eb;
-		border-radius: 6px;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-primary);
+		border-radius: 8px;
 		margin-bottom: 8px;
+		transition: var(--transition-theme);
 	}
 
 	.action-info {
@@ -443,37 +474,41 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 12px;
 	}
 
 	.action-description {
 		font-size: 14px;
-		color: #374151;
+		color: var(--text-primary);
 	}
 
 	.action-cost {
 		font-size: 12px;
 		font-weight: 600;
-		color: #6b7280;
+		color: var(--text-secondary);
 	}
 
-	.btn-remove, .btn-remove-small {
-		background-color: #ef4444;
-		color: white;
+	.btn-remove,
+	.btn-remove-small {
+		background-color: var(--color-error);
+		color: var(--text-inverse);
 		border: none;
-		border-radius: 4px;
+		border-radius: 6px;
 		padding: 4px 8px;
 		cursor: pointer;
 		font-size: 12px;
+		transition: var(--transition-theme);
 	}
 
-	.btn-remove:hover, .btn-remove-small:hover {
-		background-color: #dc2626;
+	.btn-remove:hover,
+	.btn-remove-small:hover {
+		background-color: color-mix(in oklab, var(--color-error) 80%, black 20%);
 	}
 
 	.empty-actions {
 		text-align: center;
 		padding: 20px;
-		color: #9ca3af;
+		color: var(--text-muted);
 		font-style: italic;
 	}
 
@@ -488,86 +523,65 @@
 		flex-direction: column;
 		align-items: center;
 		padding: 12px 8px;
-		background-color: #f3f4f6;
-		border: 1px solid #d1d5db;
-		border-radius: 8px;
+		background-color: var(--bg-tertiary);
+		border: 1px solid var(--border-primary);
+		border-radius: 12px;
 		cursor: pointer;
 		font-size: 14px;
 		font-weight: 500;
-		color: #374151;
-		transition: all 0.2s;
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
 	.btn-action:hover:not(:disabled) {
-		background-color: #e5e7eb;
+		background-color: color-mix(in oklab, var(--bg-tertiary) 70%, var(--color-primary) 30%);
 		transform: translateY(-1px);
 	}
 
 	.btn-action:disabled {
-		opacity: 0.5;
+		opacity: 0.6;
 		cursor: not-allowed;
 	}
 
 	.btn-enhancement {
-		background-color: #eff6ff;
-		border-color: #bfdbfe;
-		color: #1e40af;
+		background-color: color-mix(in oklab, var(--bg-tertiary) 70%, var(--color-primary) 30%);
+		border-color: color-mix(in oklab, var(--border-primary) 50%, var(--color-primary) 50%);
+		color: var(--color-primary);
 	}
 
 	.btn-enhancement:hover:not(:disabled) {
-		background-color: #dbeafe;
+		background-color: color-mix(in oklab, var(--bg-tertiary) 55%, var(--color-primary) 45%);
 	}
 
 	.btn-end {
-		background-color: #fef3c7;
-		border-color: #fde68a;
-		color: #92400e;
+		background-color: color-mix(in oklab, var(--bg-tertiary) 70%, var(--color-warning) 30%);
+		border-color: color-mix(in oklab, var(--border-primary) 50%, var(--color-warning) 50%);
+		color: var(--color-warning);
 	}
 
 	.btn-end:hover:not(:disabled) {
-		background-color: #fde68a;
+		background-color: color-mix(in oklab, var(--bg-tertiary) 55%, var(--color-warning) 45%);
 	}
 
 	.button-cost {
 		font-size: 12px;
 		font-weight: 400;
-		opacity: 0.8;
+		color: var(--text-secondary);
 		margin-top: 2px;
 	}
 
-	.turn-end-info {
-		margin-top: 16px;
-		padding: 12px;
-		background-color: #f0f9ff;
-		border: 1px solid #bae6fd;
-		border-radius: 6px;
-	}
-
-	.turn-end-info h4 {
-		margin: 0 0 8px 0;
-		font-size: 14px;
-		font-weight: 600;
-		color: #1e40af;
-	}
-
-	.turn-rules {
-		margin: 0;
-		padding-left: 16px;
-		font-size: 12px;
-		color: #1e40af;
-		line-height: 1.4;
-	}
-
-	.turn-rules li {
-		margin-bottom: 2px;
+	.action-buttons {
+		margin-top: 20px;
 	}
 
 	.enhancement-builder {
-		margin-top: 16px;
+		margin-top: 20px;
 		padding: 16px;
-		background-color: #f0f9ff;
-		border: 1px solid #bae6fd;
-		border-radius: 8px;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
+		border-radius: 12px;
+		box-shadow: 0 8px 24px var(--shadow-light);
+		transition: var(--transition-theme);
 	}
 
 	.enhancement-header {
@@ -579,24 +593,36 @@
 
 	.enhancement-header h4 {
 		margin: 0;
-		color: #1e40af;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--color-primary);
 	}
 
 	.btn-cancel {
-		background-color: #f3f4f6;
-		color: #374151;
-		border: 1px solid #d1d5db;
-		border-radius: 4px;
+		background: transparent;
+		border: 1px solid var(--border-secondary);
+		color: var(--text-secondary);
+		border-radius: 999px;
 		padding: 4px 12px;
 		cursor: pointer;
-		font-size: 12px;
+		font-size: 13px;
+		transition: var(--transition-theme);
+	}
+
+	.btn-cancel:hover {
+		color: var(--color-error);
+		border-color: var(--color-error);
+	}
+
+	.enhancements-section {
+		margin-top: 16px;
 	}
 
 	.enhancements-section h5 {
 		font-size: 14px;
 		font-weight: 600;
 		margin-bottom: 8px;
-		color: #1e40af;
+		color: var(--color-primary);
 	}
 
 	.enhancement-buttons {
@@ -611,44 +637,45 @@
 		flex-direction: column;
 		align-items: center;
 		padding: 8px 6px;
-		background-color: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 6px;
+		background-color: var(--bg-primary);
+		border: 1px solid var(--border-primary);
+		border-radius: 10px;
 		cursor: pointer;
 		font-size: 12px;
-		color: #374151;
-		transition: all 0.2s;
+		color: var(--text-primary);
+		transition: var(--transition-theme);
 	}
 
 	.btn-enhancement-add:hover:not(:disabled) {
-		background-color: #f9fafb;
-		border-color: #3b82f6;
+		background-color: var(--bg-tertiary);
+		border-color: var(--color-primary);
 	}
 
 	.btn-enhancement-add:disabled {
-		opacity: 0.5;
+		opacity: 0.6;
 		cursor: not-allowed;
 	}
 
 	.enhancement-cost {
 		font-size: 11px;
-		color: #6b7280;
+		color: var(--text-secondary);
 		margin-top: 2px;
 	}
 
 	.selected-enhancements {
-		background-color: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 6px;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-primary);
+		border-radius: 10px;
 		padding: 8px;
 		margin-bottom: 12px;
+		transition: var(--transition-theme);
 	}
 
 	.selected-enhancements h6 {
 		font-size: 13px;
 		font-weight: 600;
 		margin: 0 0 8px 0;
-		color: #1e40af;
+		color: var(--color-primary);
 	}
 
 	.enhancement-item {
@@ -656,9 +683,10 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 6px 8px;
-		background-color: #f8fafc;
-		border-radius: 4px;
+		background-color: var(--bg-tertiary);
+		border-radius: 6px;
 		margin-bottom: 4px;
+		border: 1px solid var(--border-primary);
 	}
 
 	.enhancement-item:last-child {
@@ -667,13 +695,13 @@
 
 	.enhancement-name {
 		font-size: 12px;
-		color: #374151;
+		color: var(--text-primary);
 		font-weight: 500;
 	}
 
 	.enhancement-ap {
 		font-size: 11px;
-		color: #6b7280;
+		color: var(--text-secondary);
 		margin-right: 8px;
 	}
 
@@ -682,34 +710,36 @@
 		justify-content: space-between;
 		align-items: center;
 		padding-top: 12px;
-		border-top: 1px solid #e5e7eb;
+		border-top: 1px solid var(--border-primary);
 	}
 
 	.enhancement-total {
 		font-size: 14px;
 		font-weight: 600;
-		color: #1e40af;
+		color: var(--color-primary);
 	}
 
 	.btn-add-enhanced {
-		background-color: #3b82f6;
-		color: white;
+		background-color: var(--color-primary);
+		color: var(--text-inverse);
 		border: none;
-		border-radius: 6px;
-		padding: 8px 16px;
+		border-radius: 999px;
+		padding: 8px 20px;
 		cursor: pointer;
 		font-size: 14px;
 		font-weight: 500;
+		transition: var(--transition-theme);
 	}
 
 	.btn-add-enhanced:hover:not(:disabled) {
-		background-color: #2563eb;
+		background-color: var(--color-primary-hover);
 	}
 
 	.btn-add-enhanced:disabled {
-		opacity: 0.5;
+		opacity: 0.6;
 		cursor: not-allowed;
-		background-color: #9ca3af;
+		background-color: var(--border-secondary);
+		color: var(--text-muted);
 	}
 
 	/* Desktop improvements */
