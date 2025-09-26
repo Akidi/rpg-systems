@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { RotateCcw, Sword, Shield, Target, Heart, Flame } from 'lucide-svelte';
-	import CharacterCard from './CharacterCard.svelte';
-	import CombatLog from './CombatLog.svelte';
+	import { Sword, Shield, Target, Heart, Flame } from 'lucide-svelte';
+	import BattleHeader from './BattleHeader.svelte';
+	import BattlefieldLayout from './BattlefieldLayout.svelte';
+	import BattleControls from './BattleControls.svelte';
 	import EnhancementPanel from './EnhancementPanel.svelte';
-	import ActionGrid from './ActionGrid.svelte';
 	import VictoryOverlay from './VictoryOverlay.svelte';
+	import { CombatAI, AI_PRESETS } from './combat-ai';
 	import {
 		getEnhancementCost,
 		getFocusMultiplier,
@@ -24,6 +25,7 @@
 		SelectedEnhancements,
 		TelegraphedAction
 	} from './types';
+	import type { AIDecision, AIConfig } from './combat-ai';
 
 	type PartialCharactersState = Partial<Record<CharacterKey, Character>>;
 
@@ -40,6 +42,20 @@
 		{ id: 'defend', name: 'Defend', apCost: 2, type: 'defend', icon: Shield },
 		{ id: 'fireball', name: 'Fireball', apCost: 1, type: 'damage', icon: Flame, dot: true }
 	];
+	const createAIFromPreset = (preset: AIConfig) =>
+		new CombatAI({
+			personality: { ...preset.personality },
+			difficultyModifier: preset.difficultyModifier,
+			randomnessFactor: preset.randomnessFactor
+		});
+
+	const aiControllers: Record<CharacterKey, CombatAI | null> = {
+		player: null,
+		enemy1: createAIFromPreset(AI_PRESETS.GOBLIN_ALPHA),
+		enemy2: createAIFromPreset(AI_PRESETS.GOBLIN_BETA)
+	};
+
+	const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 	const createInitialCharacters = (): CharactersState => ({
 		player: {
@@ -96,13 +112,26 @@
 	let globalActionCount = $state(0);
 	let selectedTarget = $state<CharacterKey>('enemy1');
 	let enhancementMode = $state(false);
-	let selectedEnhancements = $derived<SelectedEnhancements>({});
+	let selectedEnhancements = $state<SelectedEnhancements>({});
 	let selectedAction = $state<string | null>(null);
-	let telegraphedActions = $derived<Partial<Record<CharacterKey, TelegraphedAction>>>({});
+	let telegraphedActions = $state<Partial<Record<CharacterKey, TelegraphedAction>>>({});
+	let isProcessingEnemyTurn = false;
 
 	const currentCharacter = $derived(characters[currentTurn]);
 	const playerDefeated = $derived(characters.player.hp <= 0);
 	const goblinsDefeated = $derived(characters.enemy1.hp <= 0 && characters.enemy2.hp <= 0);
+	const characterEntries = $derived((Object.entries(characters) as [CharacterKey, Character][]));
+	const telegraphSummaries = $derived(
+		(Object.entries(telegraphedActions) as [CharacterKey, TelegraphedAction][]).map(([key, action]) => {
+			const actionName = actions.find((item) => item.id === action.actionId)?.name ?? 'Unknown action';
+			const casterName = characters[key]?.name ?? 'Unknown caster';
+			return {
+				id: key,
+				text: `⚠ ${actionName} telegraphed for ${casterName}`
+			};
+		})
+	);
+
 
 	function getEnhancementCount(id: EnhancementId) {
 		return selectedEnhancements[id] ?? 0;
@@ -139,6 +168,13 @@
 	function clearEnhancements() {
 		selectedEnhancements = {};
 		selectedAction = null;
+	}
+
+	function toggleEnhancementMode() {
+		enhancementMode = !enhancementMode;
+		if (!enhancementMode) {
+			clearEnhancements();
+		}
 	}
 
 	function sanitizeEnhancements(selection: SelectedEnhancements): SelectedEnhancements {
@@ -215,6 +251,191 @@
 	function isMultiTargetUseful() {
 		return getAliveEnemies().length > 1;
 	}
+
+	const isEnemyKey = (key: CharacterKey) => key.startsWith('enemy');
+
+	function getOpponentEntriesFor(actorKey: CharacterKey): [CharacterKey, Character][] {
+		const actorIsEnemy = isEnemyKey(actorKey);
+		return (Object.entries(characters) as [CharacterKey, Character][]).filter(([key, char]) => {
+			if (key === actorKey) return false;
+			if (char.hp <= 0) return false;
+			return actorIsEnemy ? !isEnemyKey(key) : isEnemyKey(key);
+		});
+	}
+
+	function getAlliesFor(actorKey: CharacterKey): Character[] {
+		const actorIsEnemy = isEnemyKey(actorKey);
+		return (Object.entries(characters) as [CharacterKey, Character][])
+			.filter(
+				([key, char]) =>
+					key !== actorKey && char.hp > 0 && (actorIsEnemy ? isEnemyKey(key) : !isEnemyKey(key))
+			)
+			.map(([, char]) => char);
+	}
+
+	function hasUsableActions(actorKey: CharacterKey): boolean {
+		const actor = characters[actorKey];
+		if (!actor || actor.hp <= 0 || actor.ap <= 0) {
+			return false;
+		}
+		return actions.some((action) => actor.ap >= action.apCost);
+	}
+
+	function runEnemyAction(turnKey: CharacterKey, ai: CombatAI): boolean {
+		const self = characters[turnKey];
+		if (!self || self.hp <= 0 || self.ap <= 0) {
+			return false;
+		}
+
+		const opponentEntries = getOpponentEntriesFor(turnKey);
+		const allies = getAlliesFor(turnKey);
+		const opponents = opponentEntries.map(([, char]) => char);
+
+		const decision: AIDecision = ai.decideAction(self, allies, opponents, actions, {
+			turnCount,
+			globalActionCount
+		});
+
+		const action = actions.find((item) => item.id === decision.actionId);
+		if (!action) {
+			return false;
+		}
+
+		if (self.ap < action.apCost) {
+			return false;
+		}
+
+		const enhancementsRaw = Object.fromEntries(
+			Object.entries(decision.enhancements ?? {}).filter(([, count]) => !!count && count > 0)
+		) as SelectedEnhancements;
+
+		let enhancementsToApply = enhancementsRaw;
+
+		if (Object.keys(enhancementsToApply).length > 0) {
+			if (!canAffordSelection(enhancementsToApply, action.id, self)) {
+				enhancementsToApply = {};
+			} else {
+				const stacks = getTotalEnhancementCount(enhancementsToApply);
+				const manaCost = getEnhancementCost(stacks, self.mana * 0.2);
+				if (stacks > 0 && manaCost > self.mana) {
+					enhancementsToApply = {};
+				}
+			}
+		}
+
+		const previousEnhancements = { ...selectedEnhancements } as SelectedEnhancements;
+		const previousAction = selectedAction;
+		const previousTarget = selectedTarget;
+
+		selectedAction = action.id;
+
+		if (Object.keys(enhancementsToApply).length > 0) {
+			if (!applyEnhancementSelection(enhancementsToApply)) {
+				selectedEnhancements = {};
+			}
+		} else {
+			selectedEnhancements = {};
+		}
+
+		const fallbackTarget: CharacterKey = isEnemyKey(turnKey) ? 'player' : 'enemy1';
+		let chosenTarget: CharacterKey = fallbackTarget;
+
+		if (opponentEntries.length > 0) {
+			const index = decision.targetIndex ?? 0;
+			const clampedIndex = Math.max(0, Math.min(opponentEntries.length - 1, index));
+			chosenTarget = opponentEntries[clampedIndex][0];
+		}
+
+		const priorAp = self.ap;
+		selectedTarget = chosenTarget;
+
+		handleAction(action.id);
+
+		const updated = characters[turnKey];
+		const actionConsumed = Boolean(updated && updated.ap < priorAp);
+
+		selectedEnhancements = { ...previousEnhancements };
+		selectedAction = previousAction;
+		selectedTarget = previousTarget;
+
+		return actionConsumed;
+	}
+
+	async function processEnemyTurn(turnKey: CharacterKey) {
+		const ai = aiControllers[turnKey];
+		if (!ai) {
+			isProcessingEnemyTurn = false;
+			return;
+		}
+
+		if (playerDefeated || goblinsDefeated || currentTurn !== turnKey) {
+			isProcessingEnemyTurn = false;
+			return;
+		}
+
+		await wait(220);
+
+		let iterations = 0;
+		while (
+			currentTurn === turnKey &&
+			!playerDefeated &&
+			!goblinsDefeated &&
+			characters[turnKey]?.hp > 0 &&
+			iterations < 6
+		) {
+			if (telegraphedActions[turnKey]) {
+				await wait(120);
+				continue;
+			}
+
+			const acted = runEnemyAction(turnKey, ai);
+			iterations += 1;
+
+			if (!acted) {
+				if (currentTurn === turnKey) {
+					endTurn();
+				}
+				break;
+			}
+
+			await wait(360);
+
+			if (!characters[turnKey] || characters[turnKey].hp <= 0 || characters[turnKey].ap <= 0) {
+				break;
+			}
+		}
+
+		if (currentTurn === turnKey && !playerDefeated && !goblinsDefeated) {
+			if (!hasUsableActions(turnKey)) {
+				endTurn();
+			}
+		}
+
+		const shouldQueueNext = currentTurn !== 'player' && !playerDefeated && !goblinsDefeated;
+
+		isProcessingEnemyTurn = false;
+
+		if (shouldQueueNext) {
+			startEnemyProcessing(currentTurn);
+
+		}
+	}
+
+	function startEnemyProcessing(turnKey: CharacterKey) {
+		if (turnKey === 'player' || isProcessingEnemyTurn) {
+			return;
+		}
+		isProcessingEnemyTurn = true;
+		setTimeout(() => {
+			processEnemyTurn(turnKey);
+		}, 0);
+	}
+
+	$effect(() => {
+		if (currentTurn !== 'player' && !playerDefeated && !goblinsDefeated) {
+			startEnemyProcessing(currentTurn);
+		}
+	});
 
 	function validEnhancementsForAction(actionId: string): EnhancementId[] {
 		const action = actions.find((item) => item.id === actionId);
@@ -597,6 +818,7 @@
 		const updatedCharacters: CharactersState = {
 			...characters,
 			[caster]: processDoTEffects(result.attacker, globalActionCount)
+
 		};
 
 		(Object.entries(result.targets) as [CharacterKey, Character][]).forEach(([key, value]) => {
@@ -715,47 +937,23 @@
 </script>
 
 <div class="battle-sim-container">
-	<div class="battle-header">
-		<h1 class="battle-title">Combat Simulator</h1>
-		<div class="battle-turn-meta">
-			<span>Turn {turnCount}</span>
-			<span class="separator" aria-hidden="true"></span>
-			<span class="current-turn">{currentCharacter.name}'s Turn</span>
-			<span class="separator" aria-hidden="true"></span>
-			<span class="global-actions">Global Actions: {globalActionCount}</span>
-		</div>
-		{#if Object.keys(telegraphedActions).length > 0}
-			<div class="telegraph-row">
-				{#each Object.entries(telegraphedActions) as [entityKey, action] (entityKey)}
-					<span class="telegraph-pill">
-						⚡ {actions.find((item) => item.id === action.actionId)?.name} telegraphed for {characters[
-							entityKey as CharacterKey
-						]?.name}
-					</span>
-				{/each}
-			</div>
-		{/if}
-	</div>
+	<BattleHeader
+		{turnCount}
+		currentCharacterName={currentCharacter.name}
+		{globalActionCount}
+		telegraphEntries={telegraphSummaries}
+	/>
 
-	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:col-span-2 lg:grid-cols-3">
-			{#each Object.entries(characters) as [key, char] (key)}
-				<CharacterCard
-					character={char}
-					characterKey={key as CharacterKey}
-					{currentTurn}
-					{selectedTarget}
-					{globalActionCount}
-					telegraphedAction={telegraphedActions[key as CharacterKey]}
-					{actions}
-					canTarget={key.startsWith('enemy') && currentTurn === 'player'}
-					selectTarget={handleSelectTarget}
-				/>
-			{/each}
-		</div>
-
-		<CombatLog logs={combatLog} />
-	</div>
+	<BattlefieldLayout
+		characterEntries={characterEntries}
+		{currentTurn}
+		{selectedTarget}
+		{globalActionCount}
+		telegraphedActions={telegraphedActions}
+		{actions}
+		combatLog={combatLog}
+		onSelectTarget={handleSelectTarget}
+	/>
 
 	{#if enhancementMode}
 		<EnhancementPanel
@@ -773,30 +971,15 @@
 		/>
 	{/if}
 
-	<div class="control-section">
-		<div class="control-bar">
-			<button
-				class="action-button accent"
-				type="button"
-				disabled={currentCharacter.ap <= 0 || currentCharacter.hp <= 0}
-				onclick={() => {
-					enhancementMode = !enhancementMode;
-					if (!enhancementMode) {
-						clearEnhancements();
-					}
-				}}
-			>
-				{enhancementMode ? 'Cancel Enhancements' : 'Add Enhancements'}
-			</button>
-			<button class="action-button neutral" type="button" onclick={endTurn}> End Turn </button>
-			<button class="action-button danger" type="button" onclick={resetCombat}>
-				<RotateCcw size={16} class="button-icon" />
-				Reset
-			</button>
-		</div>
-
-		<ActionGrid {actions} {currentCharacter} onAction={(actionId) => handleAction(actionId)} />
-	</div>
+	<BattleControls
+		{actions}
+		currentCharacter={currentCharacter}
+		enhancementMode={enhancementMode}
+		onToggleEnhancements={toggleEnhancementMode}
+		onEndTurn={endTurn}
+		onReset={resetCombat}
+		onAction={handleAction}
+	/>
 
 	{#if playerDefeated || goblinsDefeated}
 		<VictoryOverlay {playerDefeated} onReset={resetCombat} />
@@ -813,142 +996,16 @@
 		min-height: 100vh;
 	}
 
-	.battle-header {
-		margin-bottom: 2rem;
-		text-align: center;
-	}
-
-	.battle-title {
-		font-size: clamp(2rem, 4vw, 3rem);
-		font-weight: 700;
-		margin-bottom: 0.75rem;
-		color: var(--text-primary);
-		text-shadow: 0 4px 20px var(--shadow-medium);
-	}
-
-	.battle-turn-meta {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.75rem;
-		justify-content: center;
-		flex-wrap: wrap;
-		color: var(--text-secondary);
-		font-size: 0.95rem;
-	}
-
-	.battle-turn-meta .current-turn {
-		color: var(--color-warning);
-		font-weight: 600;
-	}
-
-	.battle-turn-meta .global-actions {
-		color: var(--color-info);
-		font-weight: 500;
-	}
-
-	.battle-turn-meta .separator::before {
-		content: '•';
-		color: var(--text-muted);
-	}
-
-	.telegraph-row {
-		margin-top: 0.75rem;
-		display: flex;
-		justify-content: center;
-		gap: 0.75rem;
-		flex-wrap: wrap;
-	}
-
-	.telegraph-pill {
-		background: color-mix(in srgb, var(--color-warning) 12%, transparent);
-		border: 1px solid color-mix(in srgb, var(--color-warning) 35%, transparent);
-		color: var(--color-warning);
-		font-size: 0.85rem;
-		padding: 0.35rem 0.75rem;
-		border-radius: 999px;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		box-shadow: 0 4px 12px var(--shadow-light);
-	}
-
-	.control-section {
-		margin-top: 2rem;
-	}
-
-	.control-bar {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		flex-wrap: wrap;
-		margin-bottom: 1.5rem;
-	}
-
-	.action-button {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.65rem 1.5rem;
-		border-radius: 0.75rem;
-		font-weight: 600;
-		border: 1px solid transparent;
-		cursor: pointer;
-		transition: var(--transition-theme);
-	}
-
-	.action-button:disabled {
-		cursor: not-allowed;
-		opacity: 0.55;
-	}
-
-	.action-button.accent {
-		background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-		color: var(--text-inverse);
-		box-shadow: 0 8px 24px var(--shadow-medium);
-	}
-
-	.action-button.accent:hover:not(:disabled) {
-		filter: brightness(1.05);
-	}
-
-	.action-button.neutral {
-		background: var(--bg-tertiary);
-		color: var(--text-primary);
-		border-color: var(--border-secondary);
-	}
-
-	.action-button.neutral:hover:not(:disabled) {
-		border-color: var(--color-primary);
-		box-shadow: 0 4px 12px var(--shadow-light);
-	}
-
-	.action-button.danger {
-		background: var(--color-error);
-		color: var(--text-inverse);
-	}
-
-	.action-button.danger:hover:not(:disabled) {
-		filter: brightness(1.08);
-	}
-
-	.button-icon {
-		width: 1rem;
-		height: 1rem;
-	}
-
 	@media (max-width: 768px) {
 		.battle-sim-container {
 			padding: 1rem;
 		}
-
-		.control-bar {
-			flex-direction: column;
-			align-items: stretch;
-		}
-
-		.action-button {
-			justify-content: center;
-			width: 100%;
-		}
 	}
 </style>
+
+
+
+
+
+
+

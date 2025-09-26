@@ -8,8 +8,8 @@
 		{#if logs.length === 0}
 			<div class="log-empty">The battlefield awaits your command...</div>
 		{:else}
-			{#each logs as log, idx (idx)}
-				<div class="log-line">{log}</div>
+			{#each logs as log, index (log + index)}
+				<div class="log-entry">{log}</div>
 			{/each}
 		{/if}
 	</div>
@@ -52,7 +52,7 @@
 		font-style: italic;
 	}
 
-	.log-line {
+	.log-entry {
 		color: var(--text-secondary);
 		padding: 0.25rem 0.35rem;
 		border-left: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);

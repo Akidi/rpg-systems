@@ -1,6 +1,8 @@
 import type { ComponentType } from 'svelte';
 
-export type CharacterKey = 'player' | 'enemy1' | 'enemy2';
+export type PlayerKey = 'player';
+export type EnemyKey = 'enemy1' | 'enemy2';
+export type CharacterKey = PlayerKey | EnemyKey;
 
 export type EnhancementId = 'power' | 'crit' | 'multi';
 
