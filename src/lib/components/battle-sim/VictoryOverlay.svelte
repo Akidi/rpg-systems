@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	type Props = {
+		playerDefeated?: boolean;
+		onReset?: () => void;
+	};
 
-	export let playerDefeated = false;
-
-	const dispatch = createEventDispatcher<{ reset: void }>();
+	let { playerDefeated = false, onReset }: Props = $props();
 
 	const title = playerDefeated ? 'Defeat!' : 'Victory!';
 	const message = playerDefeated
@@ -11,7 +12,7 @@
 		: 'You have defeated the goblins!';
 
 	function handleReset() {
-		dispatch('reset');
+		onReset?.();
 	}
 </script>
 
@@ -19,7 +20,7 @@
 	<div class="overlay-card">
 		<h2 class="overlay-title">{title}</h2>
 		<p class="overlay-message">{message}</p>
-		<button class="overlay-button" type="button" on:click={handleReset}> Start New Combat </button>
+		<button class="overlay-button" type="button" onclick={handleReset}> Start New Combat </button>
 	</div>
 </div>
 

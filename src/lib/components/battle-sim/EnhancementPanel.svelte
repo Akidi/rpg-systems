@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import {
 		getEnhancementApCost,
 		getEnhancementCost,
@@ -23,6 +22,10 @@
 		currentCharacter: Character;
 		validEnhancementsForAction: (actionId: string) => EnhancementId[];
 		multiTargetAvailable: boolean;
+		onIncrement?: (id: EnhancementId) => void;
+		onDecrement?: (id: EnhancementId) => void;
+		onToggle?: (id: EnhancementId, value: boolean) => void;
+		onExecute?: () => void;
 	};
 
 	let {
@@ -32,15 +35,12 @@
 		actions = [],
 		currentCharacter,
 		validEnhancementsForAction,
-		multiTargetAvailable
-	} = $props();
-
-	const dispatch = createEventDispatcher<{
-		increment: { id: EnhancementId };
-		decrement: { id: EnhancementId };
-		toggle: { id: EnhancementId; value: boolean };
-		execute: void;
-	}>();
+		multiTargetAvailable,
+		onIncrement,
+		onDecrement,
+		onToggle,
+		onExecute
+	}: Props = $props();
 
 	const getValidEnhancements = () =>
 		selectedActionId ? validEnhancementsForAction(selectedActionId) : null;
@@ -75,7 +75,7 @@
 		return actionCost + getEnhancementApCost(next as SelectedEnhancements);
 	};
 
-	let enhancementOptions = baseEnhancements.map((enhancement) => {
+	let enhancementOptions = $derived.by(()=>baseEnhancements.map((enhancement) => {
 		const count = selectedEnhancements[enhancement.id] ?? 0;
 		const isStacking = isStackingEnhancement(enhancement.id);
 		const validList = getValidEnhancements();
@@ -117,22 +117,22 @@
 			subtitle,
 			isActive: count > 0
 		};
-	});
+	}));
 
 	function handleIncrement(id: EnhancementId) {
-		dispatch('increment', { id });
+		onIncrement?.(id);
 	}
 
 	function handleDecrement(id: EnhancementId) {
-		dispatch('decrement', { id });
+		onDecrement?.(id);
 	}
 
 	function handleToggle(id: EnhancementId, value: boolean) {
-		dispatch('toggle', { id, value });
+		onToggle?.(id, value);
 	}
 
 	function handleExecute() {
-		dispatch('execute');
+		onExecute?.();
 	}
 </script>
 
@@ -166,7 +166,7 @@
 						<button
 							class="stack-button decrement"
 							type="button"
-							on:click={() => handleDecrement(enhancement.id)}
+							onclick={() => handleDecrement(enhancement.id)}
 							disabled={enhancement.count === 0}
 						>
 							−
@@ -175,7 +175,7 @@
 						<button
 							class="stack-button increment"
 							type="button"
-							on:click={() => handleIncrement(enhancement.id)}
+							onclick={() => handleIncrement(enhancement.id)}
 							disabled={enhancement.isDisabled || enhancement.apBlocked}
 						>
 							+
@@ -185,7 +185,7 @@
 					<button
 						class={`toggle-button${enhancement.isActive ? ' is-active' : ''}`}
 						type="button"
-						on:click={() => handleToggle(enhancement.id, !enhancement.isActive)}
+						onclick={() => handleToggle(enhancement.id, !enhancement.isActive)}
 						disabled={!enhancement.isActive && (enhancement.isDisabled || enhancement.apBlocked)}
 					>
 						{enhancement.isActive ? 'Disable' : 'Enable'}
@@ -216,7 +216,7 @@
 	{/if}
 
 	{#if selectedActionId && hasAnyEnhancements(selectedEnhancements)}
-		<button class="execute-button" type="button" on:click={handleExecute}>
+		<button class="execute-button" type="button" onclick={handleExecute}>
 			Execute Enhanced {selectedActionName}
 		</button>
 	{/if}

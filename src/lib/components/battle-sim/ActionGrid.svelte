@@ -1,41 +1,44 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { ActionDefinition, Character } from './types';
 
-	export let actions: ActionDefinition[] = [];
-	export let currentCharacter: Character;
+	type Props = {
+		actions: ActionDefinition[];
+		currentCharacter: Character;
+		onAction: (id: string) => void;
+	};
 
-	const dispatch = createEventDispatcher<{ action: { id: string } }>();
+	let { actions = [], currentCharacter, onAction }: Props = $props();
 
-	$: actionStates = actions.map((action) => {
-		const focusCost = currentCharacter.focus + 1;
-		const cost = action.id === 'focus' ? focusCost : action.apCost;
-		const canAfford = currentCharacter.ap >= cost;
-		const disabled = !canAfford || currentCharacter.hp <= 0;
+	const actionStates = $derived.by(() =>
+		actions.map((action) => {
+			const focusCost = currentCharacter.focus + 1;
+			const cost = action.id === 'focus' ? focusCost : action.apCost;
+			const maxedFocus =
+				action.id === 'focus' && currentCharacter.focus >= currentCharacter.maxFocus;
+			const canAfford = currentCharacter.ap >= cost;
+			const disabled = !canAfford || currentCharacter.hp <= 0 || maxedFocus;
 
-		return {
-			action,
-			cost,
-			canAfford,
-			disabled
-		};
-	});
-
-	function handleClick(id: string) {
-		dispatch('action', { id });
-	}
+			return {
+				action,
+				cost,
+				canAfford,
+				disabled
+			};
+		})
+	);
 </script>
 
 <div class="action-grid">
 	{#each actionStates as state (state.action.id)}
+		{@const Icon = state.action.icon}
 		<button
 			class={`action-card${state.canAfford && !state.disabled ? ' is-available' : ''}${state.disabled ? ' is-disabled' : ''}`}
 			type="button"
 			disabled={state.disabled}
-			on:click={() => handleClick(state.action.id)}
+			onclick={() => onAction(state.action.id)}
 		>
 			<div class="action-icon">
-				<svelte:component this={state.action.icon} size={24} />
+				<Icon size={24} />
 			</div>
 			<div class="action-name">{state.action.name}</div>
 			<div class="action-cost">{state.cost} AP</div>

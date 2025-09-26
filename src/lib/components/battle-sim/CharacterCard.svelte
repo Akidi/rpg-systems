@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { getFocusMultiplier } from './utils';
 	import type { ActionDefinition, Character, CharacterKey, TelegraphedAction } from './types';
 
@@ -10,8 +9,9 @@
 		selectedTarget: CharacterKey;
 		globalActionCount: number;
 		telegraphedAction: TelegraphedAction | undefined;
-		actions: ActionDefinition[];
-		canTarget: boolean;
+		actions?: ActionDefinition[];
+		canTarget?: boolean;
+		selectTarget: (key: CharacterKey) => void;
 	};
 
 	let {
@@ -22,22 +22,23 @@
 		globalActionCount,
 		telegraphedAction,
 		actions = [],
-		canTarget = false
-	} = $props();
+		canTarget = false,
+		selectTarget
+	}: Props = $props();
 
-	const dispatch = createEventDispatcher<{ selectTarget: { key: CharacterKey } }>();
-
-	let hpPercent = $state(Math.max(0, Math.min(100, (character.hp / character.maxHp) * 100)));
-	let manaPercent = $state(Math.max(0, Math.min(100, (character.mana / character.maxMana) * 100)));
-	let focusMultiplier = getFocusMultiplier(character.focus).toFixed(2);
-	let telegraphedLabel = $derived(
+	const hpPercent = $state(Math.max(0, Math.min(100, (character.hp / character.maxHp) * 100)));
+	const manaPercent = $state(
+		Math.max(0, Math.min(100, (character.mana / character.maxMana) * 100))
+	);
+	const focusMultiplier = $derived(getFocusMultiplier(character.focus).toFixed(2));
+	const telegraphedLabel = $derived(
 		telegraphedAction
-			? actions.find((action) => action.id === telegraphedAction.actionId)?.name
+			? (actions.find((action) => action.id === telegraphedAction.actionId)?.name ?? null)
 			: null
 	);
 
 	function handleSelectTarget() {
-		dispatch('selectTarget', { key: characterKey });
+		selectTarget(characterKey);
 	}
 </script>
 

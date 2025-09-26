@@ -89,20 +89,20 @@
 		}
 	});
 
-	let characters: CharactersState = createInitialCharacters();
-	let currentTurn: CharacterKey = 'player';
-	let combatLog: string[] = [];
-	let turnCount = 1;
-	let globalActionCount = 0;
-	let selectedTarget: CharacterKey = 'enemy1';
-	let enhancementMode = false;
-	let selectedEnhancements: SelectedEnhancements = {};
-	let selectedAction: string | null = null;
-	let telegraphedActions: Partial<Record<CharacterKey, TelegraphedAction>> = {};
+	let characters = $state(createInitialCharacters());
+	let currentTurn = $state<CharacterKey>('player');
+	let combatLog = $state<string[]>([]);
+	let turnCount = $state(1);
+	let globalActionCount = $state(0);
+	let selectedTarget = $state<CharacterKey>('enemy1');
+	let enhancementMode = $state(false);
+	let selectedEnhancements = $derived<SelectedEnhancements>({});
+	let selectedAction = $state<string | null>(null);
+	let telegraphedActions = $derived<Partial<Record<CharacterKey, TelegraphedAction>>>({});
 
-	$: currentCharacter = characters[currentTurn];
-	$: playerDefeated = characters.player.hp <= 0;
-	$: goblinsDefeated = characters.enemy1.hp <= 0 && characters.enemy2.hp <= 0;
+	const currentCharacter = $derived(characters[currentTurn]);
+	const playerDefeated = $derived(characters.player.hp <= 0);
+	const goblinsDefeated = $derived(characters.enemy1.hp <= 0 && characters.enemy2.hp <= 0);
 
 	function getEnhancementCount(id: EnhancementId) {
 		return selectedEnhancements[id] ?? 0;
@@ -305,9 +305,22 @@
 			};
 		}
 
-		const enhancementApCost = getEnhancementApCost(selectedEnhancements);
-		const totalApCost = action.apCost + enhancementApCost;
 		const { skipResourceCosts = false } = options;
+
+		let baseApCost = action.apCost;
+		if (action.type === 'focus') {
+			if (attacker.focus >= attacker.maxFocus) {
+				logMessage(`${attacker.name} cannot build more focus`);
+				return {
+					attacker: cloneCharacter(attacker),
+					targets: cloneTargets(targets)
+				};
+			}
+			baseApCost = attacker.focus + 1;
+		}
+
+		const enhancementApCost = getEnhancementApCost(selectedEnhancements);
+		const totalApCost = baseApCost + enhancementApCost;
 
 		if (!skipResourceCosts && attacker.ap < totalApCost) {
 			logMessage(`${attacker.name} lacks AP for ${action.name} (${totalApCost} needed)`);
@@ -477,17 +490,12 @@
 				break;
 			}
 			case 'focus': {
-				const focusCost = newAttacker.focus + 1;
-				if (newAttacker.ap >= focusCost && newAttacker.focus < newAttacker.maxFocus) {
-					newAttacker.ap = newAttacker.ap - focusCost + action.apCost;
-					newAttacker.focus += 1;
-					newAttacker.focusDecay = 0;
-					logMessage(
-						`${attacker.name} builds focus (${newAttacker.focus}/${newAttacker.maxFocus}) - cost ${focusCost} AP`
-					);
-				} else {
-					logMessage(`${attacker.name} cannot build more focus`);
-				}
+				const focusCost = baseApCost;
+				newAttacker.focus += 1;
+				newAttacker.focusDecay = 0;
+				logMessage(
+					`${attacker.name} builds focus (${newAttacker.focus}/${newAttacker.maxFocus}) - cost ${focusCost} AP`
+				);
 				break;
 			}
 			case 'defend': {
@@ -648,6 +656,10 @@
 		}
 	}
 
+	function handleSelectTarget(key: CharacterKey) {
+		selectedTarget = key;
+	}
+
 	function endTurn() {
 		let nextTurn: CharacterKey;
 		if (currentTurn === 'player') {
@@ -737,9 +749,7 @@
 					telegraphedAction={telegraphedActions[key as CharacterKey]}
 					{actions}
 					canTarget={key.startsWith('enemy') && currentTurn === 'player'}
-					on:selectTarget={(event) => {
-						selectedTarget = event.detail.key;
-					}}
+					selectTarget={handleSelectTarget}
 				/>
 			{/each}
 		</div>
@@ -756,10 +766,10 @@
 			{currentCharacter}
 			{validEnhancementsForAction}
 			multiTargetAvailable={isMultiTargetUseful()}
-			on:increment={(event) => incrementEnhancement(event.detail.id)}
-			on:decrement={(event) => decrementEnhancement(event.detail.id)}
-			on:toggle={(event) => toggleBinaryEnhancement(event.detail.id, event.detail.value)}
-			on:execute={executeEnhancedAction}
+			onIncrement={incrementEnhancement}
+			onDecrement={decrementEnhancement}
+			onToggle={toggleBinaryEnhancement}
+			onExecute={executeEnhancedAction}
 		/>
 	{/if}
 
@@ -769,7 +779,7 @@
 				class="action-button accent"
 				type="button"
 				disabled={currentCharacter.ap <= 0 || currentCharacter.hp <= 0}
-				on:click={() => {
+				onclick={() => {
 					enhancementMode = !enhancementMode;
 					if (!enhancementMode) {
 						clearEnhancements();
@@ -778,18 +788,18 @@
 			>
 				{enhancementMode ? 'Cancel Enhancements' : 'Add Enhancements'}
 			</button>
-			<button class="action-button neutral" type="button" on:click={endTurn}> End Turn </button>
-			<button class="action-button danger" type="button" on:click={resetCombat}>
+			<button class="action-button neutral" type="button" onclick={endTurn}> End Turn </button>
+			<button class="action-button danger" type="button" onclick={resetCombat}>
 				<RotateCcw size={16} class="button-icon" />
 				Reset
 			</button>
 		</div>
 
-		<ActionGrid {actions} {currentCharacter} on:action={(event) => handleAction(event.detail.id)} />
+		<ActionGrid {actions} {currentCharacter} onAction={(actionId) => handleAction(actionId)} />
 	</div>
 
 	{#if playerDefeated || goblinsDefeated}
-		<VictoryOverlay {playerDefeated} on:reset={resetCombat} />
+		<VictoryOverlay {playerDefeated} onReset={resetCombat} />
 	{/if}
 </div>
 
