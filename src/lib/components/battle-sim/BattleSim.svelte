@@ -38,10 +38,10 @@
 	];
 
 	const actions: ActionDefinition[] = [
-		{ id: 'attack', name: 'Attack', apCost: 2, type: 'damage', icon: Sword },
-		{ id: 'heal', name: 'Heal', apCost: 3, type: 'healing', icon: Heart },
+		{ id: 'attack', name: 'Attack', apCost: 1, type: 'damage', icon: Sword },
+		{ id: 'heal', name: 'Heal', apCost: 1, type: 'healing', icon: Heart },
 		{ id: 'focus', name: 'Focus', apCost: 1, type: 'focus', icon: Target },
-		{ id: 'defend', name: 'Defend', apCost: 2, type: 'defend', icon: Shield },
+		{ id: 'defend', name: 'Defend', apCost: 1, type: 'defend', icon: Shield },
 		{ id: 'fireball', name: 'Fireball', apCost: 1, type: 'damage', icon: Flame, dot: true }
 	];
 	const createAIFromPreset = (preset: AIConfig) =>
@@ -66,8 +66,8 @@
 			hp: 100,
 			maxMana: 50,
 			mana: 50,
-			maxAp: 10,
-			ap: 10,
+			maxAp: 3,
+			ap: 3,
 			focus: 0,
 			maxFocus: 4,
 			focusDecay: 0,
@@ -81,8 +81,8 @@
 			hp: 60,
 			maxMana: 30,
 			mana: 30,
-			maxAp: 10,
-			ap: 10,
+			maxAp: 3,
+			ap: 3,
 			focus: 0,
 			maxFocus: 4,
 			focusDecay: 0,
@@ -96,8 +96,8 @@
 			hp: 50,
 			maxMana: 25,
 			mana: 25,
-			maxAp: 10,
-			ap: 10,
+			maxAp: 3,
+			ap: 3,
 			focus: 0,
 			maxFocus: 4,
 			focusDecay: 0,
